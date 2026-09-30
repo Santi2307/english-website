@@ -1,0 +1,225 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum CourseLevel {
+  A1
+  A2
+  B1
+  B2
+  C1
+}
+
+enum CourseGoal {
+  CONVERSATION
+  BUSINESS
+  EXAM
+  KIDS
+}
+
+enum CourseBadge {
+  BESTSELLER
+  NEW
+}
+
+enum OrderStatus {
+  PENDING
+  APPROVED
+  DECLINED
+  VOIDED
+  ERROR
+}
+
+enum CouponType {
+  PERCENT
+  FIXED
+}
+
+model User {
+  id             String           @id @default(cuid())
+  email          String           @unique
+  name           String
+  passwordHash   String?
+  googleId       String?          @unique
+  avatarUrl      String?
+  role           Role             @default(STUDENT)
+  // Racha de días consecutivos con al menos una lección completada
+  streakCount    Int              @default(0)
+  lastActiveDate DateTime?        @db.Date
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  orders         Order[]
+  enrollments    Enrollment[]
+  progress       LessonProgress[]
+  reviews        Review[]
+}
+
+model Course {
+  id               String       @id @default(cuid())
+  slug             String       @unique
+  title            String
+  subtitle         String
+  description      String
+  level            CourseLevel
+  goal             CourseGoal
+  // Precio en pesos colombianos (sin centavos). Wompi recibe priceCOP * 100.
+  priceCOP         Int
+  // Precio "antes" para mostrar descuento tachado
+  compareAtCOP     Int?
+  badge            CourseBadge?
+  coverImage       String?
+  // Color base para portadas generadas cuando no hay imagen
+  coverColor       String       @default("#4f46e5")
+  // URL de embed pública (trailer). No requiere inscripción.
+  previewVideoUrl  String?
+  durationHours    Int          @default(0)
+  instructorName   String
+  instructorBio    String
+  instructorAvatar String?
+  whatYouLearn     String[]
+  published        Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  modules          Module[]
+  orders           Order[]
+  enrollments      Enrollment[]
+  reviews          Review[]
+  coupons          Coupon[]
+
+  @@index([published, level, goal])
+}
+
+model Module {
+  id       String   @id @default(cuid())
+  courseId String
+  title    String
+  position Int
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons  Lesson[]
+
+  @@index([courseId, position])
+}
+
+model Lesson {
+  id              String           @id @default(cuid())
+  moduleId        String
+  title           String
+  description     String           @default("")
+  position        Int
+  durationMinutes Int              @default(5)
+  // ID del video en el proveedor (Bunny videoId o Mux playbackId). Nunca se expone sin firmar.
+  videoId         String?
+  // Lecciones gratuitas visibles en el temario sin comprar
+  isFreePreview   Boolean          @default(false)
+  module          Module           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress        LessonProgress[]
+
+  @@index([moduleId, position])
+}
+
+model Order {
+  id                 String      @id @default(cuid())
+  // Referencia única enviada a Wompi
+  reference          String      @unique
+  userId             String
+  courseId           String
+  status             OrderStatus @default(PENDING)
+  subtotalCOP        Int
+  discountCOP        Int         @default(0)
+  amountInCents      Int
+  currency           String      @default("COP")
+  couponId           String?
+  wompiTransactionId String?     @unique
+  paymentMethod      String?
+  statusMessage      String?
+  paidAt             DateTime?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  user               User        @relation(fields: [userId], references: [id])
+  course             Course      @relation(fields: [courseId], references: [id])
+  coupon             Coupon?     @relation(fields: [couponId], references: [id])
+  enrollment         Enrollment?
+
+  @@index([userId, status])
+  @@index([status, createdAt])
+}
+
+model Enrollment {
+  id              String    @id @default(cuid())
+  userId          String
+  courseId        String
+  orderId         String?   @unique
+  completedAt     DateTime?
+  certificateCode String?   @unique
+  createdAt       DateTime  @default(now())
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course          Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  order           Order?    @relation(fields: [orderId], references: [id])
+
+  // Garantiza idempotencia: un usuario no puede inscribirse dos veces al mismo curso
+  @@unique([userId, courseId])
+}
+
+model LessonProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  lessonId    String
+  completedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model Coupon {
+  id             String     @id @default(cuid())
+  code           String     @unique
+  type           CouponType
+  // PERCENT: 1-100. FIXED: pesos COP.
+  value          Int
+  // Si es null aplica a todos los cursos
+  courseId       String?
+  maxRedemptions Int?
+  redemptions    Int        @default(0)
+  expiresAt      DateTime?
+  active         Boolean    @default(true)
+  createdAt      DateTime   @default(now())
+  course         Course?    @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  orders         Order[]
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+// Registro de auditoría de eventos de Wompi. El eventKey único evita reprocesar duplicados.
+model PaymentEvent {
+  id            String   @id @default(cuid())
+  eventKey      String   @unique
+  reference     String
+  transactionId String
+  status        String
+  payload       Json
+  createdAt     DateTime @default(now())
+
+  @@index([reference])
+}
