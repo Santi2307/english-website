@@ -1,15 +1,35 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Award, Download, Flame, PlayCircle } from 'lucide-react';
-import { api } from '@/lib/api';
+import { Award, Download, Flame, MailWarning, PlayCircle, Settings } from 'lucide-react';
+import { api, ApiError } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import { Seo } from '@/components/ui/Seo';
 import { PageLoader } from '@/components/ui/Spinner';
 import { CourseCover } from '@/components/ui/CourseCover';
 import { cn } from '@/lib/format';
 import type { MyCourses } from '@/lib/types';
+
+function VerifyBanner() {
+  const { t } = useTranslation();
+  const resend = useMutation({ mutationFn: () => api<void>('/auth/verify-email/resend', { method: 'POST' }) });
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 sm:flex-row sm:items-center sm:justify-between" role="status">
+      <p className="flex items-start gap-2 text-sm text-amber-900">
+        <MailWarning size={18} className="mt-0.5 shrink-0" aria-hidden /> {t('account.verifyBanner')}
+      </p>
+      {resend.isSuccess ? (
+        <span className="text-sm font-semibold text-emerald-700">{t('account.resent')}</span>
+      ) : (
+        <button onClick={() => resend.mutate()} disabled={resend.isPending} className="btn-ghost shrink-0 py-2 text-sm">
+          {t('account.resend')}
+        </button>
+      )}
+      {resend.error && <p className="text-sm text-rose-700" role="alert">{(resend.error as ApiError).message}</p>}
+    </div>
+  );
+}
 
 function last7Days() {
   const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bogota' });
@@ -66,7 +86,13 @@ export default function Dashboard() {
   return (
     <div className="container-page space-y-8 py-10">
       <Seo title={`${t('dashboard.myCourses')} · English Academy`} noindex />
-      <h1 className="text-3xl font-extrabold">{t('dashboard.hello', { name: user?.name.split(' ')[0] })}</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-3xl font-extrabold">{t('dashboard.hello', { name: user?.name.split(' ')[0] })}</h1>
+        <Link to="/mi-cuenta/ajustes" className="btn-ghost shrink-0 py-2 text-sm" aria-label={t('account.settings')}>
+          <Settings size={16} aria-hidden /> <span className="hidden sm:inline">{t('account.settings')}</span>
+        </Link>
+      </div>
+      {user && !user.emailVerified && <VerifyBanner />}
       <StreakCard streak={data.streak} active={data.activeDaysLast7} />
 
       <section>

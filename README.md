@@ -35,8 +35,9 @@ english-website/
 ├── server/
 │   ├── .env.example
 │   ├── prisma/
-│   │   ├── schema.prisma     # User, Course, Module, Lesson, Order, Enrollment,
-│   │   │                     # LessonProgress, Coupon, Review, PaymentEvent
+│   │   ├── schema.prisma     # User, Course, Module, Lesson, Order, Enrollment, LessonProgress,
+│   │   │                     # Coupon, Review, PaymentEvent, Notification, NotificationPreference,
+│   │   │                     # AuthToken, KnownDevice
 │   │   ├── migrations/
 │   │   └── seed.ts           # 4 cursos + admin + estudiantes demo + cupones
 │   └── src/
@@ -46,8 +47,9 @@ english-website/
 │       ├── schemas/          # Zod: auth, course, order, admin
 │       ├── routes/           # auth, courses, coupons, orders, me, lessons, admin, webhooks
 │       ├── controllers/
-│       ├── services/         # auth, course, pricing, payment, wompi, video, email,
-│       │                     # learning, certificate (PDF), admin
+│       ├── services/         # auth, course, pricing, payment, wompi, video,
+│       │                     # learning, certificate (PDF), admin, notificationPreferences
+│       ├── notifications/    # eventos, motor, reglas, canales, proveedores, plantillas, tests
 │       └── utils/
 └── client/
     ├── .env.example
@@ -153,10 +155,131 @@ Las lecciones guardan solo un `videoId`. El backend genera una URL de embed **fi
 
 El trailer público del curso (`previewVideoUrl`) es una URL de embed normal que no requiere firma.
 
+## Notificaciones y emails
+
+Los emails se disparan por **eventos**. Ningún servicio, controlador ni componente de UI llama a `sendEmail`: publican un hecho de negocio y el motor decide qué enviar.
+
+```
+auth / pagos / aprendizaje
+  └─ events.emit('USER_REGISTERED', payload, { id: user.id })
+       └─ NotificationEngine
+            ├─ rules.ts            evento → [canal, plantilla, categoría]
+            ├─ preferencias        seguridad y transaccionales siempre pasan
+            ├─ idempotencia        clave única "USER_REGISTERED:<id>:email"
+            ├─ tabla Notification  log + cola (queued → processing → sent/failed/…)
+            └─ EmailChannel → plantilla → EmailProvider (Resend | Preview | Sandbox)
+```
+
+Todo vive en `server/src/notifications/`:
+
+| Archivo | Responsabilidad |
+|---|---|
+| `events.ts` | Catálogo tipado de eventos y bus en proceso |
+| `rules.ts` | Qué notificación produce cada evento; separa datos persistibles de sensibles |
+| `engine.ts` | Idempotencia, preferencias, supresión por rebote, reintentos, worker |
+| `store.ts` | Persistencia (Prisma). La interfaz permite cambiar a BullMQ/SQS |
+| `channels/email.channel.ts` | Render + headers `List-Unsubscribe` + entrega |
+| `providers/` | `EmailProvider` (Resend sin SDK, Preview a archivos, Sandbox con lista blanca) |
+| `templates/` | Componentes (layout, botón, tarjetas, badges, footer) y los 6 emails |
+| `preferences.ts` / `unsubscribe.ts` | Política por categoría y tokens de baja firmados |
+
+### Emails incluidos
+
+| Evento | Plantilla | Categoría |
+|---|---|---|
+| `USER_REGISTERED` | Bienvenida | Transaccional |
+| `EMAIL_VERIFICATION_REQUESTED` | Verificar email (24 h, un solo uso) | Transaccional |
+| `PASSWORD_RESET_REQUESTED` | Restablecer contraseña (30 min, un solo uso) | Seguridad |
+| `PASSWORD_CHANGED` | Alerta de seguridad | Seguridad |
+| `NEW_SIGN_IN` | Alerta de seguridad (solo si el dispositivo es nuevo) | Seguridad |
+| `ORDER_APPROVED` | Acción completada (recibo) | Transaccional |
+| `ORDER_FAILED` | Actualización de cuenta (pago no completado) | Transaccional |
+| `ACCOUNT_UPDATED` | Actualización de cuenta | Actividad de la cuenta (opcional) |
+| `COURSE_COMPLETED` | Acción completada (certificado) | Actividad de la cuenta (opcional) |
+
+- **Categorías que siempre llegan:** Seguridad y Transaccional. No se pueden desactivar ni tienen link de baja.
+- **Categorías opcionales:** Actividad de la cuenta, Novedades y Consejos. Se controlan desde `/mi-cuenta/ajustes`.
+- **Marketing:** exige consentimiento explícito con fecha (casilla desmarcada al registrarse), de acuerdo con la Ley 1581 de 2012.
+
+### Probar en local sin enviar nada
+
+Con `EMAIL_MODE=preview` (el valor por defecto) ningún email sale de tu máquina:
+
+- **Vista previa de todas las plantillas y variantes:** http://localhost:4000/api/dev/emails, con enlaces a español, inglés, texto plano y "sin nombre". Solo existe fuera de producción.
+- **Emails generados por la app:** se guardan como `.html` y `.txt` en `server/.email-previews/` (ignorada por git). La consola imprime la ruta de cada uno.
+
+**Para recibir emails reales en tu bandeja sin arriesgar a usuarios:**
+
+```
+EMAIL_MODE=sandbox
+RESEND_API_KEY=re_...
+EMAIL_SANDBOX_ALLOWLIST=tu-email@gmail.com
+```
+
+Solo las direcciones de la lista reciben el email real; las demás se desvían a preview. El servidor **se niega a arrancar** con `EMAIL_MODE=live` si `NODE_ENV` no es `production`.
+
+### Producción con Resend
+
+1. En [resend.com](https://resend.com), verifica tu dominio (registros SPF y DKIM) y crea una API key.
+2. Configura las variables:
+   ```
+   EMAIL_MODE=live
+   RESEND_API_KEY=re_...
+   EMAIL_FROM="English Academy <hola@tudominio.com>"
+   EMAIL_REPLY_TO=...
+   SUPPORT_EMAIL=...
+   ```
+3. Opcional: en Resend, ve a **Webhooks**, apunta a `https://tu-dominio.com/api/webhooks/resend` con los eventos `email.delivered`, `email.bounced` y `email.complained`, y copia el signing secret en `RESEND_WEBHOOK_SECRET`. Con eso el log pasa a `DELIVERED`/`BOUNCED`, y a las direcciones que rebotan se les deja de escribir durante 30 días.
+
+### Garantías
+
+- **Sin duplicados.** Cada notificación tiene una clave de idempotencia única en la base de datos, y la misma clave se envía a Resend (`Idempotency-Key`). Un evento procesado 5 veces produce 1 email.
+- **No bloquea.** El registro, el login y los pagos responden de inmediato; el envío corre en segundo plano, y un fallo del proveedor nunca rompe el flujo de negocio.
+- **Reintentos.**
+  - Errores temporales (timeout, 429, 5xx): se reintentan a los 1 min, 5 min, 30 min y 2 h.
+  - Errores permanentes (4xx, dirección inválida): se marcan `FAILED` de inmediato.
+  - Si el proceso se cae a mitad de un envío, el lease vence y la notificación vuelve a la cola.
+- **Nada sensible en la base de datos.**
+  - Los tokens de verificación y reset solo existen en el link del email; en la base de datos queda su hash SHA-256.
+  - La IP y la ubicación de las alertas viven solo en memoria.
+  - Si el servidor se reinicia antes de enviar, esa notificación falla de forma segura, sin mandar un link roto, y el usuario puede pedir otro.
+- **Sesiones.** Cambiar o restablecer la contraseña cierra todas las demás sesiones (`sessionVersion` en el JWT).
+
+**Consultar el log:**
+
+```sql
+select "eventType", template, recipient, status, attempts, "errorMessage", "createdAt", "sentAt"
+from "Notification" order by "createdAt" desc limit 50;
+```
+
+### Cómo extender
+
+- **Un email nuevo:**
+  1. Agrega el evento y su payload en `events.ts`.
+  2. Crea la plantilla en `templates/` con los componentes existentes y regístrala en `templates/index.ts`.
+  3. Agrega la regla en `rules.ts`, con su categoría.
+  4. Publica el evento desde el servicio: `void events.emit('MI_EVENTO', payload, { id })`.
+- **Otro proveedor (Postmark, SES):** implementa `EmailProvider` y selecciónalo en `providers/index.ts`.
+- **Otro canal (SMS, push, in-app):** implementa `Channel` y regístralo en `notifications/index.ts`. Luego agrega reglas con `channel: 'sms'`; ni los emisores ni el motor cambian.
+
+### Tests
+
+```bash
+npm test --workspace server
+```
+
+62 tests que no usan la base de datos ni el proveedor real. Cubren:
+- Render de cada plantilla en los dos idiomas, datos faltantes, escape de HTML y URLs peligrosas.
+- Links generados y el flujo de eventos.
+- Duplicados (incluidos 5 eventos concurrentes).
+- Preferencias y categorías bloqueadas.
+- Datos sensibles fuera del log.
+- Reintentos, errores permanentes, intentos agotados, leases vencidos y rebotes.
+- Clasificación de errores de Resend, el modo sandbox y la firma del webhook.
+
 ## Otras integraciones
 
 - **Google login.** Crea un OAuth Client ID tipo *Web* en Google Cloud, agrega tus orígenes (`http://localhost:5173` y tu dominio) y pon el mismo ID en `GOOGLE_CLIENT_ID` (server) y `VITE_GOOGLE_CLIENT_ID` (client). El backend verifica el ID token.
-- **Email.** Pon tu `RESEND_API_KEY` y un `EMAIL_FROM` de un dominio verificado. Sin clave, los emails se imprimen en consola.
 - **Analítica.** Configura `VITE_GA_MEASUREMENT_ID` y `VITE_META_PIXEL_ID`. Se cargan tras la primera interacción (o a los 3 s) para no afectar el LCP. Eventos que se envían:
   - Test de nivel: `level_test_start` y `generate_lead`/`Lead`.
   - Clase demo: `demo_lesson_interaction`.

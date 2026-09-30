@@ -18,8 +18,9 @@ const registerSchema = z.object({
   name: z.string().min(2, 'name'),
   email: z.string().email('email'),
   password: z.string().min(8, 'password').regex(/[A-Za-z]/, 'password').regex(/\d/, 'password'),
+  marketingConsent: z.boolean().optional(),
 });
-type FormValues = { name?: string; email: string; password: string };
+type FormValues = { name?: string; email: string; password: string; marketingConsent?: boolean };
 
 /** Solo permite redirecciones internas (evita open redirect con ?next=https://...). */
 function safeNext(raw: string | null) {
@@ -41,7 +42,7 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
 
   const onSubmit = handleSubmit(async (values) => {
     if (isLogin) await login.mutateAsync({ email: values.email, password: values.password });
-    else await register.mutateAsync({ name: values.name!, email: values.email, password: values.password });
+    else await register.mutateAsync({ name: values.name!, email: values.email, password: values.password, marketingConsent: !!values.marketingConsent });
     navigate(next, { replace: true });
   });
 
@@ -96,7 +97,19 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
             />
             {!isLogin && !errors.password && <p id="pw-hint" className="mt-1 text-xs text-slate-500">{t('auth.passwordHint')}</p>}
             {err('password')}
+            {isLogin && (
+              <Link to="/olvide-contrasena" className="mt-2 inline-block text-sm font-medium text-brand-700 hover:underline">
+                {t('auth.forgot')}
+              </Link>
+            )}
           </div>
+          {!isLogin && (
+            <label className="flex items-start gap-2 text-sm text-slate-600">
+              {/* Consentimiento explícito y opcional (Ley 1581): nunca premarcado */}
+              <input type="checkbox" className="mt-0.5 h-4 w-4 shrink-0" {...field('marketingConsent')} />
+              {t('auth.marketingConsent')}
+            </label>
+          )}
           {serverError && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert">{serverError.message}</p>}
           <button type="submit" disabled={mutation.isPending} className="btn-primary w-full py-3.5">
             {mutation.isPending ? <Spinner className="h-5 w-5 border-white/40 border-t-white" /> : t(isLogin ? 'auth.submitLogin' : 'auth.submitRegister')}

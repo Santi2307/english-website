@@ -2,6 +2,7 @@ import type { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import type { Role } from '@prisma/client';
 import { env } from '../config/env.js';
+import { prisma } from '../lib/prisma.js';
 import { forbidden, unauthorized } from '../utils/httpError.js';
 
 export const AUTH_COOKIE = 'ea_session';
@@ -16,24 +17,32 @@ declare global {
   }
 }
 
-function readUser(token: string | undefined): AuthUser | undefined {
+/**
+ * Valida el JWT y que su versión de sesión siga vigente. Cambiar la contraseña
+ * incrementa `sessionVersion` y cierra todas las sesiones anteriores.
+ * Leer el rol desde la BD también refleja al instante cambios de permisos.
+ */
+async function readUser(token: string | undefined): Promise<AuthUser | undefined> {
   if (!token) return undefined;
+  let payload: { sub: string; sv?: number };
   try {
-    const payload = jwt.verify(token, env.JWT_SECRET) as { sub: string; role: Role };
-    return { id: payload.sub, role: payload.role };
+    payload = jwt.verify(token, env.JWT_SECRET) as { sub: string; sv?: number };
   } catch {
     return undefined;
   }
+  const user = await prisma.user.findUnique({ where: { id: payload.sub }, select: { role: true, sessionVersion: true } });
+  if (!user || user.sessionVersion !== (payload.sv ?? 0)) return undefined;
+  return { id: payload.sub, role: user.role };
 }
 
 /** Adjunta req.user si hay una sesión válida, sin exigirla. */
-export const optionalAuth: RequestHandler = (req, _res, next) => {
-  req.user = readUser(req.cookies?.[AUTH_COOKIE]);
+export const optionalAuth: RequestHandler = async (req, _res, next) => {
+  req.user = await readUser(req.cookies?.[AUTH_COOKIE]);
   next();
 };
 
-export const requireAuth: RequestHandler = (req, _res, next) => {
-  req.user = readUser(req.cookies?.[AUTH_COOKIE]);
+export const requireAuth: RequestHandler = async (req, _res, next) => {
+  req.user = await readUser(req.cookies?.[AUTH_COOKIE]);
   if (!req.user) throw unauthorized();
   next();
 };

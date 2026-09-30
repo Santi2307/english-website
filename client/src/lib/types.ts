@@ -10,7 +10,13 @@ export type User = {
   role: 'STUDENT' | 'ADMIN';
   avatarUrl: string | null;
   streakCount: number;
+  locale: 'es' | 'en';
+  emailVerified: boolean;
+  hasPassword: boolean;
 };
+
+export type PreferenceKey = 'accountUpdates' | 'productUpdates' | 'tips' | 'marketing';
+export type NotificationPreferences = Record<'security' | 'transactional' | PreferenceKey, { enabled: boolean; locked: boolean }>;
 
 export type CourseSummary = {
   id: string;

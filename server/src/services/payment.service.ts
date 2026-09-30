@@ -5,7 +5,8 @@ import { toCents } from '../utils/money.js';
 import { badRequest, conflict, notFound } from '../utils/httpError.js';
 import { quote } from './pricing.service.js';
 import { fetchTransaction, generateReference, integritySignature, type WompiTransaction } from './wompi.service.js';
-import { purchaseConfirmationEmail, sendEmail } from './email.service.js';
+import { events } from '../notifications/index.js';
+import { toLocale } from '../notifications/types.js';
 
 export async function createOrder(userId: string, courseId: string, couponCode?: string) {
   const course = await prisma.course.findFirst({ where: { id: courseId, published: true } });
@@ -94,20 +95,26 @@ async function transitionOrder(
     return true;
   });
 
-  if (transitioned && next.status === 'APPROVED') {
-    const full = await prisma.order.findUnique({ where: { id: order.id }, include: { user: true, course: true } });
-    if (full) {
-      const mail = purchaseConfirmationEmail({
-        name: full.user.name,
-        courseTitle: full.course.title,
-        courseSlug: full.course.slug,
-        totalCOP: full.amountInCents / 100,
-        reference: full.reference,
-      });
-      sendEmail({ to: full.user.email, ...mail }).catch((e) => console.error('Email falló', e));
-    }
-  }
+  // Solo quien hizo la transición publica el evento: webhooks repetidos no generan emails repetidos
+  if (transitioned) await publishOrderEvent(order.id, next.status);
   return transitioned;
+}
+
+async function publishOrderEvent(orderId: string, status: OrderStatus) {
+  if (status === 'PENDING') return;
+  const o = await prisma.order.findUnique({ where: { id: orderId }, include: { user: true, course: true } });
+  if (!o) return;
+  const user = { id: o.user.id, email: o.user.email, name: o.user.name, locale: toLocale(o.user.locale) };
+  const base = { user, orderId: o.id, reference: o.reference, courseTitle: o.course.title, courseSlug: o.course.slug };
+  if (status === 'APPROVED') {
+    void events.emit(
+      'ORDER_APPROVED',
+      { ...base, totalCOP: o.amountInCents / 100, paymentMethod: o.paymentMethod, paidAt: o.paidAt ?? new Date() },
+      { id: o.id },
+    );
+  } else {
+    void events.emit('ORDER_FAILED', { ...base, status, occurredAt: o.updatedAt }, { id: `${o.id}:${status}` });
+  }
 }
 
 /** Procesa una transacción de Wompi (del webhook o de una consulta a su API). */

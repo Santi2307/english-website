@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import type { User } from '@/lib/types';
+import i18n from '@/i18n';
+
+/** Idioma actual de la interfaz: el backend lo usa para los emails. */
+const currentLocale = () => (i18n.language?.startsWith('en') ? 'en' : 'es');
 
 const ME = ['me'] as const;
 
@@ -25,12 +29,12 @@ export function useAuthActions() {
       onSuccess,
     }),
     register: useMutation({
-      mutationFn: (body: { name: string; email: string; password: string }) =>
-        api<{ user: User }>('/auth/register', { method: 'POST', body }),
+      mutationFn: (body: { name: string; email: string; password: string; marketingConsent?: boolean }) =>
+        api<{ user: User }>('/auth/register', { method: 'POST', body: { ...body, locale: currentLocale() } }),
       onSuccess,
     }),
     google: useMutation({
-      mutationFn: (credential: string) => api<{ user: User }>('/auth/google', { method: 'POST', body: { credential } }),
+      mutationFn: (credential: string) => api<{ user: User }>('/auth/google', { method: 'POST', body: { credential, locale: currentLocale() } }),
       onSuccess,
     }),
     logout: useMutation({

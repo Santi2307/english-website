@@ -143,6 +143,7 @@ async function main() {
       name: 'Administrador',
       role: 'ADMIN',
       passwordHash: await bcrypt.hash(adminPassword, 12),
+      emailVerifiedAt: new Date(),
     },
   });
 
@@ -153,7 +154,7 @@ async function main() {
       { email: 'santiago@demo.co', name: 'Santiago Mejía' },
       { email: 'camila@demo.co', name: 'Camila Torres' },
     ].map((s) =>
-      prisma.user.upsert({ where: { email: s.email }, update: {}, create: { ...s, passwordHash: demoHash } }),
+      prisma.user.upsert({ where: { email: s.email }, update: {}, create: { ...s, passwordHash: demoHash, emailVerifiedAt: new Date() } }),
     ),
   );
 

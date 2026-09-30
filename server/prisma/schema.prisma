@@ -46,22 +46,31 @@ enum CouponType {
 }
 
 model User {
-  id             String           @id @default(cuid())
-  email          String           @unique
-  name           String
-  passwordHash   String?
-  googleId       String?          @unique
-  avatarUrl      String?
-  role           Role             @default(STUDENT)
+  id              String                  @id @default(cuid())
+  email           String                  @unique
+  name            String
+  passwordHash    String?
+  googleId        String?                 @unique
+  avatarUrl       String?
+  role            Role                    @default(STUDENT)
+  // Idioma para comunicaciones (es | en)
+  locale          String                  @default("es")
+  emailVerifiedAt DateTime?
+  // Se incrementa al cambiar la contraseña: invalida todas las sesiones (JWT) emitidas antes
+  sessionVersion  Int                     @default(0)
   // Racha de días consecutivos con al menos una lección completada
-  streakCount    Int              @default(0)
-  lastActiveDate DateTime?        @db.Date
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  orders         Order[]
-  enrollments    Enrollment[]
-  progress       LessonProgress[]
-  reviews        Review[]
+  streakCount     Int                     @default(0)
+  lastActiveDate  DateTime?               @db.Date
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  orders          Order[]
+  enrollments     Enrollment[]
+  progress        LessonProgress[]
+  reviews         Review[]
+  tokens          AuthToken[]
+  devices         KnownDevice[]
+  notifications   Notification[]
+  preferences     NotificationPreference?
 }
 
 model Course {
@@ -222,4 +231,102 @@ model PaymentEvent {
   createdAt     DateTime @default(now())
 
   @@index([reference])
+}
+
+// ─── Tokens de un solo uso (verificación de email, reset de contraseña) ─────
+enum AuthTokenPurpose {
+  VERIFY_EMAIL
+  RESET_PASSWORD
+}
+
+model AuthToken {
+  id        String           @id @default(cuid())
+  userId    String
+  purpose   AuthTokenPurpose
+  // SHA-256 del token. El token en claro solo existe en el link del email.
+  tokenHash String           @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose])
+}
+
+// Dispositivos desde los que el usuario ya inició sesión (para alertas de nuevo inicio)
+model KnownDevice {
+  id          String   @id @default(cuid())
+  userId      String
+  // SHA-256 de navegador + sistema operativo. No se guarda el user-agent completo.
+  fingerprint String
+  label       String
+  lastSeenAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, fingerprint])
+}
+
+// ─── Notificaciones ──────────────────────────────────────────────────────────
+enum NotificationStatus {
+  QUEUED
+  PROCESSING
+  SENT
+  DELIVERED
+  FAILED
+  BOUNCED
+  // No se envió por preferencias del usuario o destinatario suprimido
+  SKIPPED
+}
+
+enum NotificationCategory {
+  SECURITY
+  TRANSACTIONAL
+  ACCOUNT
+  PRODUCT_UPDATES
+  TIPS
+  MARKETING
+}
+
+model Notification {
+  id                String               @id @default(cuid())
+  userId            String?
+  channel           String
+  // Destinatario del canal (email). Necesario para reintentos y soporte.
+  recipient         String
+  eventType         String
+  eventId           String
+  template          String
+  category          NotificationCategory
+  // Evita duplicados: "<EVENTO>:<eventId>:<canal>"
+  idempotencyKey    String               @unique
+  status            NotificationStatus   @default(QUEUED)
+  provider          String?
+  providerMessageId String?              @unique
+  // Datos NO sensibles para re-renderizar en un reintento
+  payload           Json
+  attempts          Int                  @default(0)
+  nextAttemptAt     DateTime             @default(now())
+  errorMessage      String?
+  createdAt         DateTime             @default(now())
+  sentAt            DateTime?
+  deliveredAt       DateTime?
+  failedAt          DateTime?
+  user              User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([status, nextAttemptAt])
+  @@index([userId, createdAt])
+  @@index([recipient])
+}
+
+model NotificationPreference {
+  userId             String    @id
+  accountUpdates     Boolean   @default(true)
+  productUpdates     Boolean   @default(true)
+  tips               Boolean   @default(true)
+  // Marketing requiere consentimiento explícito (Ley 1581 de 2012): desactivado por defecto
+  marketing          Boolean   @default(false)
+  marketingConsentAt DateTime?
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

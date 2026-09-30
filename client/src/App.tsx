@@ -20,6 +20,11 @@ const AdminCourseEditor = lazy(() => import('./pages/admin/CourseEditor'));
 const AdminOrders = lazy(() => import('./pages/admin/Orders'));
 const AdminCoupons = lazy(() => import('./pages/admin/Coupons'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const VerifyEmail = lazy(() => import('./pages/account/VerifyEmail'));
+const ForgotPassword = lazy(() => import('./pages/account/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/account/ResetPassword'));
+const Settings = lazy(() => import('./pages/account/Settings'));
+const Unsubscribe = lazy(() => import('./pages/account/Unsubscribe'));
 
 export default function App() {
   return (
@@ -34,6 +39,11 @@ export default function App() {
           <Route path="checkout/:slug" element={<RequireAuth><Checkout /></RequireAuth>} />
           <Route path="pago/resultado" element={<RequireAuth><PaymentResult /></RequireAuth>} />
           <Route path="mi-cuenta" element={<RequireAuth><Dashboard /></RequireAuth>} />
+          <Route path="mi-cuenta/ajustes" element={<RequireAuth><Settings /></RequireAuth>} />
+          <Route path="verificar-email" element={<VerifyEmail />} />
+          <Route path="olvide-contrasena" element={<ForgotPassword />} />
+          <Route path="restablecer-contrasena" element={<ResetPassword />} />
+          <Route path="preferencias/baja" element={<Unsubscribe />} />
           <Route path="*" element={<NotFound />} />
         </Route>
   

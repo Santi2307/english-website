@@ -27,11 +27,40 @@ const schema = z.object({
   MUX_SIGNING_KEY_ID: z.string().optional().default(''),
   MUX_SIGNING_PRIVATE_KEY: z.string().optional().default(''),
 
-  RESEND_API_KEY: z.string().optional().default(''),
+  // ─── Email ───
+  // preview: no envía nada, guarda cada email como archivo (por defecto en local)
+  // sandbox: envía por el proveedor SOLO a EMAIL_SANDBOX_ALLOWLIST; el resto va a preview
+  // live:    envía a todos. Solo permitido con NODE_ENV=production
+  EMAIL_MODE: z.enum(['preview', 'sandbox', 'live']).default('preview'),
+  EMAIL_PROVIDER: z.enum(['resend']).default('resend'),
   EMAIL_FROM: z.string().default('English Academy <onboarding@resend.dev>'),
+  EMAIL_REPLY_TO: z.string().optional().transform((v) => v || undefined),
+  EMAIL_SANDBOX_ALLOWLIST: z
+    .string()
+    .optional()
+    .default('')
+    .transform((v) => v.split(',').map((e) => e.trim().toLowerCase()).filter(Boolean)),
+  EMAIL_PREVIEW_DIR: z.string().default('.email-previews'),
+  RESEND_API_KEY: z.string().optional().default(''),
+  // Secreto de firma del webhook de Resend (whsec_...) para estados delivered/bounced
+  RESEND_WEBHOOK_SECRET: z.string().optional().default(''),
+  SUPPORT_EMAIL: z.string().email().default('soporte@englishacademy.co'),
 });
 
-const parsed = schema.safeParse(process.env);
+const parsed = schema
+  .superRefine((e, ctx) => {
+    // Un entorno local nunca debe poder enviar emails reales masivamente por error
+    if (e.EMAIL_MODE === 'live' && e.NODE_ENV !== 'production') {
+      ctx.addIssue({ code: 'custom', path: ['EMAIL_MODE'], message: 'EMAIL_MODE=live solo se permite con NODE_ENV=production' });
+    }
+    if (e.EMAIL_MODE !== 'preview' && !e.RESEND_API_KEY) {
+      ctx.addIssue({ code: 'custom', path: ['RESEND_API_KEY'], message: `EMAIL_MODE=${e.EMAIL_MODE} requiere RESEND_API_KEY` });
+    }
+    if (e.EMAIL_MODE === 'sandbox' && e.EMAIL_SANDBOX_ALLOWLIST.length === 0) {
+      ctx.addIssue({ code: 'custom', path: ['EMAIL_SANDBOX_ALLOWLIST'], message: 'EMAIL_MODE=sandbox requiere al menos un email autorizado' });
+    }
+  })
+  .safeParse(process.env);
 if (!parsed.success) {
   console.error('❌ Variables de entorno inválidas:', parsed.error.flatten().fieldErrors);
   process.exit(1);

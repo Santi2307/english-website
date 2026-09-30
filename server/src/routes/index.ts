@@ -4,6 +4,7 @@ import { courseRoutes } from './course.routes.js';
 import { couponRoutes, orderRoutes } from './order.routes.js';
 import { lessonRoutes, meRoutes } from './learning.routes.js';
 import { adminRoutes } from './admin.routes.js';
+import { notificationRoutes } from './notification.routes.js';
 
 export const apiRoutes = Router()
   .get('/health', (_req, res) => {
@@ -15,4 +16,5 @@ export const apiRoutes = Router()
   .use('/orders', orderRoutes)
   .use('/me', meRoutes)
   .use('/lessons', lessonRoutes)
-  .use('/admin', adminRoutes);
+  .use('/admin', adminRoutes)
+  .use('/notifications', notificationRoutes);

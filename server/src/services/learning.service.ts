@@ -3,6 +3,8 @@ import { prisma } from '../lib/prisma.js';
 import { forbidden, notFound } from '../utils/httpError.js';
 import { bogotaDay, dayDiff } from '../utils/dates.js';
 import { signedPlayback } from './video.service.js';
+import { events } from '../notifications/index.js';
+import { toLocale } from '../notifications/types.js';
 
 async function requireEnrollment(userId: string, courseId: string) {
   const e = await prisma.enrollment.findUnique({ where: { userId_courseId: { userId, courseId } } });
@@ -144,10 +146,28 @@ export async function completeLesson(userId: string, lessonId: string) {
   ]);
   let courseCompleted = !!enrollment.completedAt;
   if (!enrollment.completedAt && total > 0 && completed >= total) {
-    await prisma.enrollment.update({
-      where: { id: enrollment.id },
-      data: { completedAt: new Date(), certificateCode: crypto.randomBytes(6).toString('hex').toUpperCase() },
+    // Condicional: si dos peticiones completan la última lección a la vez, solo una cierra el curso
+    const completedAt = new Date();
+    const certificateCode = crypto.randomBytes(6).toString('hex').toUpperCase();
+    const res = await prisma.enrollment.updateMany({
+      where: { id: enrollment.id, completedAt: null },
+      data: { completedAt, certificateCode },
     });
+    if (res.count === 1) {
+      const e = await prisma.enrollment.findUniqueOrThrow({ where: { id: enrollment.id }, include: { user: true, course: true } });
+      void events.emit(
+        'COURSE_COMPLETED',
+        {
+          user: { id: e.user.id, email: e.user.email, name: e.user.name, locale: toLocale(e.user.locale) },
+          enrollmentId: e.id,
+          courseId: e.course.id,
+          courseTitle: e.course.title,
+          certificateCode,
+          completedAt,
+        },
+        { id: e.id },
+      );
+    }
     courseCompleted = true;
   }
 

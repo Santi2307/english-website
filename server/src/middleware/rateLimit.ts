@@ -22,3 +22,12 @@ export const orderLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'Demasiadas solicitudes de pago. Espera un momento.' },
 });
+
+/** Endpoints que disparan emails (reset, reenvío de verificación): evita usarlos para spamear buzones. */
+export const emailActionLimiter = rateLimit({
+  windowMs: 60 * 60_000,
+  limit: 5,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'Demasiadas solicitudes. Intenta de nuevo en una hora.' },
+});

@@ -7,11 +7,13 @@
     "dev": "tsx watch --include .env src/index.ts",
     "build": "prisma generate && tsc -p tsconfig.json",
     "start": "node dist/index.js",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.test.json",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "seed": "tsx prisma/seed.ts",
-    "start:prod": "prisma migrate deploy && node dist/index.js"
+    "start:prod": "prisma migrate deploy && node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -39,6 +41,7 @@
     "@types/pdfkit": "^0.17.6",
     "prisma": "^6.19.3",
     "tsx": "^4.23.15",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.7"
   }
 }
