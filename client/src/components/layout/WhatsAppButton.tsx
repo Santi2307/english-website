@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { track } from '@/lib/analytics';
 
-const NUMBER = (import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined) ?? '573001234567';
+const NUMBER = (import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined) ?? '573151378651';
 
 export function whatsappUrl(message: string) {
   return `https://wa.me/${NUMBER}?text=${encodeURIComponent(message)}`;

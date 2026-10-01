@@ -287,7 +287,8 @@ npm test --workspace server
   - Clase demo: `demo_lesson_interaction`.
   - Embudo de compra: `view_item`/`ViewContent`, `begin_checkout`/`InitiateCheckout` y `purchase`/`Purchase` (deduplicado por orden).
   - WhatsApp: `contact`.
-- **WhatsApp.** Configura `VITE_WHATSAPP_NUMBER` (formato `57300…`).
+- **WhatsApp.** `VITE_WHATSAPP_NUMBER=573151378651` (formato internacional sin `+`).
+- **Fotos.** En `client/public/images/people/`, con licencia Unsplash. Ver `CREDITS.md`: son de stock y deben reemplazarse por profes y estudiantes reales antes de lanzar.
 - **Testimonios en video.** Pon los `.mp4` en `client/public/videos/` con los nombres de `src/data/testimonials.ts`. Si un archivo no existe, la tarjeta se muestra solo con texto.
 
 ## Despliegue

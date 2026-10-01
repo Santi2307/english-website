@@ -21,9 +21,9 @@ function LevelMeter({ level }: { level: Level }) {
             initial={{ height: 0 }}
             animate={{ height: 24 + i * 16 }}
             transition={{ delay: 0.3 + i * 0.12, type: 'spring', stiffness: 120 }}
-            className={cn('w-9 rounded-t-lg sm:w-11', i <= idx ? 'bg-gradient-to-t from-brand-600 to-sky-400' : 'bg-slate-200')}
+            className={cn('w-9 rounded-t-lg sm:w-11', i <= idx ? 'bg-brand-600' : 'bg-white/70')}
           />
-          <span className={cn('text-xs font-bold', i === idx ? 'text-brand-700' : 'text-slate-400')}>{l}</span>
+          <span className={cn('text-xs font-bold', i === idx ? 'text-slate-900' : 'text-slate-400')}>{l}</span>
         </div>
       ))}
     </div>
@@ -70,16 +70,16 @@ export function LevelTest() {
   const progress = ((phase === 'result' ? QUESTIONS.length : current) / QUESTIONS.length) * 100;
 
   return (
-    <section id="test-de-nivel" className="scroll-mt-20 bg-gradient-to-b from-white to-brand-50/60 py-16 sm:py-24">
+    <section id="test-de-nivel" className="scroll-mt-24 py-16 sm:py-24">
       <div className="container-page">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="section-title">{t('levelTest.title')}</h2>
           <p className="mt-3 text-slate-600">{t('levelTest.subtitle')}</p>
         </div>
 
-        <div className="card relative mx-auto mt-10 max-w-2xl overflow-hidden p-6 sm:p-10">
+        <div className="glass-strong relative mx-auto mt-10 max-w-2xl overflow-hidden rounded-[2rem] p-6 sm:p-10">
           {phase !== 'intro' && (
-            <div className="absolute inset-x-0 top-0 h-1.5 bg-slate-100">
+            <div className="absolute inset-x-0 top-0 h-1.5 bg-white/60">
               <motion.div className="h-full bg-brand-600" animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
             </div>
           )}
@@ -87,10 +87,10 @@ export function LevelTest() {
           <AnimatePresence mode="wait">
             {phase === 'intro' && (
               <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center">
-                <div className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-brand-100 text-3xl" aria-hidden>🎯</div>
+                <div className="glass mx-auto mb-5 grid h-16 w-16 place-items-center rounded-2xl text-3xl" aria-hidden>🎯</div>
                 <div className="mb-6 flex justify-center gap-2">
                   {LEVELS.map((l) => (
-                    <span key={l} className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600">{l}</span>
+                    <span key={l} className="rounded-full bg-white/70 px-3 py-1 text-xs font-bold text-slate-600">{l}</span>
                   ))}
                 </div>
                 <button onClick={start} className="btn-primary px-8 py-4 text-base">{t('levelTest.start')}</button>
@@ -105,7 +105,7 @@ export function LevelTest() {
                 exit={{ opacity: 0, x: -40 }}
                 transition={{ duration: 0.25 }}
               >
-                <p className="text-sm font-medium text-brand-600" aria-live="polite">
+                <p className="text-sm font-medium text-slate-500" aria-live="polite">
                   {t('levelTest.question', { current: current + 1, total: QUESTIONS.length })}
                 </p>
                 <h3 className="mt-3 text-xl font-bold text-slate-900 sm:text-2xl" id="lt-q">{q.prompt}</h3>
@@ -119,8 +119,8 @@ export function LevelTest() {
                       disabled={picked !== null}
                       onClick={() => answer(i)}
                       className={cn(
-                        'rounded-xl border-2 px-4 py-4 text-left font-semibold transition',
-                        picked === i ? 'border-brand-600 bg-brand-50 text-brand-800' : 'border-slate-200 hover:border-brand-300 hover:bg-slate-50',
+                        'rounded-2xl border-2 px-4 py-4 text-left font-semibold transition',
+                        picked === i ? 'border-brand-600 bg-white text-slate-900 shadow-sm' : 'border-white/80 bg-white/55 hover:border-brand-300 hover:bg-white/90',
                       )}
                     >
                       <span className="mr-2 text-slate-400">{String.fromCharCode(65 + i)}.</span>
@@ -141,7 +141,7 @@ export function LevelTest() {
                   initial={{ scale: 0, rotate: -12 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: 'spring', stiffness: 180, damping: 12, delay: 0.1 }}
-                  className="mt-2 bg-gradient-to-r from-brand-600 to-sky-500 bg-clip-text text-7xl font-black text-transparent"
+                  className="mt-2 text-7xl font-black tracking-tight text-slate-900"
                   aria-live="polite"
                 >
                   {result.level}
@@ -155,9 +155,9 @@ export function LevelTest() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1 }}
-                    className="mt-8 rounded-2xl border-2 border-brand-200 bg-brand-50 p-5 text-left"
+                    className="glass mt-8 rounded-3xl p-5 text-left"
                   >
-                    <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-brand-700">
+                    <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-slate-600">
                       <Sparkles size={14} aria-hidden /> {t('levelTest.recommended')}
                     </p>
                     <p className="mt-1 text-lg font-bold text-slate-900">{recommended.title}</p>

@@ -43,8 +43,8 @@ Sigue los pasos en orden, porque cada uno usa datos del anterior. Tiempo estimad
 4. Desde tu computador, crea las tablas y carga los cursos de ejemplo:
    ```bash
    cd english-website/server
-   DATABASE_URL="postgresql://...neon.tech/neondb?sslmode=require" npx prisma migrate deploy
-   DATABASE_URL="postgresql://...neon.tech/neondb?sslmode=require" npm run seed
+   DATABASE_URL="postgresql://neondb_owner:npg_oqsMmlV6J1PL@ep-autumn-tooth-b4p71vhi.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require" npx prisma migrate deploy
+   DATABASE_URL="postgresql://neondb_owner:npg_oqsMmlV6J1PL@ep-autumn-tooth-b4p71vhi.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require" npm run seed
    ```
    El seed crea el admin (`admin@englishacademy.co` / `Admin12345!`). **Cambia esa contraseña** desde Ajustes apenas entres.
 
@@ -90,7 +90,7 @@ Sigue los pasos en orden, porque cada uno usa datos del anterior. Tiempo estimad
 1. Revisa `client/vercel.json`: debe apuntar a la URL real de Render. Si Render te asignó otra (p. ej. `english-academy-api-x1y2.onrender.com`), reemplázala en las dos líneas, haz commit y push.
 2. En Vercel, ve a **Project → Settings → Environment Variables** y agrega:
    - `VITE_SITE_URL` = tu URL de Vercel
-   - `VITE_WHATSAPP_NUMBER` = tu número, p. ej. `573001234567`
+   - `VITE_WHATSAPP_NUMBER` = `573151378651`
    - Opcionales: `VITE_GOOGLE_CLIENT_ID`, `VITE_GA_MEASUREMENT_ID`, `VITE_META_PIXEL_ID`
 3. **Redeploy** para aplicar los cambios.
 

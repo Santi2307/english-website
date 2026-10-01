@@ -75,8 +75,8 @@ export function CourseCard({ course, highlight }: { course: CourseSummary; highl
             </span>
           </div>
           <div className="flex flex-1 flex-col p-5">
-            {highlight && <p className="mb-1 text-xs font-bold text-brand-600">{highlight}</p>}
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand-600">{t(`goals.${course.goal}`)}</p>
+            {highlight && <p className="mb-1 text-xs font-bold text-slate-700">★ {highlight}</p>}
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{t(`goals.${course.goal}`)}</p>
             <h3 className="mt-1 text-lg font-bold leading-snug text-slate-900">
               <Link to={href} className="after:absolute after:inset-0 focus:outline-none" tabIndex={flipped ? -1 : 0}>{course.title}</Link>
             </h3>

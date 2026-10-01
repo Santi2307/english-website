@@ -22,7 +22,9 @@ function useRouteEffects() {
 export function Layout() {
   useRouteEffects();
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="relative isolate flex min-h-dvh flex-col">
+      {/* Fondo ambiente fijo: el vidrio necesita color detrás para verse */}
+      <div className="ambient-bg pointer-events-none fixed inset-0 -z-10" aria-hidden />
       <a href="#main" className="sr-only z-50 rounded bg-brand-600 px-4 py-2 text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
         Saltar al contenido
       </a>

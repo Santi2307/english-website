@@ -10,12 +10,12 @@ export function StatsBar() {
     { value: 32, label: t('stats.cities') },
   ];
   return (
-    <section aria-label="Resultados" className="border-y border-slate-200 bg-white">
-      <dl className="container-page grid grid-cols-2 gap-6 py-8 md:grid-cols-4">
+    <section aria-label="Resultados" className="container-page">
+      <dl className="glass grid grid-cols-2 gap-6 rounded-3xl px-6 py-7 md:grid-cols-4">
         {stats.map((s) => (
           <div key={s.label} className="flex flex-col-reverse text-center">
-            <dt className="mt-1 text-sm text-slate-500">{s.label}</dt>
-            <dd className="text-3xl font-extrabold text-brand-700 sm:text-4xl">
+            <dt className="mt-1 text-sm text-slate-600">{s.label}</dt>
+            <dd className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
               <AnimatedCounter to={s.value} decimals={s.decimals} suffix={s.suffix} />
             </dd>
           </div>

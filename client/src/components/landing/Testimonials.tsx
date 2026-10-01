@@ -7,7 +7,10 @@ import { Stars } from '../ui/Stars';
 import { cn } from '@/lib/format';
 import { usePrefersReducedMotion } from '@/hooks/useDeviceCapability';
 
-function Avatar({ name }: { name: string }) {
+function Avatar({ name, photo }: { name: string; photo?: string }) {
+  if (photo) {
+    return <img src={photo} alt="" width={56} height={56} loading="lazy" className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-white" />;
+  }
   const initials = name.split(' ').map((p) => p[0]).slice(0, 2).join('');
   return (
     <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-sky-400 font-bold text-white" aria-hidden>
@@ -100,22 +103,22 @@ export function Testimonials() {
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.2}
                 onDragEnd={onDragEnd}
-                className="card cursor-grab p-6 active:cursor-grabbing sm:p-10"
+                className="glass-strong cursor-grab rounded-[2rem] p-6 active:cursor-grabbing sm:p-10"
                 aria-roledescription="diapositiva"
                 aria-label={`${index + 1} / ${n}`}
               >
                 {item.video && <VideoTestimonial video={item.video} name={item.name} />}
-                <Quote className="text-brand-200" size={36} aria-hidden />
+                <Quote className="text-slate-300" size={36} aria-hidden />
                 <blockquote className="mt-2 text-lg font-medium leading-relaxed text-slate-800 sm:text-xl">“{item.quote}”</blockquote>
                 <figcaption className="mt-6 flex items-center gap-3">
-                  <Avatar name={item.name} />
+                  <Avatar name={item.name} photo={item.photo} />
                   <div>
                     <p className="font-bold text-slate-900">{item.name}</p>
                     <p className="text-sm text-slate-500">{item.role} · {item.city}</p>
                   </div>
                   <div className="ml-auto hidden text-right sm:block">
                     <Stars value={item.rating} />
-                    <p className="mt-1 text-xs font-medium text-brand-600">{item.course}</p>
+                    <p className="mt-1 text-xs font-medium text-slate-500">{item.course}</p>
                   </div>
                 </figcaption>
               </motion.figure>
@@ -123,7 +126,7 @@ export function Testimonials() {
           </div>
 
           <div className="mt-6 flex items-center justify-center gap-4">
-            <button onClick={() => go(-1)} className="rounded-full border border-slate-200 bg-white p-2.5 hover:bg-slate-50" aria-label={t('testimonials.prev')}>
+            <button onClick={() => go(-1)} className="glass rounded-full p-2.5" aria-label={t('testimonials.prev')}>
               <ChevronLeft size={20} aria-hidden />
             </button>
             <div className="flex gap-2">
@@ -133,11 +136,11 @@ export function Testimonials() {
                   onClick={() => setState([i, i > index ? 1 : -1])}
                   aria-label={`${i + 1}`}
                   aria-current={i === index}
-                  className={cn('h-2.5 rounded-full transition-all', i === index ? 'w-8 bg-brand-600' : 'w-2.5 bg-slate-300')}
+                  className={cn('h-2.5 rounded-full transition-all', i === index ? 'w-8 bg-slate-900' : 'w-2.5 bg-slate-300')}
                 />
               ))}
             </div>
-            <button onClick={() => go(1)} className="rounded-full border border-slate-200 bg-white p-2.5 hover:bg-slate-50" aria-label={t('testimonials.next')}>
+            <button onClick={() => go(1)} className="glass rounded-full p-2.5" aria-label={t('testimonials.next')}>
               <ChevronRight size={20} aria-hidden />
             </button>
           </div>

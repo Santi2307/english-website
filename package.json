@@ -12,8 +12,5 @@
     "db:migrate": "npm run prisma:migrate --workspace server",
     "db:seed": "npm run seed --workspace server",
     "typecheck": "npm run typecheck --workspace server && npm run typecheck --workspace client"
-  },
-  "overrides": {
-    "@types/three": "0.169.0"
   }
 }

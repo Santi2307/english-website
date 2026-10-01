@@ -65,7 +65,7 @@ function OrderExercise() {
         onReorder={setAnswer}
         className={cn(
           'mt-5 flex min-h-16 flex-wrap items-center gap-2 rounded-2xl border-2 border-dashed p-3 transition',
-          feedback === 'correct' ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 bg-slate-50',
+          feedback === 'correct' ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 bg-white/50',
         )}
         aria-label="Tu respuesta"
       >
@@ -78,7 +78,7 @@ function OrderExercise() {
           >
             <button
               onClick={() => remove(w)}
-              className="rounded-xl bg-brand-600 px-4 py-2.5 font-semibold text-white shadow-md"
+              className="rounded-full bg-brand-600 px-4 py-2.5 font-semibold text-white shadow-md"
               aria-label={`Quitar ${w}`}
             >
               {w}
@@ -94,7 +94,7 @@ function OrderExercise() {
             layout
             whileTap={{ scale: 0.92 }}
             onClick={() => add(w)}
-            className="rounded-xl border-2 border-slate-200 bg-white px-4 py-2.5 font-semibold text-slate-800 shadow-sm hover:border-brand-300"
+            className="rounded-full border border-white/80 bg-white/75 px-4 py-2.5 font-semibold text-slate-800 shadow-sm hover:border-brand-300"
           >
             {w}
           </motion.button>
@@ -239,7 +239,7 @@ function SpeakExercise() {
   return (
     <div>
       <p className="text-slate-600">{t('demo.speakInstructions')}</p>
-      <p className="mt-5 rounded-2xl bg-slate-50 p-5 text-center text-2xl font-bold">
+      <p className="mt-5 rounded-2xl bg-white/60 p-5 text-center text-2xl font-bold">
         {PHRASE.split(' ').map((word, i) => (
           <span
             key={i}
@@ -277,19 +277,19 @@ export function DemoLesson() {
   const tabs: Tab[] = ['order', 'fill', 'speak'];
 
   return (
-    <section id="clase-demo" className="scroll-mt-20 py-16 sm:py-24">
+    <section id="clase-demo" className="scroll-mt-24 py-16 sm:py-24">
       <div className="container-page grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-center">
         <div>
           <h2 className="section-title">{t('demo.title')}</h2>
           <p className="mt-3 text-lg text-slate-600">{t('demo.subtitle')}</p>
-          <div className="mt-8 hidden rounded-2xl bg-brand-950 p-6 text-white lg:block">
+          <div className="glass-dark mt-8 hidden rounded-3xl p-6 text-white lg:block">
             <p className="font-semibold">{t('demo.ctaTitle')}</p>
             <Link to="/cursos" className="btn-accent mt-4">{t('demo.cta')} →</Link>
           </div>
         </div>
 
-        <div className="card p-5 sm:p-8">
-          <div role="tablist" aria-label={t('demo.title')} className="mb-6 grid grid-cols-3 gap-1 rounded-xl bg-slate-100 p-1">
+        <div className="glass-strong rounded-[2rem] p-5 sm:p-8">
+          <div role="tablist" aria-label={t('demo.title')} className="mb-6 grid grid-cols-3 gap-1 rounded-full bg-white/60 p-1">
             {tabs.map((k) => (
               <button
                 key={k}
@@ -298,9 +298,9 @@ export function DemoLesson() {
                 aria-selected={tab === k}
                 aria-controls={`panel-${k}`}
                 onClick={() => setTab(k)}
-                className={cn('relative rounded-lg px-2 py-2.5 text-sm font-semibold transition', tab === k ? 'text-brand-700' : 'text-slate-500')}
+                className={cn('relative rounded-full px-2 py-2.5 text-sm font-semibold transition', tab === k ? 'text-slate-900' : 'text-slate-500')}
               >
-                {tab === k && <motion.span layoutId="demo-tab" className="absolute inset-0 rounded-lg bg-white shadow-sm" />}
+                {tab === k && <motion.span layoutId="demo-tab" className="absolute inset-0 rounded-full bg-white shadow-sm" />}
                 <span className="relative">{t(`demo.tabs.${k}`)}</span>
               </button>
             ))}

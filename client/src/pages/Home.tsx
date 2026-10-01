@@ -7,6 +7,7 @@ import { LevelTest } from '@/components/landing/LevelTest';
 import { CoursesShowcase } from '@/components/landing/CoursesShowcase';
 
 // Secciones bajo el pliegue: chunks separados
+const TeachersSection = lazy(() => import('@/components/landing/TeachersSection').then((m) => ({ default: m.TeachersSection })));
 const DemoLesson = lazy(() => import('@/components/landing/DemoLesson').then((m) => ({ default: m.DemoLesson })));
 const Testimonials = lazy(() => import('@/components/landing/Testimonials').then((m) => ({ default: m.Testimonials })));
 const Faq = lazy(() => import('@/components/landing/Faq').then((m) => ({ default: m.Faq })));
@@ -20,6 +21,9 @@ export default function Home() {
       <Hero />
       <StatsBar />
       <LevelTest />
+      <Suspense fallback={<div className="min-h-[600px]" />}>
+        <TeachersSection />
+      </Suspense>
       <CoursesShowcase />
       <Suspense fallback={<div className="min-h-[600px]" />}>
         <DemoLesson />

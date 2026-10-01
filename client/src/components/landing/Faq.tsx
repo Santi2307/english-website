@@ -13,14 +13,14 @@ export function Faq() {
   const base = useId();
 
   return (
-    <section id="faq" className="scroll-mt-20 bg-slate-50 py-16 sm:py-24">
+    <section id="faq" className="scroll-mt-24 py-16 sm:py-24">
       <div className="container-page max-w-3xl">
         <h2 className="section-title text-center">{t('faq.title')}</h2>
         <div className="mt-10 space-y-3">
           {items.map((item, i) => {
             const isOpen = open === i;
             return (
-              <div key={item.q} className="card overflow-hidden">
+              <div key={item.q} className="glass overflow-hidden rounded-2xl">
                 <h3>
                   <button
                     id={`${base}-h${i}`}
@@ -30,7 +30,7 @@ export function Faq() {
                     className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-semibold text-slate-900"
                   >
                     {item.q}
-                    <ChevronDown size={20} aria-hidden className={cn('shrink-0 text-slate-400 transition-transform', isOpen && 'rotate-180 text-brand-600')} />
+                    <ChevronDown size={20} aria-hidden className={cn('shrink-0 text-slate-400 transition-transform', isOpen && 'rotate-180 text-slate-900')} />
                   </button>
                 </h3>
                 <AnimatePresence initial={false}>
