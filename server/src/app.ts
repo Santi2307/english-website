@@ -24,7 +24,9 @@ declare global {
 
 export function createApp() {
   const app = express();
-  app.set('trust proxy', 1); // Railway/Render/Vercel están detrás de un proxy
+  // Número de proxies delante (Render = 1; Vercel → Render = 2). Sin esto, todos los usuarios
+  // compartirían la IP del proxy y el rate limiting los bloquearía a todos juntos.
+  app.set('trust proxy', env.TRUST_PROXY);
   app.disable('x-powered-by');
 
   app.use(helmet());

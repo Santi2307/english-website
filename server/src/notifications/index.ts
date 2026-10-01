@@ -26,6 +26,6 @@ export const notificationEngine = new NotificationEngine({
 events.subscribe(notificationEngine.handle);
 
 export function startNotifications() {
-  notificationEngine.start();
+  notificationEngine.start(env.NOTIFICATIONS_SWEEP_MINUTES * 60_000);
   console.info(`📬 Notificaciones activas (EMAIL_MODE=${env.EMAIL_MODE}, proveedor=${emailProvider.name})`);
 }

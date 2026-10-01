@@ -10,10 +10,10 @@ Plataforma para vender cursos de inglés a estudiantes en Colombia: landing inte
   (móvil primero)       │   /api/*  y  /sitemap.xml  ──rewrite──►  backend              │
                         └───────────────────────────────┬───────────────────────────────┘
                                                         │  cookie httpOnly first-party
-                        ┌──────────────── Railway / Render ─────────────────────────────┐
-  Wompi ──webhook─────► │ Express + TS   routes → controllers → services → Prisma       │ ──► PostgreSQL
+                        ┌──────────────────────── Render ───────────────────────────────┐
+  Wompi ──webhook─────► │ Express + TS   routes → controllers → services → Prisma       │ ──► PostgreSQL (Neon)
   (transaction.updated) │   helmet · CORS · rate limit · Zod · sanitización · CSRF       │
-                        │   Wompi (firma integridad / checksum eventos / API)           │ ──► Resend (email)
+                        │   Wompi (firma integridad / checksum eventos / API)           │ ──► Brevo / Resend (email)
                         │   Bunny Stream / Mux (URLs firmadas con expiración)           │
                         └────────────────────────────────────────────────────────────────┘
 ```
@@ -218,7 +218,9 @@ EMAIL_SANDBOX_ALLOWLIST=tu-email@gmail.com
 
 Solo las direcciones de la lista reciben el email real; las demás se desvían a preview. El servidor **se niega a arrancar** con `EMAIL_MODE=live` si `NODE_ENV` no es `production`.
 
-### Producción con Resend
+### Producción con Resend (con dominio propio)
+
+> Sin dominio propio usa **Brevo** (`EMAIL_PROVIDER=brevo`, el valor por defecto): ver [DEPLOY.md](DEPLOY.md#2-emails-con-brevo).
 
 1. En [resend.com](https://resend.com), verifica tu dominio (registros SPF y DKIM) y crea una API key.
 2. Configura las variables:
@@ -290,31 +292,13 @@ npm test --workspace server
 
 ## Despliegue
 
-### Base de datos + backend (Railway)
+La guía paso a paso está en **[DEPLOY.md](DEPLOY.md)**. Despliega todo gratis y sin tarjeta:
 
-1. Crea un proyecto en Railway y agrega **PostgreSQL**.
-2. Agrega un servicio desde tu repo:
-   - **Root directory:** `/` (el monorepo usa workspaces).
-   - **Build:** `npm install && npm run build --workspace server`
-   - **Start:** `npm run start:prod --workspace server` (ejecuta `prisma migrate deploy` antes de arrancar).
-3. Variables: todas las de `server/.env.example`, con:
-   - `NODE_ENV=production`
-   - `DATABASE_URL=${{Postgres.DATABASE_URL}}`
-   - `CLIENT_URL=https://tu-dominio.com`
-   - `API_URL=https://tu-api.up.railway.app`
-   - `COOKIE_SAMESITE=lax`
-   - Un `JWT_SECRET` largo.
-4. Ejecuta el seed una vez (opcional): `railway run npm run seed --workspace server`.
-
-**Render** funciona igual: crea un *PostgreSQL* y un *Web Service* con los mismos comandos de build y start.
-
-### Frontend (Vercel)
-
-1. Importa el repo y usa `client` como *Root Directory*. El framework es Vite.
-2. En `client/vercel.json`, reemplaza `https://TU-BACKEND.up.railway.app` por la URL real de tu API.
-3. Variables: `VITE_SITE_URL`, `VITE_GOOGLE_CLIENT_ID`, `VITE_GA_MEASUREMENT_ID`, `VITE_META_PIXEL_ID` y `VITE_WHATSAPP_NUMBER`.
-4. Actualiza el dominio en `index.html` (canonical/og) y en `public/robots.txt`.
-5. En Wompi (modo producción), configura la URL de eventos: `https://tu-dominio.com/api/webhooks/wompi`. Pasa por el rewrite de Vercel, o puedes apuntar directo a Railway.
+- **Vercel:** la web.
+- **Render:** la API, con `render.yaml`.
+- **Neon:** PostgreSQL.
+- **Brevo:** los emails.
+- **cron-job.org:** mantiene la API despierta.
 
 ## SEO
 

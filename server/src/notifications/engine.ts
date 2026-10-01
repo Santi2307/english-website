@@ -16,6 +16,8 @@ export type EngineOptions = {
   suppressionMs?: number;
   /** Cuánto tiempo se conservan en memoria los datos sensibles para reintentos */
   sensitiveTtlMs?: number;
+  /** Programa cada reintento con un temporizador en memoria (por defecto sí). Los tests usan reloj falso. */
+  retryTimers?: boolean;
   now?: () => Date;
   logger?: Pick<Console, 'info' | 'warn' | 'error'>;
 };
@@ -48,6 +50,8 @@ export class NotificationEngine {
   private readonly sensitive = new Map<string, { data: SensitiveData; expiresAt: number }>();
   private readonly inFlight = new Set<Promise<void>>();
   private timer: NodeJS.Timeout | null = null;
+  private readonly retryTimers: boolean;
+  private readonly pendingRetries = new Set<NodeJS.Timeout>();
 
   constructor(o: EngineOptions) {
     this.store = o.store;
@@ -57,6 +61,7 @@ export class NotificationEngine {
     this.leaseMs = o.leaseMs ?? 10 * 60_000;
     this.suppressionMs = o.suppressionMs ?? 30 * 24 * 3_600_000;
     this.sensitiveTtlMs = o.sensitiveTtlMs ?? 6 * 3_600_000;
+    this.retryTimers = o.retryTimers ?? true;
     this.now = o.now ?? (() => new Date());
     this.log = o.logger ?? console;
   }
@@ -155,6 +160,7 @@ export class NotificationEngine {
       if (canRetry) {
         const wait = this.backoff[n.attempts - 1] ?? this.backoff[this.backoff.length - 1];
         await this.store.markRetry(id, { nextAttemptAt: new Date(this.now().getTime() + wait), error: e.message, provider: e.provider });
+        this.scheduleRetry(id, wait);
         this.log.warn(`[notifications] ${n.template} → ${n.recipient}: error temporal, reintento ${n.attempts}/${this.maxAttempts - 1} en ${Math.round(wait / 1000)}s: ${e.message}`);
       } else {
         await this.store.markFailed(id, { error: e.message, at: this.now(), provider: e.provider });
@@ -174,18 +180,38 @@ export class NotificationEngine {
     return ids.length;
   }
 
-  /** Worker periódico en proceso. Con más tráfico se reemplaza por una cola dedicada. */
-  start(intervalMs = 30_000) {
+  /**
+   * Reintento sin consultar la BD en bucle: un temporizador por notificación.
+   * Así una base serverless (Neon) puede suspenderse cuando no hay tráfico.
+   */
+  private scheduleRetry(id: string, waitMs: number) {
+    if (!this.retryTimers) return;
+    const t = setTimeout(() => {
+      this.pendingRetries.delete(t);
+      this.schedule(id);
+    }, waitMs);
+    t.unref();
+    this.pendingRetries.add(t);
+  }
+
+  /**
+   * Red de seguridad: revisa la BD al arrancar y luego cada `intervalMs`
+   * (reintentos perdidos por un reinicio, leases vencidos).
+   * Con más tráfico, esto se reemplaza por una cola dedicada (BullMQ, SQS).
+   */
+  start(intervalMs = 60 * 60_000) {
     if (this.timer) return;
-    this.timer = setInterval(() => {
-      this.processDue().catch((err) => this.log.error('[notifications] worker falló', err));
-    }, intervalMs);
+    const sweep = () => this.processDue().catch((err) => this.log.error('[notifications] worker falló', err));
+    void sweep();
+    this.timer = setInterval(sweep, intervalMs);
     this.timer.unref();
   }
 
   async stop() {
     if (this.timer) clearInterval(this.timer);
     this.timer = null;
+    for (const t of this.pendingRetries) clearTimeout(t);
+    this.pendingRetries.clear();
     await this.idle();
   }
 

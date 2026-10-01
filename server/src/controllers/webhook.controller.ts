@@ -6,6 +6,7 @@ import { applyWompiTransaction } from '../services/payment.service.js';
 import { env } from '../config/env.js';
 import { notificationStore } from '../notifications/index.js';
 import { RESEND_STATUS, verifyResendSignature, type ResendWebhookEvent } from '../notifications/providers/resend.webhook.js';
+import { parseBrevoEvent, verifyBrevoToken, type BrevoWebhookEvent } from '../notifications/providers/brevo.webhook.js';
 
 export async function wompi(req: Request, res: Response) {
   const event = req.body as WompiEvent;
@@ -56,6 +57,22 @@ export async function resend(req: Request, res: Response) {
   const status = RESEND_STATUS[event.type];
   if (status && event.data?.email_id) {
     await notificationStore.updateDeliveryStatus(event.data.email_id, status, new Date(event.created_at ?? Date.now()));
+  }
+  res.status(200).json({ received: true });
+}
+
+/** Estados de entrega de Brevo. Autenticado con el token secreto de la URL (?token=...). */
+export async function brevo(req: Request, res: Response) {
+  const token = typeof req.query.token === 'string' ? req.query.token : undefined;
+  if (!verifyBrevoToken(token, env.BREVO_WEBHOOK_TOKEN)) {
+    res.status(401).json({ error: 'Token inválido' });
+    return;
+  }
+  // Brevo puede enviar un evento o un lote
+  const items = (Array.isArray(req.body) ? req.body : [req.body]) as BrevoWebhookEvent[];
+  for (const item of items) {
+    const parsed = parseBrevoEvent(item);
+    if (parsed) await notificationStore.updateDeliveryStatus(parsed.messageId, parsed.status, parsed.at);
   }
   res.status(200).json({ received: true });
 }

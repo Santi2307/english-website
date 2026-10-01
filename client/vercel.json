@@ -1,7 +1,7 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://TU-BACKEND.up.railway.app/api/:path*" },
-    { "source": "/sitemap.xml", "destination": "https://TU-BACKEND.up.railway.app/sitemap.xml" },
+    { "source": "/api/:path*", "destination": "https://english-academy-api.onrender.com/api/:path*" },
+    { "source": "/sitemap.xml", "destination": "https://english-academy-api.onrender.com/sitemap.xml" },
     { "source": "/((?!assets/).*)", "destination": "/index.html" }
   ],
   "headers": [

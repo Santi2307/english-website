@@ -1,0 +1,64 @@
+# Blueprint de Render: crea el backend con un clic (Dashboard → New → Blueprint).
+# Plan Free: sin tarjeta, 750 h/mes. La base de datos va en Neon (gratis permanente).
+services:
+  - type: web
+    name: english-academy-api
+    runtime: node
+    plan: free
+    # Virginia: la región más cercana a Colombia (y a Neon us-east-1)
+    region: virginia
+    # --include=dev: TypeScript y Prisma CLI se necesitan para compilar aunque NODE_ENV=production
+    buildCommand: npm ci --workspace server --include-workspace-root --include=dev && npm run build --workspace server
+    # Aplica migraciones pendientes y arranca
+    startCommand: npm run start:prod --workspace server
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      # Vercel (rewrite /api) → balanceador de Render → app
+      - key: TRUST_PROXY
+        value: "2"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: COOKIE_SAMESITE
+        value: lax
+      - key: EMAIL_MODE
+        value: live
+      - key: EMAIL_PROVIDER
+        value: brevo
+      - key: NOTIFICATIONS_SWEEP_MINUTES
+        value: "60"
+      - key: BREVO_WEBHOOK_TOKEN
+        generateValue: true
+      - key: WOMPI_ENV
+        value: sandbox
+      # ─── Valores que debes pegar en el dashboard de Render ───
+      - key: DATABASE_URL # Neon → Connection string (sin "pooled")
+        sync: false
+      - key: CLIENT_URL # https://tu-proyecto.vercel.app
+        sync: false
+      - key: API_URL # https://english-academy-api.onrender.com
+        sync: false
+      - key: EMAIL_FROM # English Academy <tu-email-verificado@gmail.com>
+        sync: false
+      - key: EMAIL_REPLY_TO
+        sync: false
+      - key: SUPPORT_EMAIL
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: WOMPI_PUBLIC_KEY
+        sync: false
+      - key: WOMPI_PRIVATE_KEY
+        sync: false
+      - key: WOMPI_INTEGRITY_SECRET
+        sync: false
+      - key: WOMPI_EVENTS_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false

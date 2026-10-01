@@ -4,6 +4,8 @@ import { z } from 'zod';
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().default(4000),
+  // Proxies delante de la app. Render = 1. Vercel (rewrite) → Render = 2. Determina la IP real del usuario.
+  TRUST_PROXY: z.coerce.number().int().min(0).max(5).default(1),
   CLIENT_URL: z.string().url(),
   API_URL: z.string().url(),
   DATABASE_URL: z.string().min(1),
@@ -32,7 +34,9 @@ const schema = z.object({
   // sandbox: envía por el proveedor SOLO a EMAIL_SANDBOX_ALLOWLIST; el resto va a preview
   // live:    envía a todos. Solo permitido con NODE_ENV=production
   EMAIL_MODE: z.enum(['preview', 'sandbox', 'live']).default('preview'),
-  EMAIL_PROVIDER: z.enum(['resend']).default('resend'),
+  // brevo: plan gratis permite enviar a cualquiera sin dominio propio (300/día)
+  // resend: requiere dominio verificado para enviar a terceros
+  EMAIL_PROVIDER: z.enum(['brevo', 'resend']).default('brevo'),
   EMAIL_FROM: z.string().default('English Academy <onboarding@resend.dev>'),
   EMAIL_REPLY_TO: z.string().optional().transform((v) => v || undefined),
   EMAIL_SANDBOX_ALLOWLIST: z
@@ -44,6 +48,11 @@ const schema = z.object({
   RESEND_API_KEY: z.string().optional().default(''),
   // Secreto de firma del webhook de Resend (whsec_...) para estados delivered/bounced
   RESEND_WEBHOOK_SECRET: z.string().optional().default(''),
+  BREVO_API_KEY: z.string().optional().default(''),
+  // Token secreto que va en la URL del webhook de Brevo (?token=...)
+  BREVO_WEBHOOK_TOKEN: z.string().optional().default(''),
+  // Revisión periódica de reintentos pendientes. Alto en producción para que Neon pueda dormir.
+  NOTIFICATIONS_SWEEP_MINUTES: z.coerce.number().min(1).max(1440).default(60),
   SUPPORT_EMAIL: z.string().email().default('soporte@englishacademy.co'),
 });
 
@@ -53,8 +62,9 @@ const parsed = schema
     if (e.EMAIL_MODE === 'live' && e.NODE_ENV !== 'production') {
       ctx.addIssue({ code: 'custom', path: ['EMAIL_MODE'], message: 'EMAIL_MODE=live solo se permite con NODE_ENV=production' });
     }
-    if (e.EMAIL_MODE !== 'preview' && !e.RESEND_API_KEY) {
-      ctx.addIssue({ code: 'custom', path: ['RESEND_API_KEY'], message: `EMAIL_MODE=${e.EMAIL_MODE} requiere RESEND_API_KEY` });
+    const keyVar = e.EMAIL_PROVIDER === 'brevo' ? 'BREVO_API_KEY' : 'RESEND_API_KEY';
+    if (e.EMAIL_MODE !== 'preview' && !e[keyVar]) {
+      ctx.addIssue({ code: 'custom', path: [keyVar], message: `EMAIL_MODE=${e.EMAIL_MODE} con EMAIL_PROVIDER=${e.EMAIL_PROVIDER} requiere ${keyVar}` });
     }
     if (e.EMAIL_MODE === 'sandbox' && e.EMAIL_SANDBOX_ALLOWLIST.length === 0) {
       ctx.addIssue({ code: 'custom', path: ['EMAIL_SANDBOX_ALLOWLIST'], message: 'EMAIL_MODE=sandbox requiere al menos un email autorizado' });

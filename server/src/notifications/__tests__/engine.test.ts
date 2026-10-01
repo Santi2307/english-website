@@ -16,6 +16,7 @@ function setup() {
     channels: [new EmailChannel(provider, { from: 'Test <hola@app.test>' })],
     rules: notificationRules,
     backoffMs: [1000, 5000],
+    retryTimers: false,
     now: clock.now,
     logger: silentLogger,
   });
@@ -135,7 +136,7 @@ describe('datos sensibles', () => {
     t.provider.failNext(new DeliveryError('timeout', true));
     await t.emit('EMAIL_VERIFICATION_REQUESTED', { user: testUser(), verifyUrl: 'https://app.test/v?token=abcdefghijklmnopqrstu', expiresAt: new Date(Date.now() + 86_400_000) }, { id: 'tok2' });
     // Simula un reinicio: motor nuevo con el mismo store (sin memoria)
-    const fresh = new NotificationEngine({ store: t.store, channels: [new EmailChannel(t.provider, { from: 'x@app.test' })], rules: notificationRules, now: t.clock.now, logger: silentLogger });
+    const fresh = new NotificationEngine({ store: t.store, channels: [new EmailChannel(t.provider, { from: 'x@app.test' })], rules: notificationRules, retryTimers: false, now: t.clock.now, logger: silentLogger });
     t.clock.advance(60_000);
     await fresh.processDue();
     expect(t.provider.sent).toHaveLength(0);
@@ -207,5 +208,28 @@ describe('reintentos y errores', () => {
     await t.emit('NEW_SIGN_IN', { user: testUser(), occurredAt: new Date(), method: 'password', context: {} }, { id: 'd9' });
     expect(t.provider.sent).toHaveLength(1);
     expect(t.store.all().at(-1)).toMatchObject({ status: 'SKIPPED', errorMessage: expect.stringContaining('rebote') });
+  });
+});
+
+describe('reintentos con temporizador (sin sondear la BD)', () => {
+  it('un error temporal se reintenta solo, sin processDue', async () => {
+    const store = new MemoryNotificationStore();
+    const provider = new FakeEmailProvider();
+    const engine = new NotificationEngine({
+      store,
+      channels: [new EmailChannel(provider, { from: 'x@app.test' })],
+      rules: notificationRules,
+      backoffMs: [20],
+      logger: silentLogger,
+    });
+    provider.failNext(new DeliveryError('timeout', true));
+    await engine.handle({ type: 'USER_REGISTERED', id: 'u1', occurredAt: new Date(), payload: { user: testUser(), method: 'password', emailVerified: true } });
+    await engine.idle();
+    expect(store.all()[0].status).toBe('QUEUED');
+    await new Promise((r) => setTimeout(r, 60));
+    await engine.idle();
+    expect(store.all()[0].status).toBe('SENT');
+    expect(provider.sent).toHaveLength(1);
+    await engine.stop();
   });
 });
