@@ -9,6 +9,8 @@ import { cn } from '@/lib/format';
 import { Seo } from '@/components/ui/Seo';
 import { PageLoader, Spinner } from '@/components/ui/Spinner';
 import type { LearningCourse, Playback } from '@/lib/types';
+import type { LessonContentResponse } from '@/lib/lessonContent';
+import { LessonContentView } from '@/components/lesson/LessonContentView';
 
 type CompleteResponse = { completed: number; total: number; progress: number; courseCompleted: boolean; streak: number };
 
@@ -48,6 +50,9 @@ function Sidebar({ course, currentId, onPick }: { course: LearningCourse; curren
                       <Circle size={18} className="shrink-0 text-slate-300" aria-hidden />
                     )}
                     <span className="flex-1">{l.title}</span>
+                    {l.score !== null && l.score !== undefined && (
+                      <span className={cn('rounded-full px-1.5 py-0.5 text-[11px] font-bold', l.score >= 80 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700')}>{l.score}%</span>
+                    )}
                     <span className="text-xs text-slate-400">{l.durationMinutes}m</span>
                   </button>
                 </li>
@@ -87,14 +92,24 @@ export default function Learn() {
     staleTime: 30 * 60_000,
   });
 
+  const { data: lessonContent } = useQuery({
+    queryKey: ['lesson-content', current?.id],
+    queryFn: () => api<LessonContentResponse>(`/lessons/${current!.id}/content`),
+    enabled: !!current,
+    staleTime: 5 * 60_000,
+  });
+  const content = lessonContent?.content ?? null;
+
   const complete = useMutation({
-    mutationFn: () => api<CompleteResponse>(`/lessons/${current!.id}/complete`, { method: 'POST' }),
-    onSuccess: (r) => {
+    mutationFn: (score?: number) => api<CompleteResponse>(`/lessons/${current!.id}/complete`, { method: 'POST', body: score === undefined ? {} : { score } }),
+    onSuccess: (r, score) => {
       qc.invalidateQueries({ queryKey: ['learn', slug] });
       qc.invalidateQueries({ queryKey: ['my-courses'] });
       qc.invalidateQueries({ queryKey: ['me'] });
+      qc.invalidateQueries({ queryKey: ['lesson-content', current?.id] });
       if (r.courseCompleted && !course?.completedAt) setCelebrate(r);
-      else if (next) go(next.id);
+      // Tras la práctica se queda en la pantalla de resultados; el botón manual sí avanza
+      else if (score === undefined && next) go(next.id);
     },
   });
 
@@ -121,10 +136,11 @@ export default function Learn() {
   const done = !!course.completedAt || !!celebrate;
 
   return (
-    <div className="flex min-h-dvh flex-col bg-slate-50">
+    <div className="relative isolate flex min-h-dvh flex-col">
+      <div className="ambient-bg pointer-events-none fixed inset-0 -z-10" aria-hidden />
       <Seo title={`${current.title} · ${course.title}`} noindex />
 
-      <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-slate-200 bg-white px-4">
+      <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-white/60 bg-white/70 px-4 backdrop-blur-xl">
         <Link to="/mi-cuenta" className="flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-brand-700">
           <ArrowLeft size={18} aria-hidden /> <span className="hidden sm:inline">{t('learn.back')}</span>
         </Link>
@@ -146,6 +162,7 @@ export default function Learn() {
 
       <div className="flex flex-1">
         <main className="min-w-0 flex-1">
+          {(loadingVideo || playback || !content) && (
           <div className="bg-black">
             <div className="mx-auto aspect-video max-w-5xl">
               {loadingVideo ? (
@@ -169,6 +186,7 @@ export default function Learn() {
               )}
             </div>
           </div>
+          )}
 
           <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -181,12 +199,22 @@ export default function Learn() {
                   <CheckCircle2 size={18} aria-hidden /> {t('learn.completed')}
                 </span>
               ) : (
-                <button onClick={() => complete.mutate()} disabled={complete.isPending} className="btn-primary shrink-0">
+                <button onClick={() => complete.mutate(undefined)} disabled={complete.isPending} className="btn-primary shrink-0">
                   {complete.isPending ? <Spinner className="h-5 w-5 border-white/40 border-t-white" /> : <CheckCircle2 size={18} aria-hidden />}
                   {t('learn.markComplete')}
                 </button>
               )}
             </div>
+
+            {content && (
+              <LessonContentView
+                title={current.title}
+                content={content}
+                bestScore={lessonContent?.bestScore ?? null}
+                onFinish={(score) => complete.mutate(score)}
+                finishing={complete.isPending}
+              />
+            )}
 
             <AnimatePresence>
               {done && (
@@ -221,14 +249,14 @@ export default function Learn() {
             </div>
 
             {/* Temario en móvil */}
-            <section id="temario" className="card scroll-mt-16 overflow-hidden lg:hidden">
+            <section id="temario" className="glass-strong scroll-mt-16 overflow-hidden rounded-3xl lg:hidden">
               <h2 className="border-b border-slate-200 px-4 py-3 font-bold">{t('learn.content')}</h2>
               <Sidebar course={course} currentId={current.id} onPick={go} />
             </section>
           </div>
         </main>
 
-        <aside className="hidden w-80 shrink-0 border-l border-slate-200 bg-white lg:block">
+        <aside className="hidden w-80 shrink-0 border-l border-white/60 bg-white/70 backdrop-blur-xl lg:block">
           <div className="sticky top-14 max-h-[calc(100dvh-3.5rem)] overflow-y-auto">
             <p className="border-b border-slate-200 px-4 py-3 font-bold">{t('learn.content')}</p>
             <Sidebar course={course} currentId={current.id} onPick={go} />

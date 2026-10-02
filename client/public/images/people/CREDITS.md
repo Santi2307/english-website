@@ -6,7 +6,7 @@ Fotos de [Unsplash](https://unsplash.com) bajo la [licencia Unsplash](https://un
 
 | Archivo | Fotógrafo | Original |
 |---|---|---|
-| hero-student*.webp | Brooke Cagle | https://unsplash.com/photos/n1m25jvupEU |
+| hero-santi*.webp | Foto propia (Santiago) | Sin metadatos EXIF/GPS |
 | teacher-laura.webp | Rodrigo Rodrigues | https://unsplash.com/photos/xpLZKXf3Duw |
 | teacher-daniel.webp | Kawê Rodrigues | https://unsplash.com/photos/bAXL_Y7r-X4 |
 | teacher-andrea.webp | Vinicius "amnx" Amano | https://unsplash.com/photos/Ry3KyBpEGSs |

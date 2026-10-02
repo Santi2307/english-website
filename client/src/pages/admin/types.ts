@@ -9,6 +9,8 @@ export type AdminLesson = {
   durationMinutes: number;
   videoId: string | null;
   isFreePreview: boolean;
+  /** Contenido interactivo (ver server/src/lessonContent/schema.ts) */
+  content: { exercises?: unknown[] } | null;
 };
 export type AdminModule = { id: string; courseId: string; title: string; position: number; lessons: AdminLesson[] };
 

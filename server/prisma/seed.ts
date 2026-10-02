@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
+import { seedContent } from './seed-content.js';
 import { PrismaClient, type CourseBadge, type CourseGoal, type CourseLevel } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -214,6 +215,8 @@ async function main() {
     update: {},
     create: { code: 'TEST100', type: 'PERCENT', value: 100, maxRedemptions: 50 },
   });
+
+  await seedContent(prisma);
 
   console.log(`\n✓ Admin: ${adminEmail} / ${adminPassword}`);
   console.log('✓ Estudiantes demo: valentina@demo.co / Demo12345!');

@@ -3,6 +3,7 @@ import * as c from '../controllers/learning.controller.js';
 import { validate } from '../middleware/validate.js';
 import { optionalAuth, requireAuth } from '../middleware/auth.js';
 import { idParams, slugParams } from '../schemas/course.schema.js';
+import { completeLessonSchema } from '../schemas/learning.schema.js';
 
 export const meRoutes = Router()
   .use(requireAuth)
@@ -12,4 +13,5 @@ export const meRoutes = Router()
 
 export const lessonRoutes = Router()
   .get('/:id/playback', optionalAuth, validate({ params: idParams }), c.playback)
-  .post('/:id/complete', requireAuth, validate({ params: idParams }), c.complete);
+  .get('/:id/content', optionalAuth, validate({ params: idParams }), c.content)
+  .post('/:id/complete', requireAuth, validate({ params: idParams, body: completeLessonSchema }), c.complete);

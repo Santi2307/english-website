@@ -82,9 +82,10 @@ export async function courseForLearning(userId: string, slug: string) {
   const lessonIds = course.modules.flatMap((m) => m.lessons.map((l) => l.id));
   const done = await prisma.lessonProgress.findMany({
     where: { userId, lessonId: { in: lessonIds } },
-    select: { lessonId: true },
+    select: { lessonId: true, score: true },
   });
   const doneSet = new Set(done.map((d) => d.lessonId));
+  const scores = new Map(done.map((d) => [d.lessonId, d.score]));
 
   return {
     id: course.id,
@@ -97,12 +98,13 @@ export async function courseForLearning(userId: string, slug: string) {
       title: m.title,
       completed: m.lessons.filter((l) => doneSet.has(l.id)).length,
       total: m.lessons.length,
-      lessons: m.lessons.map((l) => ({ ...l, completed: doneSet.has(l.id) })),
+      lessons: m.lessons.map((l) => ({ ...l, completed: doneSet.has(l.id), score: scores.get(l.id) ?? null })),
     })),
   };
 }
 
-export async function lessonPlayback(userId: string | undefined, lessonId: string) {
+/** Lección accesible: gratuita, o el usuario está inscrito en el curso. */
+async function accessibleLesson(userId: string | undefined, lessonId: string) {
   const lesson = await prisma.lesson.findUnique({
     where: { id: lessonId },
     include: { module: { select: { courseId: true } } },
@@ -112,10 +114,24 @@ export async function lessonPlayback(userId: string | undefined, lessonId: strin
     if (!userId) throw forbidden('Inicia sesión para ver esta lección');
     await requireEnrollment(userId, lesson.module.courseId);
   }
+  return lesson;
+}
+
+export async function lessonPlayback(userId: string | undefined, lessonId: string) {
+  const lesson = await accessibleLesson(userId, lessonId);
   return { lessonId: lesson.id, playback: signedPlayback(lesson.videoId) };
 }
 
-export async function completeLesson(userId: string, lessonId: string) {
+/** Contenido interactivo (mini-clase, vocabulario, ejercicios). Mismo control de acceso que el video. */
+export async function lessonContent(userId: string | undefined, lessonId: string) {
+  const lesson = await accessibleLesson(userId, lessonId);
+  const progress = userId
+    ? await prisma.lessonProgress.findUnique({ where: { userId_lessonId: { userId, lessonId } }, select: { score: true } })
+    : null;
+  return { lessonId: lesson.id, content: lesson.content, bestScore: progress?.score ?? null };
+}
+
+export async function completeLesson(userId: string, lessonId: string, score?: number) {
   const lesson = await prisma.lesson.findUnique({
     where: { id: lessonId },
     include: { module: { select: { courseId: true } } },
@@ -124,10 +140,13 @@ export async function completeLesson(userId: string, lessonId: string) {
   const courseId = lesson.module.courseId;
   const enrollment = await requireEnrollment(userId, courseId);
 
+  // Se conserva la mejor nota: repetir los ejercicios nunca baja el puntaje
+  const existing = await prisma.lessonProgress.findUnique({ where: { userId_lessonId: { userId, lessonId } } });
+  const best = score === undefined ? existing?.score ?? null : Math.max(score, existing?.score ?? 0);
   await prisma.lessonProgress.upsert({
     where: { userId_lessonId: { userId, lessonId } },
-    create: { userId, lessonId },
-    update: {},
+    create: { userId, lessonId, score: best },
+    update: { score: best },
   });
 
   // Racha diaria (zona horaria de Colombia)

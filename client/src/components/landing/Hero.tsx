@@ -116,16 +116,16 @@ export function Hero() {
             className="glass relative overflow-hidden rounded-[2.25rem] p-2"
           >
             <picture>
-              <source media="(max-width: 640px)" srcSet="/images/people/hero-student-sm.webp" />
+              <source media="(max-width: 640px)" srcSet="/images/people/hero-santi-sm.webp" />
               <img
-                src="/images/people/hero-student.webp"
+                src="/images/people/hero-santi.webp"
                 alt={t('hero.photoAlt')}
                 width={720}
-                height={880}
+                height={960}
                 // React 18 no reconoce fetchPriority: se pasa el atributo HTML tal cual
                 {...{ fetchpriority: "high" }}
                 decoding="async"
-                className="aspect-[4/5] w-full rounded-[1.85rem] object-cover"
+                className="aspect-[3/4] w-full rounded-[1.85rem] object-cover"
               />
             </picture>
           </motion.div>

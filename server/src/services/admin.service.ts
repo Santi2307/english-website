@@ -1,4 +1,4 @@
-import type { OrderStatus, Prisma } from '@prisma/client';
+import { Prisma, type OrderStatus } from '@prisma/client';
 import { prisma } from '../lib/prisma.js';
 import { bogotaDay } from '../utils/dates.js';
 
@@ -31,8 +31,13 @@ export const createModule = (data: Prisma.ModuleUncheckedCreateInput) => prisma.
 export const updateModule = (id: string, data: Prisma.ModuleUpdateInput) => prisma.module.update({ where: { id }, data });
 export const deleteModule = (id: string) => prisma.module.delete({ where: { id } });
 
-export const createLesson = (data: Prisma.LessonUncheckedCreateInput) => prisma.lesson.create({ data });
-export const updateLesson = (id: string, data: Prisma.LessonUpdateInput) => prisma.lesson.update({ where: { id }, data });
+/** Prisma requiere DbNull para vaciar una columna Json */
+const jsonContent = (c: unknown) => (c === null ? Prisma.DbNull : (c as Prisma.InputJsonValue | undefined));
+
+export const createLesson = ({ content, ...data }: Omit<Prisma.LessonUncheckedCreateInput, 'content'> & { content?: unknown }) =>
+  prisma.lesson.create({ data: { ...data, content: jsonContent(content) } });
+export const updateLesson = (id: string, { content, ...data }: Omit<Prisma.LessonUpdateInput, 'content'> & { content?: unknown }) =>
+  prisma.lesson.update({ where: { id }, data: { ...data, content: jsonContent(content) } });
 export const deleteLesson = (id: string) => prisma.lesson.delete({ where: { id } });
 
 // ─── Órdenes ─────────────────────────────────────────────────

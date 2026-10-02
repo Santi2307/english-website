@@ -85,10 +85,16 @@ function Field({ label, error, children, className }: { label: string; error?: s
 function LessonRow({ lesson, onChanged }: { lesson: AdminLesson; onChanged: () => void }) {
   const [draft, setDraft] = useState(lesson);
   const [open, setOpen] = useState(false);
-  useEffect(() => setDraft(lesson), [lesson]);
+  const toJson = (c: AdminLesson['content']) => (c ? JSON.stringify(c, null, 2) : '');
+  const [contentJson, setContentJson] = useState(toJson(lesson.content));
+  const [jsonError, setJsonError] = useState<string | null>(null);
+  useEffect(() => {
+    setDraft(lesson);
+    setContentJson(toJson(lesson.content));
+  }, [lesson]);
 
   const save = useMutation({
-    mutationFn: () =>
+    mutationFn: (content: unknown) =>
       api(`/admin/lessons/${lesson.id}`, {
         method: 'PUT',
         body: {
@@ -98,10 +104,23 @@ function LessonRow({ lesson, onChanged }: { lesson: AdminLesson; onChanged: () =
           videoId: draft.videoId || null,
           isFreePreview: draft.isFreePreview,
           position: draft.position,
+          // El servidor valida la estructura con Zod y rechaza contenido inválido
+          content,
         },
       }),
     onSuccess: onChanged,
   });
+
+  const onSave = () => {
+    setJsonError(null);
+    if (!contentJson.trim()) return save.mutate(null);
+    try {
+      save.mutate(JSON.parse(contentJson));
+    } catch (e) {
+      setJsonError(`JSON inválido: ${(e as Error).message}`);
+    }
+  };
+  const serverError = save.error instanceof ApiError ? save.error : null;
   const remove = useMutation({ mutationFn: () => api(`/admin/lessons/${lesson.id}`, { method: 'DELETE' }), onSuccess: onChanged });
 
   return (
@@ -111,6 +130,9 @@ function LessonRow({ lesson, onChanged }: { lesson: AdminLesson; onChanged: () =
           {lesson.position + 1}. {lesson.title}
           {lesson.videoId && <Video size={14} className="ml-2 inline text-emerald-600" aria-label="Con video" />}
           {lesson.isFreePreview && <span className="ml-2 rounded bg-brand-50 px-1.5 text-xs text-brand-700">Gratis</span>}
+          {lesson.content && (
+            <span className="ml-2 rounded bg-emerald-50 px-1.5 text-xs text-emerald-700">Interactiva · {lesson.content.exercises?.length ?? 0} ejercicios</span>
+          )}
         </button>
         <button onClick={() => confirm('¿Eliminar lección?') && remove.mutate()} className="rounded p-1.5 text-rose-600 hover:bg-rose-50" aria-label="Eliminar lección">
           <Trash2 size={15} aria-hidden />
@@ -131,8 +153,24 @@ function LessonRow({ lesson, onChanged }: { lesson: AdminLesson; onChanged: () =
             <input type="checkbox" checked={draft.isFreePreview} onChange={(e) => setDraft({ ...draft, isFreePreview: e.target.checked })} className="h-4 w-4" />
             Vista previa gratuita
           </label>
-          <div className="flex justify-end">
-            <button onClick={() => save.mutate()} disabled={save.isPending} className="btn-primary py-2 text-sm"><Check size={16} aria-hidden /> Guardar</button>
+          <Field label="Contenido interactivo (JSON: mini-clase, vocabulario, gramática, diálogo, ejercicios)" className="sm:col-span-2">
+            <textarea
+              rows={10}
+              spellCheck={false}
+              className="input py-2 font-mono text-xs"
+              value={contentJson}
+              onChange={(e) => setContentJson(e.target.value)}
+              placeholder='Vacío = lección sin contenido interactivo. Formato en server/src/lessonContent/schema.ts'
+            />
+          </Field>
+          {(jsonError || serverError) && (
+            <div className="rounded-lg bg-rose-50 p-3 text-xs text-rose-700 sm:col-span-2" role="alert">
+              {jsonError ?? serverError?.message}
+              {serverError?.details && <pre className="mt-1 whitespace-pre-wrap">{JSON.stringify(serverError.details, null, 2)}</pre>}
+            </div>
+          )}
+          <div className="flex justify-end sm:col-span-2">
+            <button onClick={onSave} disabled={save.isPending} className="btn-primary py-2 text-sm"><Check size={16} aria-hidden /> Guardar</button>
           </div>
         </div>
       )}

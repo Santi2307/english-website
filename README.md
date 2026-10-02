@@ -155,6 +155,29 @@ Las lecciones guardan solo un `videoId`. El backend genera una URL de embed **fi
 
 El trailer público del curso (`previewVideoUrl`) es una URL de embed normal que no requiere firma.
 
+## Contenido de los cursos
+
+Las 36 lecciones (4 cursos × 3 módulos × 3 lecciones) tienen contenido interactivo **original**, escrito para este proyecto y ajustado al nivel MCER de cada curso. Cada lección trae:
+
+| Paso | Qué es |
+|---|---|
+| **Mini-clase** | Diapositivas animadas narradas en inglés con la voz del navegador. Reemplaza al video mientras no grabes uno; cuando una lección tiene `videoId` (Bunny/Mux), el video aparece arriba. |
+| **Vocabulario** | Tarjetas que giran, con traducción, ejemplo y audio |
+| **Gramática** | Explicación en español, ejemplos con audio y un tip |
+| **Diálogo** | Conversación tipo chat que se reproduce línea por línea, con traducción opcional |
+| **Práctica** | 7-9 ejercicios: opción múltiple, completar, ordenar, emparejar, escuchar, hablar (reconocimiento de voz) y verdadero/falso. Termina con una nota que queda guardada; se conserva la mejor. |
+
+- **Dónde vive:** `server/prisma/content/<slug>.ts`, validado con Zod (`server/src/lessonContent/schema.ts`). También se edita desde **Admin → Cursos → lección → Contenido interactivo (JSON)**; el servidor rechaza contenido inválido.
+- **Acceso:** solo estudiantes inscritos, o cualquiera en las lecciones marcadas como gratuitas, cuya vista previa muestra la mini-clase.
+- **Cargar o actualizar el contenido** (idempotente; no borra progreso ni inscripciones):
+  ```bash
+  npm run seed:content --workspace server
+  # En producción (Neon):
+  DATABASE_URL="postgresql://...neon.tech/neondb?sslmode=require" npm run seed:content --workspace server
+  ```
+- **Tests:** `npm test --workspace server` valida las 36 lecciones: estructura, respuestas dentro de rango, variedad de ejercicios y opciones sin repetir.
+- **Por qué no hay videos de terceros:** copiar material de otros cursos o meter videos de YouTube dentro de un curso pago infringe derechos de autor y los términos de YouTube. Graba tus propios videos, súbelos a Bunny Stream y pega el `videoId` en cada lección desde el admin.
+
 ## Notificaciones y emails
 
 Los emails se disparan por **eventos**. Ningún servicio, controlador ni componente de UI llama a `sendEmail`: publican un hecho de negocio y el motor decide qué enviar.

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { goalEnum, levelEnum } from './course.schema.js';
+import { lessonContentSchema } from '../lessonContent/schema.js';
 
 const optionalUrl = z
   .string()
@@ -49,6 +50,8 @@ export const lessonInput = z.object({
   durationMinutes: z.coerce.number().int().min(1).max(600).default(5),
   videoId: z.string().max(200).optional().nullable().transform((v) => v || null),
   isFreePreview: z.boolean().default(false),
+  // null borra el contenido
+  content: lessonContentSchema.nullable().optional(),
 });
 export const lessonUpdate = lessonInput.omit({ moduleId: true }).partial();
 

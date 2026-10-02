@@ -47,7 +47,7 @@ const en: Messages = {
     lessonChip: "Today's lesson · 10 min",
     lessonDone: 'Completed',
     community: '12,500+ Colombians are already learning',
-    photoAlt: 'Student smiling while taking an English lesson on her laptop',
+    photoAlt: 'Santiago smiling in front of the CN Tower in Toronto, Canada',
   },
   teachers: {
     title: 'Meet your teachers',

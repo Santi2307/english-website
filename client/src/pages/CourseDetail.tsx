@@ -13,6 +13,8 @@ import { api } from '@/lib/api';
 import { track } from '@/lib/analytics';
 import { cn, formatCOP } from '@/lib/format';
 import type { CourseDetail as Course, Playback } from '@/lib/types';
+import type { LessonContentResponse, Slide } from '@/lib/lessonContent';
+import { MiniClass } from '@/components/lesson/MiniClass';
 import NotFound from './NotFound';
 
 function BuyButton({ course, className }: { course: Course; className?: string }) {
@@ -86,8 +88,11 @@ function Syllabus({ course, onPreview }: { course: Course; onPreview: (lessonId:
 function PreviewModal({ lessonId, title, onClose }: { lessonId: string; title: string; onClose: () => void }) {
   const { t } = useTranslation();
   const [playback, setPlayback] = useState<Playback | undefined>(undefined);
+  const [slides, setSlides] = useState<Slide[] | null>(null);
   useEffect(() => {
     api<{ playback: Playback }>(`/lessons/${lessonId}/playback`).then((r) => setPlayback(r.playback)).catch(() => setPlayback(null));
+    // Sin video grabado, la vista previa muestra la mini-clase animada de la lección
+    api<LessonContentResponse>(`/lessons/${lessonId}/content`).then((r) => setSlides(r.content?.slides ?? null)).catch(() => setSlides(null));
   }, [lessonId]);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -102,13 +107,17 @@ function PreviewModal({ lessonId, title, onClose }: { lessonId: string; title: s
           <p className="font-semibold">{title}</p>
           <button onClick={onClose} aria-label="Cerrar" className="rounded-full p-2 hover:bg-white/10" autoFocus><X aria-hidden /></button>
         </div>
-        <div className="aspect-video overflow-hidden rounded-xl bg-black">
-          {playback === undefined ? null : playback ? (
+        {playback === undefined ? (
+          <div className="aspect-video rounded-xl bg-black" />
+        ) : playback ? (
+          <div className="aspect-video overflow-hidden rounded-xl bg-black">
             <iframe src={playback.embedUrl} title={title} className="h-full w-full" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture" allowFullScreen />
-          ) : (
-            <p className="grid h-full place-items-center p-6 text-center text-slate-300">{t('learn.noVideo')}</p>
-          )}
-        </div>
+          </div>
+        ) : slides ? (
+          <MiniClass slides={slides} title={title} />
+        ) : (
+          <p className="grid aspect-video place-items-center rounded-xl bg-black p-6 text-center text-slate-300">{t('learn.noVideo')}</p>
+        )}
       </div>
     </motion.div>
   );

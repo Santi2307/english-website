@@ -43,8 +43,12 @@ Sigue los pasos en orden, porque cada uno usa datos del anterior. Tiempo estimad
 4. Desde tu computador, crea las tablas y carga los cursos de ejemplo:
    ```bash
    cd english-website/server
-   DATABASE_URL="postgresql://neondb_owner:npg_oqsMmlV6J1PL@ep-autumn-tooth-b4p71vhi.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require" npx prisma migrate deploy
-   DATABASE_URL="postgresql://neondb_owner:npg_oqsMmlV6J1PL@ep-autumn-tooth-b4p71vhi.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require" npm run seed
+   DATABASE_URL="postgresql://USUARIO:CONTRASEÑA@ep-xxxx.REGION.aws.neon.tech/neondb?sslmode=require" npx prisma migrate deploy
+   DATABASE_URL="postgresql://USUARIO:CONTRASEÑA@ep-xxxx.REGION.aws.neon.tech/neondb?sslmode=require" npm run seed
+   ```
+   El seed también carga el contenido interactivo de las 36 lecciones. Si en el futuro editas el contenido en `server/prisma/content/`, actualízalo en producción con:
+   ```bash
+   DATABASE_URL="postgresql://USUARIO:CONTRASEÑA@ep-xxxx.REGION.aws.neon.tech/neondb?sslmode=require" npm run seed:content
    ```
    El seed crea el admin (`admin@englishacademy.co` / `Admin12345!`). **Cambia esa contraseña** desde Ajustes apenas entres.
 

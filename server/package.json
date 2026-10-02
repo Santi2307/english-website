@@ -13,7 +13,8 @@
     "seed": "tsx prisma/seed.ts",
     "start:prod": "prisma migrate deploy && node dist/index.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "seed:content": "tsx prisma/seed-content.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

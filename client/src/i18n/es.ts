@@ -45,7 +45,7 @@ const es = {
     lessonChip: 'Clase de hoy · 10 min',
     lessonDone: 'Completada',
     community: '+12.500 colombianos ya están aprendiendo',
-    photoAlt: 'Estudiante sonriendo mientras toma una clase de inglés en su portátil',
+    photoAlt: 'Santiago sonriendo frente a la CN Tower en Toronto, Canadá',
   },
   teachers: {
     title: 'Conoce a tus profes',

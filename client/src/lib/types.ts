@@ -118,7 +118,7 @@ export type LearningCourse = {
     title: string;
     completed: number;
     total: number;
-    lessons: { id: string; title: string; description: string; durationMinutes: number; completed: boolean }[];
+    lessons: { id: string; title: string; description: string; durationMinutes: number; completed: boolean; score: number | null }[];
   }[];
 };
 

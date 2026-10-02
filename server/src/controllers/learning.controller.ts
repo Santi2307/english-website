@@ -15,8 +15,13 @@ export async function playback(req: Request, res: Response) {
   res.json(await learning.lessonPlayback(req.user?.id, res.locals.params.id));
 }
 
+export async function content(req: Request, res: Response) {
+  res.set('Cache-Control', 'private, no-store');
+  res.json(await learning.lessonContent(req.user?.id, res.locals.params.id));
+}
+
 export async function complete(req: Request, res: Response) {
-  res.json(await learning.completeLesson(req.user!.id, res.locals.params.id));
+  res.json(await learning.completeLesson(req.user!.id, res.locals.params.id, req.body?.score));
 }
 
 export async function certificate(req: Request, res: Response) {
