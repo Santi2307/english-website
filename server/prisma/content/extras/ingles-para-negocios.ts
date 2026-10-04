@@ -1,0 +1,645 @@
+import type { LessonExtras } from './types.js';
+
+/** Inglés para Negocios (B1-C1): lectura, errores típicos, pronunciación, cultura, misión y práctica extra. */
+export const inglesParaNegociosExtras: LessonExtras[][] = [
+  // ─── Módulo 1: Entrevistas de trabajo ───────────────────────────────────
+  [
+    // M1L1 · Tell me about yourself
+    {
+      vocabulary: [
+        { en: 'Hands-on experience', es: 'Experiencia práctica', example: 'I have hands-on experience with SQL.', emoji: '🛠️' },
+        { en: 'Cross-functional team', es: 'Equipo multidisciplinario', example: 'I led a cross-functional team of eight people.', emoji: '🧩' },
+        { en: 'Passionate about', es: 'Apasionado por', example: "I'm passionate about data and design.", emoji: '🔥' },
+        { en: 'Currently', es: 'Actualmente', example: "I'm currently working as a QA analyst.", emoji: '📍' },
+        { en: 'Be in charge of', es: 'Estar a cargo de', example: 'I was in charge of the client onboarding.', emoji: '🧭' },
+        { en: 'Next step', es: 'Siguiente paso', example: "I'm ready for the next step in my career.", emoji: '🪜' },
+      ],
+      mistakes: [
+        { wrong: 'I was born in 1995 in Pereira, I studied in the school…', right: "I'm a backend developer with five years of experience in fintech.", why: '"Tell me about yourself" no pide tu biografía. Empieza por tu presente profesional, sigue con logros pasados y cierra con por qué quieres ESTE puesto.' },
+        { wrong: 'I have 5 years of experience in sales. (dicho con tono de pregunta ↗)', right: 'I have five years of experience in sales. ↘', why: 'Terminar las afirmaciones subiendo la voz transmite inseguridad. En una entrevista, baja al final de cada frase.' },
+        { wrong: 'I am a person very responsible and proactive.', right: "I'm known for being reliable — for example, I've never missed a release deadline.", why: 'Además del orden del adjetivo, los rasgos sin evidencia no convencen. Respalda cada cualidad con un dato.' },
+        { wrong: 'Actually I work in Bancolombia.', right: 'I currently work at Bancolombia.', why: '"Actually" = en realidad. "Actualmente" = currently. Y para empresas se usa "at", no "in".' },
+      ],
+      pronunciation: {
+        focus: 'Palabras de CV que se pronuncian mal',
+        tip: 'Estas palabras salen en casi toda entrevista y los hispanohablantes las acentúan donde no es. Fíjate en la sílaba fuerte (en mayúsculas).',
+        words: [
+          { word: 'experience', sounds: '/ɪkˈspɪriəns/ — "ex-PI-ri-ens"', es: 'experiencia' },
+          { word: 'develop', sounds: '/dɪˈveləp/ — "di-VE-lop"', es: 'desarrollar' },
+          { word: 'management', sounds: '/ˈmænɪdʒmənt/ — "MA-nich-ment"', es: 'gestión' },
+          { word: 'analysis', sounds: '/əˈnæləsɪs/ — "a-NA-li-sis"', es: 'análisis' },
+          { word: 'company', sounds: '/ˈkʌmpəni/ — "KAM-pa-ni"', es: 'empresa' },
+          { word: 'engineer', sounds: '/ˌendʒɪˈnɪr/ — "en-chi-NIR"', es: 'ingeniero' },
+        ],
+      },
+      reading: {
+        title: 'What recruiters really want to hear',
+        paragraphs: [
+          "\"Tell me about yourself\" is usually the first question in an interview, and it's often the most poorly answered. Many candidates either recite their résumé from the beginning or talk about their personal life. Recruiters, however, are listening for something very specific: evidence that you can do the job and a clear reason why you want it.",
+          "A simple structure that works is Present–Past–Future. Start with your current role and your main area of expertise. Then mention one or two past achievements that are relevant to the position, ideally with numbers. Finally, explain why this role is the logical next step for you.",
+          "Keep it between sixty and ninety seconds. Rehearse it out loud, but don't memorize it word for word, or it will sound robotic. And remember: this answer sets the tone for the whole interview, so the topics you mention are likely to become the interviewer's follow-up questions.",
+        ],
+        glossary: [
+          { en: 'poorly answered', es: 'mal respondida' },
+          { en: 'recite', es: 'recitar' },
+          { en: 'expertise', es: 'especialidad, pericia' },
+          { en: 'rehearse', es: 'ensayar' },
+        ],
+        questions: [
+          { q: 'What do recruiters want to hear?', options: ['Your personal life story', 'Evidence you can do the job and why you want it', 'Your complete résumé'], answer: 1 },
+          { q: 'What comes first in the Present–Past–Future structure?', options: ['Your current role', 'Your education', 'Your career goals'], answer: 0 },
+          { q: 'Why shouldn\'t you memorize the answer word for word?', options: ["It's too long", 'It will sound robotic', 'Recruiters will notice you copied it'], answer: 1 },
+          { q: 'Why is this answer important for the rest of the interview?', options: ['It decides your salary', 'Its topics often become follow-up questions', 'It is the only question that matters'], answer: 1 },
+        ],
+      },
+      culture: {
+        title: 'Venderte no es ser arrogante',
+        body: 'En Latinoamérica nos enseñan a ser modestos y a hablar en plural ("logramos…"). En entrevistas en EE. UU. o Canadá eso juega en contra: el entrevistador quiere saber qué hiciste TÚ. Usa "I" para tus aportes ("I designed…, I negotiated…") y reserva "we" para el contexto del equipo. No es arrogancia, es claridad.',
+      },
+      mission: {
+        title: 'Graba tu pitch de 90 segundos',
+        task: 'Escribe y graba tu respuesta a "Tell me about yourself" para un puesto real que te interese (búscalo en LinkedIn). Escúchate y mide el tiempo.',
+        steps: ['Presente: rol actual + especialidad', 'Pasado: 1-2 logros con números', 'Futuro: por qué este puesto y esta empresa', 'Máximo 90 segundos, sin leer'],
+        model: "I'm a data analyst with four years of experience in e-commerce. Currently I work at Rappi, where I build dashboards that the sales team uses every day. Last year I designed a churn model that helped us reduce cancellations by twelve percent. Now I'm looking for a role where I can work on bigger international datasets, and that's why I'm so excited about this position at your company.",
+      },
+      exercises: [
+        { type: 'fix', sentence: 'Actually I work in Globant as a developer.', answers: ['Currently I work at Globant as a developer.', 'I currently work at Globant as a developer.', "I'm currently working at Globant as a developer."], explanation: 'Actualmente = currently; empresa → at.' },
+        { type: 'dictation', audio: 'I have five years of experience in marketing.', translation: 'Tengo cinco años de experiencia en marketing.' },
+        { type: 'choice', prompt: '¿Cómo deberías empezar tu respuesta a "Tell me about yourself"?', options: ['I was born in Cali in 1994…', "I'm a project manager specialized in logistics…", 'Well, I like football and music…'], answer: 1 },
+        { type: 'fix', sentence: 'I am a person very organized.', answers: ['I am a very organized person.', "I'm a very organized person."], explanation: 'Adjetivo antes del sustantivo.' },
+        { type: 'listen', audio: 'I was in charge of a team of six people.', options: ['Estaba a cargo de un equipo de seis personas.', 'Le cobré a un equipo de seis personas.', 'Estuve en un equipo de seis personas.'], answer: 0 },
+        { type: 'dictation', audio: "I'm ready for the next step in my career.", translation: 'Estoy listo para el siguiente paso en mi carrera.' },
+        { type: 'choice', prompt: '¿Qué frase tiene evidencia concreta?', options: ['I am very hard-working.', 'I increased sales by 20% in six months.', 'I always give 100%.'], answer: 1 },
+        { type: 'match', prompt: 'Une la parte del pitch', pairs: [['Present', 'Tu rol actual'], ['Past', 'Logros relevantes'], ['Future', 'Por qué este puesto']] },
+        { type: 'order', words: ["I'm", 'passionate', 'about', 'solving', 'problems', 'with', 'data'], translation: 'Me apasiona resolver problemas con datos.' },
+        { type: 'truefalse', statement: 'Según la lectura, la respuesta ideal dura entre 3 y 5 minutos.', answer: false, explanation: 'Entre 60 y 90 segundos.' },
+      ],
+    },
+    // M1L2 · Método STAR
+    {
+      vocabulary: [
+        { en: 'Tight deadline', es: 'Plazo muy ajustado', example: 'We had a tight deadline of two weeks.', emoji: '⏰' },
+        { en: 'Take ownership', es: 'Asumir la responsabilidad', example: 'I took ownership of the problem.', emoji: '🙋' },
+        { en: 'Root cause', es: 'Causa raíz', example: 'We found the root cause of the bug.', emoji: '🌱' },
+        { en: 'Lessons learned', es: 'Lecciones aprendidas', example: 'One of the lessons learned was to test earlier.', emoji: '📚' },
+        { en: 'Streamline', es: 'Optimizar, simplificar', example: 'I streamlined the approval process.', emoji: '⚙️' },
+        { en: 'Conflict', es: 'Conflicto', example: 'Tell me about a conflict with a coworker.', emoji: '⚡' },
+      ],
+      mistakes: [
+        { wrong: 'We did a lot of things and the project was a success.', right: 'I reorganized the sprint plan, and we delivered two weeks early.', why: 'En la "A" de STAR, el entrevistador quiere TUS acciones concretas. "We" diluye tu aporte y "a lot of things" no dice nada.' },
+        { wrong: 'Usually I solve conflicts talking. (respuesta hipotética)', right: 'Last year, a client was unhappy with a delay. I called him directly and…', why: 'Las preguntas de comportamiento ("Tell me about a time…") piden un caso REAL en pasado, no lo que haces en general.' },
+        { wrong: 'The result was good.', right: 'As a result, customer complaints dropped by 30%.', why: 'El "Result" necesita números o un impacto medible. Si no hay números, describe el impacto concreto.' },
+        { wrong: 'My biggest weakness is that I\'m a perfectionist.', right: "I used to struggle with delegating. Now I use a weekly check-in system to share tasks.", why: 'Es una respuesta cliché. Mejor una debilidad real, no crítica para el puesto, y lo que haces para mejorar.' },
+      ],
+      pronunciation: {
+        focus: 'Verbos de logro en pasado',
+        tip: 'Estos verbos son el corazón de tus respuestas STAR. Practica la -ed correcta: /t/, /d/ o /ɪd/. "Implemented" y "negotiated" tienen sílaba extra; "reduced" y "improved", no.',
+        words: [
+          { word: 'implemented', sounds: '/ˈɪmplɪmentɪd/ — "IM-pli-men-tid"' },
+          { word: 'reduced', sounds: '/rɪˈduːst/ — "ri-DUST"' },
+          { word: 'improved', sounds: '/ɪmˈpruːvd/ — "im-PRUVD"' },
+          { word: 'negotiated', sounds: '/nɪˈɡoʊʃieɪtɪd/ — "ni-GOU-shi-ei-tid"' },
+          { word: 'launched', sounds: '/lɔːntʃt/ — "LONCHT"' },
+        ],
+      },
+      reading: {
+        title: 'A STAR answer, step by step',
+        paragraphs: [
+          "Question: \"Tell me about a time you had to deal with a difficult client.\" Situation: \"Two years ago I was an account manager at a software company. One of our biggest clients threatened to cancel their contract because our platform had been down for three hours during their busiest day.\"",
+          "Task: \"My job was to keep the account and rebuild trust. Action: First, I called the client's director personally and apologized without making excuses. Then I worked with our engineers to get a clear explanation of the root cause, and I sent the client a written report within 24 hours. Finally, I offered a one-month discount and set up weekly check-ins for the next quarter.\"",
+          "Result: \"The client renewed their contract for two more years and, six months later, they increased their license count by forty percent. I also proposed an incident communication protocol that the company still uses today.\"",
+        ],
+        glossary: [
+          { en: 'threatened', es: 'amenazó' },
+          { en: 'down', es: 'caída (sin servicio)' },
+          { en: 'rebuild trust', es: 'recuperar la confianza' },
+          { en: 'renewed', es: 'renovó' },
+        ],
+        questions: [
+          { q: 'What was the problem in the Situation?', options: ['The client didn\'t pay', 'The platform was down for three hours', 'The engineers quit'], answer: 1 },
+          { q: 'What did the candidate do FIRST?', options: ['Offered a discount', 'Called the director and apologized', 'Wrote a report'], answer: 1 },
+          { q: 'Which part shows a long-term impact beyond the client?', options: ['The weekly check-ins', 'The incident communication protocol', 'The one-month discount'], answer: 1 },
+          { q: 'Why is this a strong answer?', options: ['It uses "we" a lot', 'It has specific actions and measurable results', "It's very short"], answer: 1 },
+        ],
+      },
+      culture: {
+        title: 'Las entrevistas "behavioral" son la norma',
+        body: 'Empresas como Amazon, Google o cualquier multinacional basan buena parte de la entrevista en preguntas de comportamiento: "Tell me about a time…", "Give me an example of…". Parten de la idea de que el comportamiento pasado predice el futuro. Prepara 6-8 historias STAR (liderazgo, conflicto, error, presión, iniciativa, trabajo en equipo) que puedas adaptar a casi cualquier pregunta.',
+      },
+      mission: {
+        title: 'Tu banco de historias STAR',
+        task: 'Escribe 3 historias STAR reales: un logro, un conflicto y un error. Cada una de máximo 2 minutos hablada. Practica contándolas en voz alta con un cronómetro.',
+        steps: ['S y T: 2-3 frases de contexto', 'A: 3 acciones tuyas con verbos fuertes', 'R: un número o impacto concreto', 'Opcional: lo que aprendiste'],
+        model: "Situation: Our app's ratings dropped to 3.1 stars. Task: As the product owner, I had to find out why. Action: I analyzed 500 reviews, grouped the complaints and prioritized the top three bugs with the team. Result: In two months, our rating went up to 4.5 stars.",
+      },
+      exercises: [
+        { type: 'match', prompt: 'Une cada letra de STAR', pairs: [['S', 'Situation: el contexto'], ['T', 'Task: tu responsabilidad'], ['A', 'Action: lo que TÚ hiciste'], ['R', 'Result: el impacto medible']] },
+        { type: 'dictation', audio: 'I took ownership of the problem.', translation: 'Asumí la responsabilidad del problema.' },
+        { type: 'fix', sentence: 'The result was that the sales was better.', answers: ['As a result, sales improved.', 'The result was that sales were better.', 'As a result, sales increased.'], explanation: '"Sales" es plural → were; mejor aún, un verbo de resultado.' },
+        { type: 'choice', prompt: '¿Cuál es la mejor frase para la "A" de STAR?', options: ['We worked very hard.', 'I created a new onboarding guide and trained five new hires.', 'The team did many things.'], answer: 1 },
+        { type: 'listen', audio: 'We had a very tight deadline.', options: ['Teníamos un plazo muy ajustado.', 'Teníamos una línea muy apretada.', 'Teníamos un jefe muy estricto.'], answer: 0 },
+        { type: 'dictation', audio: 'We reduced costs by fifteen percent.', translation: 'Redujimos los costos un 15 %.' },
+        { type: 'fix', sentence: 'Last year I have implemented a new system.', answers: ['Last year I implemented a new system.'], explanation: '"Last year" → pasado simple.' },
+        { type: 'fill', sentence: 'We found the ___ cause of the problem.', answers: ['root'], hint: 'causa raíz' },
+        { type: 'order', words: ['Tell', 'me', 'about', 'a', 'time', 'you', 'failed'], translation: 'Cuéntame de una vez que fallaste.' },
+        { type: 'truefalse', statement: 'En el ejemplo de la lectura, el cliente canceló el contrato.', answer: false, explanation: 'Lo renovó por dos años más.' },
+      ],
+    },
+    // M1L3 · Salario
+    {
+      vocabulary: [
+        { en: 'Compensation', es: 'Remuneración', example: "What's the total compensation for this role?", emoji: '💼' },
+        { en: 'Equity / stock options', es: 'Acciones de la empresa', example: 'The offer includes equity.', emoji: '📈' },
+        { en: 'Sign-on bonus', es: 'Bono de bienvenida', example: 'They offered a $5,000 sign-on bonus.', emoji: '🎁' },
+        { en: 'Paid time off (PTO)', es: 'Vacaciones pagadas', example: 'How many days of PTO do you offer?', emoji: '🏖️' },
+        { en: 'Non-negotiable', es: 'No negociable', example: 'Remote work is non-negotiable for me.', emoji: '🚧' },
+        { en: 'Walk away', es: 'Retirarse (de una negociación)', example: 'Know when to walk away.', emoji: '🚶' },
+      ],
+      mistakes: [
+        { wrong: 'I want 4,000 dollars.', right: "Based on my research and experience, I'm looking for something in the range of $4,000 to $4,500.", why: '"I want" suena exigente. Usa un rango basado en datos y un lenguaje condicional.' },
+        { wrong: 'OK, perfect, I accept! (a la primera oferta)', right: 'Thank you, I\'m really excited about this offer. Could I have a couple of days to review it?', why: 'En EE. UU. se espera que negocies. Agradecer, pedir tiempo y luego contraofertar es profesional, no grosero.' },
+        { wrong: 'The salary is a little low, no?', right: 'Is there any flexibility on the base salary?', why: 'Pregunta por "flexibility" en vez de criticar la oferta. Mantiene la conversación positiva.' },
+        { wrong: 'How much is the salary? (en la primera llamada, como primera pregunta)', right: 'Could you share the salary range budgeted for this role?', why: 'Es válido preguntar, pero con tacto y en el momento correcto. "Budgeted range" suena profesional.' },
+      ],
+      pronunciation: {
+        focus: 'Números grandes y monedas',
+        tip: 'En negociación los números deben sonar claros. "Thousand" lleva "th" sordo. "Fifty" vs. "fifteen" puede costarte mucho dinero. "K" se usa en conversación: "eighty K" = 80,000. Los decimales se leen "point": 4.5 = "four point five".',
+        words: [
+          { word: '$85,000', sounds: '"eighty-five thousand dollars" / "eighty-five K"' },
+          { word: '$4,500', sounds: '"four thousand five hundred" / "forty-five hundred"' },
+          { word: '15%', sounds: '"fif-TEEN percent"' },
+          { word: '50%', sounds: '"FIF-ty percent"' },
+          { word: 'annually', sounds: '/ˈænjuəli/ — "A-niu-a-li"', es: 'anualmente' },
+        ],
+      },
+      reading: {
+        title: 'Negotiating your first remote job in dollars',
+        paragraphs: [
+          "Laura, a UX designer from Medellín, received her first offer from a US startup: $3,200 a month as a contractor. She was thrilled; it was almost three times her local salary. Her first instinct was to accept immediately. Instead, she thanked the recruiter and asked for two days to review the details.",
+          "During those two days she researched market rates for remote designers in Latin America and found that the typical range for her level was $3,500 to $4,500. She also noticed that, as a contractor, she wouldn't get paid vacation and would have to cover her own health insurance and taxes.",
+          "On the call, she said: \"I'm really excited about the role. Based on the market data and the fact that I'll be covering my own benefits, I was hoping for something closer to $4,000. Is there any flexibility?\" The recruiter came back with $3,800 plus fifteen days of paid time off. She accepted, and she still uses that script to coach friends.",
+        ],
+        glossary: [
+          { en: 'contractor', es: 'contratista (independiente)' },
+          { en: 'thrilled', es: 'emocionadísima' },
+          { en: 'cover', es: 'cubrir, pagar' },
+          { en: 'came back with', es: 'respondió con (una oferta)' },
+        ],
+        questions: [
+          { q: 'What was the initial offer?', options: ['$3,200 a month', '$3,800 a month', '$4,000 a month'], answer: 0 },
+          { q: 'What did Laura discover in her research?', options: ['The offer was above the market', 'The typical range was $3,500–4,500', 'Contractors get more benefits'], answer: 1 },
+          { q: 'Which argument did she use?', options: ['She needed the money', 'Market data and covering her own benefits', 'Another company offered more'], answer: 1 },
+          { q: 'What was the final result?', options: ['$4,000 with no PTO', '$3,800 plus fifteen days of PTO', 'She rejected the offer'], answer: 1 },
+        ],
+      },
+      culture: {
+        title: 'Contractor vs. employee',
+        body: 'Muchas empresas extranjeras contratan latinoamericanos como "contractors" (independientes): pagan más en bruto, pero no incluyen vacaciones, salud, pensión ni prima, y tú declaras tus impuestos. Antes de comparar con un salario local, réstale entre 25 y 35 % para cubrir esos costos. Y pregunta siempre: "Is this a full-time employee or a contractor position?"',
+      },
+      mission: {
+        title: 'Simula una negociación',
+        task: 'Escribe el guion completo de una negociación salarial para un puesto que te interese: investiga el rango real (Glassdoor, Levels.fyi, LinkedIn) y prepara tu contraoferta. Luego practícalo en voz alta.',
+        steps: ['Agradece y muestra entusiasmo', 'Da tu rango con un argumento de mercado', 'Pregunta por flexibilidad', 'Ten un plan B: PTO, bono, días remotos'],
+        model: "Thank you so much for the offer — I'm really excited about the team. Based on my research for similar roles and my experience leading migrations, I was expecting something in the range of $4,200 to $4,600. Is there any flexibility on the base? If the base is fixed, could we discuss a sign-on bonus or additional PTO?",
+      },
+      exercises: [
+        { type: 'fix', sentence: 'I want 5,000 dollars.', answers: ["I'm looking for something around $5,000.", "I'm looking for something in the range of $5,000.", "I'd be looking for around $5,000."], explanation: 'Usa un lenguaje más diplomático.' },
+        { type: 'choice', prompt: 'Te hacen una oferta por debajo de lo esperado. ¿Qué dices?', options: ['This is ridiculous.', 'Is there any flexibility on the base salary?', 'OK, I accept.'], answer: 1 },
+        { type: 'dictation', audio: 'Is there any flexibility on the salary?', translation: '¿Hay alguna flexibilidad en el salario?' },
+        { type: 'listen', audio: 'The range is eighty to ninety K.', options: ['$80,000 – $90,000', '$8,000 – $9,000', '$18,000 – $19,000'], answer: 0 },
+        { type: 'match', prompt: 'Une el término', pairs: [['PTO', 'vacaciones pagadas'], ['sign-on bonus', 'bono de bienvenida'], ['equity', 'acciones'], ['benefits', 'prestaciones']] },
+        { type: 'dictation', audio: 'Could I have a couple of days to think about it?', translation: '¿Podría tener un par de días para pensarlo?' },
+        { type: 'fix', sentence: 'The salary is a little low, no?', answers: ['Is there any flexibility on the salary?', 'Is there any flexibility on the base salary?'], explanation: 'Pregunta por flexibilidad.' },
+        { type: 'fill', sentence: "I was ___ for something closer to $4,000.", answers: ['hoping'], hint: 'esperaba (pasado continuo, suena suave)' },
+        { type: 'choice', prompt: 'Como contractor, normalmente…', options: ['tienes vacaciones y salud pagas', 'cubres tus propias prestaciones e impuestos', 'pagas menos impuestos que un empleado'], answer: 1 },
+        { type: 'truefalse', statement: 'Laura aceptó la primera oferta de inmediato.', answer: false, explanation: 'Pidió dos días e hizo una contraoferta.' },
+      ],
+    },
+  ],
+  // ─── Módulo 2: Comunicación escrita ─────────────────────────────────────
+  [
+    // M2L1 · Emails
+    {
+      vocabulary: [
+        { en: 'Just a quick reminder', es: 'Solo un recordatorio', example: 'Just a quick reminder about tomorrow\'s deadline.', emoji: '🔔' },
+        { en: 'Please find attached', es: 'Adjunto encontrará', example: 'Please find attached the final proposal.', emoji: '📎' },
+        { en: 'I hope this email finds you well', es: 'Espero que esté bien', example: 'Hi Tom, I hope this email finds you well.', emoji: '✉️' },
+        { en: 'Looking forward to hearing from you', es: 'Quedo atento a su respuesta', example: 'Looking forward to hearing from you.', emoji: '⏳' },
+        { en: 'Apologies for the delay', es: 'Disculpas por la demora', example: 'Apologies for the delay in getting back to you.', emoji: '🙇' },
+        { en: 'Kind regards', es: 'Saludos cordiales', example: 'Kind regards, Natalia', emoji: '🖊️' },
+      ],
+      mistakes: [
+        { wrong: 'Dear Mr. John,', right: 'Dear Mr. Smith, / Hi John,', why: '"Mr./Ms." va con el apellido, nunca con el nombre. Si hay confianza, simplemente "Hi John".' },
+        { wrong: 'I remain attentive to your comments.', right: 'Looking forward to hearing from you. / Let me know if you have any questions.', why: '"Quedo atento" no se traduce literal: suena muy raro en inglés.' },
+        { wrong: 'Kindly do the needful. / Please revert back.', right: 'Could you please take care of this? / Please get back to me.', why: 'Son frases arcaicas o regionales que suenan raras a un lector estadounidense o británico.' },
+        { wrong: 'Asunto: "Information"', right: 'Subject: "Q3 budget — approval needed by Friday"', why: 'Un buen asunto dice de qué trata y qué necesitas. Muchos leen solo el asunto antes de decidir si abren el email.' },
+        { wrong: 'Escribir 4 párrafos de contexto antes de la petición.', right: 'Put the request in the first two lines.', why: 'En inglés de negocios se va al grano (BLUF: Bottom Line Up Front). El contexto va después.' },
+      ],
+      pronunciation: {
+        focus: 'Leer en voz alta símbolos y abreviaturas',
+        tip: 'Cuando dictas un email o lees uno en una llamada, necesitas nombrar símbolos y abreviaturas. "e.g." se lee "for example", "i.e." se lee "that is", "etc." se lee "et cetera" y "CC" se lee "see-see".',
+        words: [
+          { word: 'e.g.', sounds: '"for example" o "i-yi"' },
+          { word: 'i.e.', sounds: '"that is" o "ai-i"' },
+          { word: 'etc.', sounds: '"et-SE-te-ra"' },
+          { word: 'attachment', sounds: '/əˈtætʃmənt/ — "a-TACH-ment"' },
+          { word: 'schedule', sounds: '/ˈskedʒuːl/ (EE. UU.) — "SKE-chul"' },
+        ],
+      },
+      reading: {
+        title: 'Before and after: rewriting a weak email',
+        paragraphs: [
+          "BEFORE — Subject: Question. \"Dear Mr. Robert, I hope you are very well. I am writing to you because, as you know, we have been working on the project for some months and there have been some changes in the scope that the team discussed in the last meeting and also the client asked for some new features, so I wanted to ask you if maybe it would be possible to have more time.\"",
+          "AFTER — Subject: Request: 2-week extension for Atlas project. \"Hi Robert, Could we extend the Atlas deadline from May 10 to May 24? The client added two new features last week (details below), and the team needs extra time to test them properly. If the date can't move, an alternative would be to launch without the new features and add them in June. Could you let me know by Wednesday? Thanks, Diego.\"",
+          "The second version is shorter, but it's not just about length. It names the request in the subject line, asks the question in the first sentence, gives one clear reason, offers an alternative and sets a deadline for the reply. That's exactly what a busy manager needs to make a decision in under a minute.",
+        ],
+        glossary: [
+          { en: 'scope', es: 'alcance' },
+          { en: 'extension', es: 'prórroga, extensión' },
+          { en: 'properly', es: 'adecuadamente' },
+          { en: 'launch', es: 'lanzar' },
+        ],
+        questions: [
+          { q: 'What is wrong with "Dear Mr. Robert"?', options: ['It should use the last name', "It's too informal", 'Nothing'], answer: 0 },
+          { q: 'Where is the main request in the AFTER version?', options: ['At the end', 'In the subject and first sentence', 'In the P.S.'], answer: 1 },
+          { q: 'What alternative does Diego offer?', options: ['Hire more people', 'Launch without the new features', 'Cancel the project'], answer: 1 },
+          { q: 'Why does Diego ask for an answer by Wednesday?', options: ['To be polite', 'To set a clear deadline for the decision', "Because he's on vacation"], answer: 1 },
+        ],
+      },
+      culture: {
+        title: 'Formal no significa largo',
+        body: 'En la cultura empresarial anglosajona, un email cortés y profesional puede tener tres líneas. Las fórmulas largas ("Por medio de la presente me permito…") se perciben como burocráticas. Lo que sí se valora: un saludo con el nombre, un "Thanks" sincero, una petición clara y una firma breve. Si el email pasa de 5 líneas, pregúntate si debería ser una llamada.',
+      },
+      mission: {
+        title: 'Reescribe un email real',
+        task: 'Toma un email que hayas escrito en español en tu trabajo (o invéntalo) y escríbelo en inglés aplicando BLUF: asunto con acción, petición en las 2 primeras líneas, una razón, una alternativa y una fecha límite.',
+        steps: ['Asunto: [Acción] + tema + fecha', 'Petición en la primera frase con "Could you…?"', 'Una razón breve', 'Fecha límite de respuesta', 'Cierre: Thanks / Best'],
+        model: 'Subject: Approval needed: new supplier contract by Friday\n\nHi Mónica,\n\nCould you approve the new contract with LogiTrans by Friday? It reduces our shipping costs by 18%, and the offer expires next week. I\'ve attached the comparison table. Happy to jump on a quick call if you have questions.\n\nThanks,\nAndrés',
+      },
+      exercises: [
+        { type: 'fix', sentence: 'Dear Mrs. Laura,', answers: ['Dear Ms. Smith,', 'Hi Laura,', 'Dear Laura,'], explanation: 'Ms. + apellido, o el nombre sin título.' },
+        { type: 'choice', prompt: '¿Qué asunto es mejor?', options: ['Hello', 'Information', 'Action needed: sign the contract by Friday'], answer: 2 },
+        { type: 'dictation', audio: 'Please find attached the final report.', translation: 'Adjunto encontrará el informe final.' },
+        { type: 'fix', sentence: 'I remain attentive to your comments.', answers: ['Looking forward to hearing from you.', 'Let me know if you have any questions.', 'I look forward to hearing from you.'], explanation: '"Quedo atento" no se traduce literal.' },
+        { type: 'listen', audio: 'Apologies for the delay in getting back to you.', options: ['Disculpas por la demora en responderle.', 'Disculpas por el retraso en el vuelo.', 'Disculpas por devolverle el dinero tarde.'], answer: 0 },
+        { type: 'match', prompt: 'Une la abreviatura', pairs: [['e.g.', 'por ejemplo'], ['i.e.', 'es decir'], ['FYI', 'para tu información'], ['ASAP', 'lo antes posible']] },
+        { type: 'dictation', audio: 'Could you let me know by Wednesday?', translation: '¿Me podrías avisar antes del miércoles?' },
+        { type: 'fill', sentence: 'I ___ this email finds you well.', answers: ['hope'], hint: 'espero' },
+        { type: 'order', words: ['Looking', 'forward', 'to', 'hearing', 'from', 'you'], translation: 'Quedo atento a su respuesta.' },
+        { type: 'truefalse', statement: 'BLUF significa poner la petición principal al final del email.', answer: false, explanation: 'Bottom Line Up Front: al principio.' },
+      ],
+    },
+    // M2L2 · Slack / Teams
+    {
+      vocabulary: [
+        { en: 'Quick question', es: 'Pregunta rápida', example: 'Quick question: is the demo at 3 or 4?', emoji: '⚡' },
+        { en: 'No rush', es: 'Sin afán', example: 'No rush, whenever you have a sec.', emoji: '🐢' },
+        { en: 'On it', es: 'Ya me encargo', example: 'On it! I\'ll send it in 10 min.', emoji: '🫡' },
+        { en: 'Circle back', es: 'Retomar (un tema)', example: "Let's circle back on this tomorrow.", emoji: '🔁' },
+        { en: 'Bandwidth', es: 'Capacidad, tiempo disponible', example: "I don't have the bandwidth this week.", emoji: '📶' },
+        { en: 'Blocker', es: 'Bloqueo, impedimento', example: 'Any blockers I can help with?', emoji: '🧱' },
+      ],
+      mistakes: [
+        { wrong: 'Hi', right: 'Hi Ana! Quick question: could you share the Q2 deck? I need it for a 3 p.m. call.', why: 'Mandar solo "Hi" y esperar respuesta ("naked hello") hace perder tiempo. Escribe saludo y pregunta en el mismo mensaje.' },
+        { wrong: 'Send me the file.', right: 'Could you send me the file when you get a chance?', why: 'En texto, las órdenes suenan más bruscas que en persona. Un "could you" y un "thanks!" cambian el tono.' },
+        { wrong: 'OK.', right: 'Sounds good, thanks! 👍', why: 'Un "OK." seco puede leerse como molestia. En chat corporativo se usa un tono algo más cálido o un emoji neutro.' },
+        { wrong: 'I can\'t, I\'m very busy.', right: "I don't have the bandwidth this week, but I can look at it on Monday.", why: 'Decir que no con una alternativa es la manera profesional de manejar tu carga de trabajo.' },
+      ],
+      pronunciation: {
+        focus: 'Acrónimos de oficina en voz alta',
+        tip: 'Algunos acrónimos se deletrean letra por letra (EOD, FYI, ASAP a veces) y otros se leen como palabra (ASAP como "ei-sap"). Cuando los uses en una llamada, pronúncialos con seguridad.',
+        words: [
+          { word: 'ASAP', sounds: '"ei-es-ei-pi" o "EI-sap"' },
+          { word: 'EOD', sounds: '"i-ou-DI" (end of day)' },
+          { word: 'FYI', sounds: '"ef-uai-AI"' },
+          { word: 'OOO', sounds: '"out of office" o "ou-ou-OU"' },
+          { word: 'ETA', sounds: '"i-ti-EI" (hora estimada de llegada)' },
+        ],
+      },
+      reading: {
+        title: 'A day in a remote team channel',
+        paragraphs: [
+          "9:02 — Sam: Morning all! 👋 Heads up: the staging server will be down from 10 to 11 for maintenance. 9:05 — Valeria: Thanks for the heads up! Quick question, does that affect the client demo at 11:30? 9:06 — Sam: Shouldn't, we'll be back up by 11. I'll ping you if anything changes.",
+          "11:40 — Priya: @Valeria great demo! The client loved the new dashboard. Can you share the recording when you get a chance? No rush. 11:42 — Valeria: Thanks! 🙌 On it, I'll drop it here by EOD.",
+          "15:20 — Diego: Hey team, I'm a bit blocked on the payment integration. The API keeps returning a 403 error. Has anyone run into this before? 15:25 — Sam: Yep, it's probably the new IP whitelist. Let me loop in Karen from DevOps. 15:26 — Karen: Hi Diego! Send me your IP and I'll add it. 15:40 — Diego: Fixed! Thanks so much, you're a lifesaver. 🙏",
+        ],
+        glossary: [
+          { en: 'heads up', es: 'aviso previo' },
+          { en: 'staging server', es: 'servidor de pruebas' },
+          { en: 'drop it here', es: 'compartirlo aquí' },
+          { en: 'lifesaver', es: 'salvavidas (me salvaste)' },
+        ],
+        questions: [
+          { q: 'Why will the staging server be down?', options: ['A security problem', 'Maintenance', 'A client demo'], answer: 1 },
+          { q: 'When will Valeria share the recording?', options: ['Immediately', 'By the end of the day', 'Tomorrow morning'], answer: 1 },
+          { q: "What was Diego's blocker?", options: ['A 403 error from the API', 'The server was down', 'He lost the recording'], answer: 0 },
+          { q: 'What does "loop in Karen" mean?', options: ['Remove Karen from the chat', 'Include Karen in the conversation', 'Call Karen on the phone'], answer: 1 },
+        ],
+      },
+      culture: {
+        title: 'Emojis y reacciones en el trabajo',
+        body: 'En equipos de EE. UU. y Europa es normal reaccionar con emojis: 👀 = "lo estoy revisando", ✅ = "hecho", 👍 = "recibido", 🙏 = "gracias". Ojo: en algunas culturas el 👍 suelto puede parecer frío o pasivo-agresivo para la generación más joven. Observa cómo escribe tu equipo y adáptate.',
+      },
+      mission: {
+        title: 'Traduce tu semana a mensajes de Slack',
+        task: 'Escribe 5 mensajes de chat de trabajo en inglés: una pregunta rápida, un aviso (heads up), decir que no a una tarea, pedir ayuda con un bloqueo y agradecer a un compañero.',
+        steps: ['Nada de "naked hello"', 'Usa al menos 3 expresiones de la lección', 'Tono amable pero directo'],
+        model: "Hi Carlos! Quick question: are we still on for the 2 p.m. sync? · Heads up: I'll be OOO on Friday. · I don't have the bandwidth for this today, but I can pick it up tomorrow morning. · I'm blocked on the report — does anyone have access to the sales dashboard? · Thanks Laura, you're a lifesaver! 🙏",
+      },
+      exercises: [
+        { type: 'choice', prompt: '¿Cuál es el mejor primer mensaje?', options: ['Hi', 'Hi Ana! Could you share the Q2 report? I need it for my 3 p.m. meeting.', 'Are you there?'], answer: 1 },
+        { type: 'dictation', audio: "No rush, whenever you have a second.", translation: 'Sin afán, cuando tengas un segundo.' },
+        { type: 'fix', sentence: 'Send me the report now.', answers: ['Could you send me the report when you get a chance?', 'Could you send me the report, please?', 'Can you send me the report, please?'], explanation: 'Suaviza con could/can y please.' },
+        { type: 'match', prompt: 'Une la expresión', pairs: [['heads up', 'aviso'], ['on it', 'ya me encargo'], ['blocker', 'impedimento'], ['bandwidth', 'capacidad']] },
+        { type: 'listen', audio: "I'll send it by end of day.", options: ['Lo envío antes de terminar el día.', 'Lo envío al final de la semana.', 'Lo envío al día siguiente.'], answer: 0 },
+        { type: 'fix', sentence: "I can't, I'm very busy.", answers: ["I don't have the bandwidth this week, but I can help next week.", "I don't have the bandwidth right now, but I can look at it tomorrow."], explanation: 'Di que no con una alternativa.' },
+        { type: 'dictation', audio: "Let me loop in Karen.", translation: 'Déjame incluir a Karen.' },
+        { type: 'fill', sentence: "Let's circle ___ on this tomorrow.", answers: ['back'], hint: 'retomar' },
+        { type: 'order', words: ['Has', 'anyone', 'run', 'into', 'this', 'before?'], translation: '¿A alguien le ha pasado esto antes?' },
+        { type: 'truefalse', statement: 'En el canal, Sam resolvió directamente el error de Diego.', answer: false, explanation: 'Sam incluyó a Karen, de DevOps, que lo solucionó.' },
+      ],
+    },
+    // M2L3 · Reportes
+    {
+      vocabulary: [
+        { en: 'Year-over-year (YoY)', es: 'Interanual', example: 'Revenue grew 12% year-over-year.', emoji: '📆' },
+        { en: 'Quarter (Q1, Q2…)', es: 'Trimestre', example: 'Sales peaked in Q4.', emoji: '🗓️' },
+        { en: 'Revenue', es: 'Ingresos', example: 'Revenue reached $2 million.', emoji: '💰' },
+        { en: 'Churn rate', es: 'Tasa de abandono', example: 'Our churn rate dropped to 3%.', emoji: '🚪' },
+        { en: 'Key insight', es: 'Hallazgo clave', example: 'The key insight is that mobile users buy more.', emoji: '🔑' },
+        { en: 'Compared to', es: 'En comparación con', example: 'Compared to last year, costs are lower.', emoji: '⚖️' },
+      ],
+      mistakes: [
+        { wrong: 'Sales increased in 20%.', right: 'Sales increased by 20%.', why: 'Para la cantidad del cambio se usa "by". Para el valor final, "to": "increased to $5M".' },
+        { wrong: 'The number of clients have increased.', right: 'The number of clients has increased.', why: '"The number of" es singular (has). En cambio, "A number of clients have…" es plural.' },
+        { wrong: 'The 30% of users prefer the app.', right: '30% of users prefer the app.', why: 'Los porcentajes no llevan "the" delante en inglés.' },
+        { wrong: '1.200.000 dollars', right: '$1.2 million / $1,200,000', why: 'Comas para miles, punto para decimales. En reportes se prefiere "$1.2M".' },
+      ],
+      pronunciation: {
+        focus: 'Verbos con acento que cambia (noun vs. verb)',
+        tip: 'Algunas palabras cambian el acento según sean sustantivo o verbo: an INcrease (sustantivo) vs. to inCREASE (verbo); a REcord vs. to reCORD; a PROgress vs. to proGRESS. En presentaciones de datos lo notarán.',
+        words: [
+          { word: 'an increase', sounds: '"an-IN-kriis" (sustantivo)' },
+          { word: 'to increase', sounds: '"tu-in-KRIIS" (verbo)' },
+          { word: 'a decrease', sounds: '"a-DI-kriis" (sustantivo)' },
+          { word: 'to decrease', sounds: '"tu-di-KRIIS" (verbo)' },
+          { word: 'percent', sounds: '/pərˈsent/ — "per-SENT"' },
+        ],
+      },
+      reading: {
+        title: 'Q3 Performance Summary',
+        paragraphs: [
+          "Overview: Q3 was our strongest quarter to date. Total revenue reached $1.8 million, up 22% compared to Q2 and 35% year-over-year. The growth was driven mainly by the new subscription plan, which now accounts for 40% of total revenue.",
+          "Challenges: Customer acquisition costs rose slightly, from $45 to $52 per customer, due to higher advertising prices in September. Additionally, churn increased from 3.1% to 3.8% among users on the basic plan, most of whom cited limited features as the reason for leaving.",
+          "Recommendations: First, we recommend launching a mid-tier plan to reduce churn among basic users. Second, we suggest shifting 20% of the ad budget to referral programs, which have the lowest acquisition cost. We expect these changes to keep churn below 3.5% in Q4.",
+        ],
+        glossary: [
+          { en: 'to date', es: 'hasta la fecha' },
+          { en: 'driven by', es: 'impulsado por' },
+          { en: 'cited', es: 'mencionaron, citaron' },
+          { en: 'shifting', es: 'trasladar, mover' },
+        ],
+        questions: [
+          { q: 'How much did revenue grow compared to Q2?', options: ['35%', '22%', '40%'], answer: 1 },
+          { q: 'What drove the growth?', options: ['Lower ad prices', 'The new subscription plan', 'The referral program'], answer: 1 },
+          { q: 'Why did basic users leave?', options: ['High prices', 'Limited features', 'Bad customer service'], answer: 1 },
+          { q: 'What is the goal for churn in Q4?', options: ['Below 3.5%', 'Below 3.1%', 'Below 3.8%'], answer: 0 },
+        ],
+      },
+      culture: {
+        title: 'Primero la conclusión, después los datos',
+        body: 'Los gerentes anglosajones leen reportes en diagonal. La estructura que esperan: resumen ejecutivo arriba (qué pasó y qué recomiendas), luego los datos que lo respaldan y, al final, el detalle. Si tienes que hacer scroll para encontrar la recomendación, el reporte no está bien estructurado.',
+      },
+      mission: {
+        title: 'Escribe un mini reporte',
+        task: 'Escoge datos reales de tu vida o de tu trabajo (gastos del mes, horas de estudio, ventas) y escribe un reporte de 3 párrafos: Overview, Challenges y Recommendations.',
+        steps: ['Una cifra con "by" y otra con "to"', 'Una comparación con "compared to"', 'Dos recomendaciones con "We recommend…"'],
+        model: "Overview: In March, my study time increased by 30% to 26 hours compared to February. Challenges: Weekend sessions dropped slightly because of travel. Recommendations: I recommend scheduling 20-minute sessions on Saturday mornings and using podcasts during my commute.",
+      },
+      exercises: [
+        { type: 'fix', sentence: 'Profits increased in 15%.', answers: ['Profits increased by 15%.'], explanation: 'El cambio → by.' },
+        { type: 'dictation', audio: 'Revenue grew by twelve percent year over year.', translation: 'Los ingresos crecieron un 12 % interanual.' },
+        { type: 'fix', sentence: 'The number of users have doubled.', answers: ['The number of users has doubled.'], explanation: '"The number of" es singular.' },
+        { type: 'choice', prompt: 'Las ventas pasaron de $100K a $150K. ¿Qué frase es correcta?', options: ['Sales increased by $150K.', 'Sales increased to $150K.', 'Sales increased in $50K.'], answer: 1 },
+        { type: 'listen', audio: 'Sales peaked in the fourth quarter.', options: ['Las ventas alcanzaron su punto máximo en el cuarto trimestre.', 'Las ventas cayeron en el cuarto trimestre.', 'Las ventas se mantuvieron en el cuarto mes.'], answer: 0 },
+        { type: 'fix', sentence: 'The 40% of clients use the app.', answers: ['40% of clients use the app.', 'Forty percent of clients use the app.'], explanation: 'Sin "the" antes del porcentaje.' },
+        { type: 'match', prompt: 'Une el término', pairs: [['revenue', 'ingresos'], ['churn', 'abandono de clientes'], ['YoY', 'interanual'], ['Q3', 'tercer trimestre']] },
+        { type: 'dictation', audio: 'We recommend launching a new plan.', translation: 'Recomendamos lanzar un nuevo plan.' },
+        { type: 'fill', sentence: '___ to last year, costs are 10% lower.', answers: ['Compared'], hint: 'en comparación con' },
+        { type: 'truefalse', statement: 'Según el reporte, el costo de adquisición de clientes bajó en Q3.', answer: false, explanation: 'Subió de $45 a $52.' },
+      ],
+    },
+  ],
+  // ─── Módulo 3: Reuniones ────────────────────────────────────────────────
+  [
+    // M3L1 · Moderar reuniones
+    {
+      vocabulary: [
+        { en: "Let's get started", es: 'Empecemos', example: "OK everyone, let's get started.", emoji: '▶️' },
+        { en: 'Run over (time)', es: 'Pasarse del tiempo', example: "Sorry, we're running over. Let's wrap up.", emoji: '⏱️' },
+        { en: 'Recap', es: 'Resumen', example: 'Quick recap of last week…', emoji: '🔄' },
+        { en: 'Parking lot', es: 'Temas pendientes (para después)', example: "Let's put that in the parking lot.", emoji: '🅿️' },
+        { en: 'Owner', es: 'Responsable', example: "Who's the owner of this task?", emoji: '👤' },
+        { en: 'Follow-up', es: 'Seguimiento', example: "I'll send a follow-up email with the notes.", emoji: '📨' },
+      ],
+      mistakes: [
+        { wrong: 'We are going to begin the reunion.', right: "Let's start the meeting.", why: '"Reunion" es un reencuentro (de exalumnos, familiares). Una reunión de trabajo es "meeting".' },
+        { wrong: 'Can you hear me? Can you hear me? Hello? (por 2 minutos)', right: "Looks like we have some audio issues — I'll drop off and rejoin.", why: 'Los problemas técnicos se resuelven rápido y con calma. Ten frases listas para salir del paso.' },
+        { wrong: 'Terminar la reunión sin decidir quién hace qué.', right: "So, to recap: Ana owns the budget, Leo will send the draft by Friday.", why: 'Toda reunión en inglés corporativo cierra con action items: tarea, responsable y fecha.' },
+        { wrong: 'Is there more questions?', right: 'Are there any more questions? / Any other questions?', why: '"Questions" es plural → "are there".' },
+      ],
+      pronunciation: {
+        focus: 'Frases de reunión con el ritmo correcto',
+        tip: 'Un buen moderador habla con ritmo pausado y voz que baja al final. Practica estas frases conectando las palabras ("let\'s get started" → "lets-gues-TAR-ted") y sin subir la voz al final.',
+        words: [
+          { word: "Let's get started.", sounds: '"lets-guet-STAR-did" ↘' },
+          { word: "Let's move on.", sounds: '"lets-mu-VON" ↘' },
+          { word: "Let's take this offline.", sounds: '"lets-teik-dhis-of-LAIN" ↘' },
+          { word: 'Any other business?', sounds: '"e-ni-A-dher-BIS-nes" ↗' },
+          { word: "Let's wrap up.", sounds: '"lets-ra-PAP" ↘' },
+        ],
+      },
+      reading: {
+        title: 'Transcript: weekly marketing sync',
+        paragraphs: [
+          "Andrea: OK, it's 10 o'clock, let's get started. Thanks for joining, everyone. We have thirty minutes and three items on the agenda: the campaign results, the new website and the budget for Q4. Tom, do you want to kick things off with the campaign?",
+          "Tom: Sure. The Instagram campaign reached 200,000 people, which is 50% above our goal… Mike: Sorry to jump in, but what about TikTok? I think we should… Andrea: Good point, Mike, but let's put TikTok in the parking lot and come back to it at the end if we have time. Tom, please go on.",
+          "Andrea: We're almost out of time, so let's wrap up. To recap: Tom will share the full campaign report by Thursday, Laura owns the website launch and I'll set up a separate call about the budget. Mike, let's take the TikTok idea offline — can you send me a short proposal? Great. Thanks, everyone!",
+        ],
+        glossary: [
+          { en: 'kick things off', es: 'arrancar, iniciar' },
+          { en: 'jump in', es: 'intervenir, meterse' },
+          { en: 'go on', es: 'continúa' },
+          { en: 'set up', es: 'organizar, agendar' },
+        ],
+        questions: [
+          { q: 'How many items are on the agenda?', options: ['Two', 'Three', 'Four'], answer: 1 },
+          { q: 'What does Andrea do when Mike interrupts?', options: ['She ignores him', 'She parks his topic for later', 'She ends the meeting'], answer: 1 },
+          { q: 'Who owns the website launch?', options: ['Tom', 'Laura', 'Mike'], answer: 1 },
+          { q: 'What will happen with the budget?', options: ['It will be discussed in a separate call', 'Tom will decide it', 'It was approved'], answer: 0 },
+        ],
+      },
+      culture: {
+        title: 'La puntualidad en reuniones virtuales',
+        body: 'En EE. UU., Canadá, Reino Unido o Alemania, una reunión de las 10:00 empieza a las 10:00 (o 10:01). Llegar 5 minutos tarde sin avisar se nota mucho. Y la reunión termina a la hora pactada: pasarse del tiempo se considera una falta de respeto al tiempo de los demás. Si vas a llegar tarde, escribe en el chat antes: "Running 3 min late, sorry!"',
+      },
+      mission: {
+        title: 'Dirige una reunión de 10 minutos',
+        task: 'Escribe el guion completo para moderar una reunión corta (real o imaginaria): apertura con agenda, transición entre temas, manejo de una interrupción y cierre con action items.',
+        steps: ['Apertura: tiempo + agenda', 'Ceder la palabra con un nombre', 'Mandar un tema al "parking lot"', 'Cerrar con: tarea + responsable + fecha'],
+        model: "Hi everyone, let's get started. We have 15 minutes and two topics: the launch date and the press release. Carla, can you start with the launch? … Great, let's move on. … We're almost out of time, so to recap: Carla confirms the date by Tuesday and Pedro drafts the press release by Friday. Thanks, everyone!",
+      },
+      exercises: [
+        { type: 'fix', sentence: "Let's start the reunion.", answers: ["Let's start the meeting."], explanation: 'Reunión de trabajo = meeting.' },
+        { type: 'dictation', audio: "Let's get started.", translation: 'Empecemos.' },
+        { type: 'choice', prompt: 'Alguien trae un tema que no está en la agenda. ¿Qué dices?', options: ['That is not important.', "Good point — let's put that in the parking lot.", 'Stop talking, please.'], answer: 1 },
+        { type: 'fix', sentence: 'Is there more questions?', answers: ['Are there any more questions?', 'Are there more questions?', 'Any other questions?'], explanation: 'Plural → are there.' },
+        { type: 'listen', audio: "We're running over, so let's wrap up.", options: ['Nos estamos pasando del tiempo, así que cerremos.', 'Estamos corriendo, así que envolvamos.', 'Vamos tarde, así que sigamos.'], answer: 0 },
+        { type: 'match', prompt: 'Une la frase con el momento de la reunión', pairs: [["Let's get started", 'Apertura'], ["Let's move on", 'Cambiar de tema'], ["Let's take this offline", 'Hablarlo aparte'], ["Let's wrap up", 'Cierre']] },
+        { type: 'dictation', audio: "I'll send a follow-up email with the notes.", translation: 'Enviaré un correo de seguimiento con las notas.' },
+        { type: 'fill', sentence: "Tom, do you want to kick things ___?", answers: ['off'], hint: 'arrancar' },
+        { type: 'order', words: ['Who', 'is', 'the', 'owner', 'of', 'this', 'task?'], translation: '¿Quién es el responsable de esta tarea?' },
+        { type: 'truefalse', statement: 'En la reunión, Andrea discute la idea de TikTok en detalle antes de terminar.', answer: false, explanation: 'La deja para hablarla aparte (offline).' },
+      ],
+    },
+    // M3L2 · Opinar e interrumpir con tacto
+    {
+      vocabulary: [
+        { en: 'Can I just add something?', es: '¿Puedo agregar algo?', example: 'Sorry, can I just add something here?', emoji: '✋' },
+        { en: 'Going back to…', es: 'Volviendo a…', example: "Going back to Ana's point…", emoji: '↩️' },
+        { en: 'Playing devil\'s advocate', es: 'Haciendo de abogado del diablo', example: "Just playing devil's advocate here…", emoji: '😈' },
+        { en: 'I\'d be careful with…', es: 'Yo tendría cuidado con…', example: "I'd be careful with that timeline.", emoji: '⚠️' },
+        { en: 'What if we…?', es: '¿Y si…?', example: 'What if we tested it with ten users first?', emoji: '💭' },
+        { en: 'Let me finish', es: 'Déjame terminar', example: 'Sorry, let me just finish this thought.', emoji: '🙏' },
+      ],
+      mistakes: [
+        { wrong: 'No, that is a bad idea.', right: "I like the direction, but I'm a bit worried about the cost.", why: 'En inglés corporativo se usa el "sándwich": algo positivo + la preocupación + una propuesta. El "no" directo se siente agresivo.' },
+        { wrong: 'Interrumpir sin pedir permiso y hablar encima.', right: 'Sorry to interrupt, but can I just jump in for a second?', why: 'Interrumpir está bien si lo anuncias. Hablar encima de alguien sin señal se ve como falta de respeto.' },
+        { wrong: 'You must change the design.', right: 'It might be worth revisiting the design.', why: '"Must" suena como una orden. Las frases con "might", "could" o "worth" suenan a sugerencia.' },
+        { wrong: 'I have a doubt.', right: 'I have a question.', why: '"Doubt" implica desconfianza o escepticismo. Para una pregunta, usa "question".' },
+      ],
+      pronunciation: {
+        focus: 'Suavizar con la entonación',
+        tip: 'El mismo texto puede sonar agresivo o diplomático según la entonación. Las frases de desacuerdo suenan más suaves con un tono que sube un poco y una pausa breve: "I\'m not sure… ↗ that\'s the best option." Evita el tono plano y seco.',
+        words: [
+          { word: "I'm not sure that's the best option.", sounds: 'pausa después de "sure"' },
+          { word: 'Sorry to interrupt, but…', sounds: '"SO-ri-tu-in-te-RAPT-bat"' },
+          { word: 'What if we…?', sounds: '"uat-if-UI" ↗' },
+          { word: 'That might be tricky.', sounds: '"dat-mait-bi-TRI-ki"' },
+        ],
+      },
+      reading: {
+        title: 'The "yes, and" technique',
+        paragraphs: [
+          "In improvisational theater, actors follow a simple rule: never block your partner's idea. Instead of saying \"No\", they say \"Yes, and…\" and build on it. Many companies have adopted this principle for brainstorming meetings, because it keeps ideas flowing and makes people feel safe to contribute.",
+          "In practice, it sounds like this: \"Yes, and if we offer the free trial, we could also collect feedback from users who don't convert.\" Compare that to \"Yes, but the free trial will cost too much.\" The first response keeps the idea alive and improves it; the second one closes the discussion.",
+          "This doesn't mean you should never disagree. Critical thinking is essential, especially when decisions involve money or risk. The key is timing: use \"yes, and\" when the team is generating ideas, and save the hard questions for the evaluation phase, when you can say \"I see the potential, but I'd be careful with the cost.\"",
+        ],
+        glossary: [
+          { en: 'block', es: 'bloquear' },
+          { en: 'build on', es: 'construir sobre' },
+          { en: 'convert', es: 'convertir (en clientes)' },
+          { en: 'timing', es: 'momento oportuno' },
+        ],
+        questions: [
+          { q: 'Where does the "yes, and" technique come from?', options: ['Business schools', 'Improvisational theater', 'Sports coaching'], answer: 1 },
+          { q: 'What is the problem with "Yes, but…"?', options: ['It closes the discussion', "It's grammatically wrong", "It's too informal"], answer: 0 },
+          { q: 'According to the text, when should you raise hard questions?', options: ['Never', 'During brainstorming', 'In the evaluation phase'], answer: 2 },
+          { q: 'Why do companies use this technique?', options: ['To make meetings shorter', 'To keep ideas flowing and make people feel safe', 'To avoid all disagreement'], answer: 1 },
+        ],
+      },
+      culture: {
+        title: 'Direct vs. indirect: depende del país',
+        body: 'Los holandeses, alemanes e israelíes suelen ser muy directos ("This won\'t work"). Los británicos y japoneses, muy indirectos ("That\'s an interesting approach…"). Los estadounidenses están en el medio, pero envuelven las críticas en positivo. Si trabajas con un equipo internacional, observa cómo da feedback tu jefe y adapta tu nivel de franqueza.',
+      },
+      mission: {
+        title: 'Desacuerdo en 3 niveles',
+        task: 'Escoge una propuesta con la que no estés de acuerdo (por ejemplo: "volver a la oficina 5 días a la semana"). Escribe tu respuesta en tres versiones: muy indirecta, diplomática y directa pero respetuosa. Luego dilas en voz alta.',
+        steps: ['Indirecta: "That\'s an interesting idea…"', 'Diplomática: positivo + preocupación + propuesta', 'Directa: "I don\'t think this will work because…"'],
+        model: 'Indirect: "That\'s an interesting idea. I wonder how the team would feel about it." · Diplomatic: "I see the benefits for collaboration, but I\'m concerned about commute times. What if we tried three days first?" · Direct: "I don\'t think five days will work, because we\'d lose two senior developers."',
+      },
+      exercises: [
+        { type: 'fix', sentence: 'I have a doubt about the budget.', answers: ['I have a question about the budget.'], explanation: 'Pregunta = question.' },
+        { type: 'choice', prompt: 'Quieres interrumpir con educación. ¿Qué dices?', options: ['Wait, wait, wait!', 'Sorry to interrupt, but can I just add something?', 'Listen to me.'], answer: 1 },
+        { type: 'dictation', audio: 'What if we tested it with ten users first?', translation: '¿Y si lo probamos primero con diez usuarios?' },
+        { type: 'fix', sentence: 'You must change the price.', answers: ['It might be worth changing the price.', 'Maybe we could change the price.', 'We might want to change the price.'], explanation: 'Sugiere en vez de ordenar.' },
+        { type: 'listen', audio: "I'd be careful with that timeline.", options: ['Yo tendría cuidado con ese cronograma.', 'Me encanta ese cronograma.', 'Necesito más tiempo para la línea.'], answer: 0 },
+        { type: 'choice', prompt: 'En un brainstorming, ¿qué respuesta sigue la técnica "yes, and"?', options: ['Yes, but it\'s too expensive.', 'Yes, and we could also add a referral bonus.', 'No, we tried that before.'], answer: 1 },
+        { type: 'dictation', audio: 'Sorry, let me just finish this thought.', translation: 'Perdón, déjame terminar esta idea.' },
+        { type: 'match', prompt: 'Une la intención', pairs: [['Going back to…', 'Retomar un punto'], ['What if we…?', 'Proponer'], ["I'd be careful with…", 'Advertir un riesgo'], ['Can I just add…?', 'Intervenir']] },
+        { type: 'order', words: ['I', 'see', 'your', 'point,', 'but', "I'm", 'concerned', 'about', 'the', 'cost'], translation: 'Entiendo tu punto, pero me preocupa el costo.' },
+        { type: 'truefalse', statement: 'La lectura dice que nunca debes estar en desacuerdo en una reunión.', answer: false, explanation: 'Dice que el pensamiento crítico es esencial; la clave es el momento.' },
+      ],
+    },
+    // M3L3 · Presentaciones
+    {
+      vocabulary: [
+        { en: 'Hook', es: 'Gancho (inicio que atrapa)', example: 'Start with a hook: a question or a surprising fact.', emoji: '🪝' },
+        { en: 'Bear with me', es: 'Ténganme paciencia', example: 'Bear with me while I share my screen.', emoji: '🐻' },
+        { en: 'As you can see', es: 'Como pueden ver', example: 'As you can see, sales doubled.', emoji: '👁️' },
+        { en: 'Let me walk you through', es: 'Déjenme explicarles paso a paso', example: 'Let me walk you through the new process.', emoji: '🚶' },
+        { en: 'That brings me to…', es: 'Eso me lleva a…', example: 'That brings me to my next point.', emoji: '➡️' },
+        { en: "That's a great question", es: 'Excelente pregunta', example: "That's a great question. Let me check and get back to you.", emoji: '🙌' },
+      ],
+      mistakes: [
+        { wrong: 'Leer las diapositivas palabra por palabra.', right: 'Use slides for key numbers and visuals; you tell the story.', why: 'Si lees, el público lee más rápido que tú y se desconecta. La diapositiva apoya, no reemplaza.' },
+        { wrong: 'In this slide we can see…', right: 'On this slide, you can see…', why: 'Para diapositivas se usa "on" (on this slide, on page 3). Y habla al público: "you can see".' },
+        { wrong: "I don't know. (ante una pregunta difícil)", right: "That's a great question. I don't have the exact number, but I'll get back to you by tomorrow.", why: 'No saber está bien; quedarse en blanco, no. Agradece, sé honesto y comprométete a responder.' },
+        { wrong: 'And… that\'s all. Questions?', right: "So, the key takeaway is… Thank you! I'm happy to take any questions.", why: 'Cierra con el mensaje clave y una invitación clara. Un final que se desinfla resta fuerza a toda la presentación.' },
+      ],
+      pronunciation: {
+        focus: 'Enfatizar números y palabras clave',
+        tip: 'En presentaciones, el público recuerda lo que acentúas. Sube el volumen y alarga un poco las cifras y palabras clave, y haz una pausa después: "Sales grew by… FORTY percent. [pausa]". Las pausas te dan autoridad.',
+        words: [
+          { word: 'significantly', sounds: '/sɪɡˈnɪfɪkəntli/ — "sig-NI-fi-kant-li"' },
+          { word: 'strategy', sounds: '/ˈstrætədʒi/ — "STRA-te-chi"' },
+          { word: 'opportunity', sounds: '/ˌɑːpərˈtuːnəti/ — "a-per-TU-ni-di"' },
+          { word: 'results', sounds: '/rɪˈzʌlts/ — "ri-ZALTS"' },
+          { word: 'questions', sounds: '/ˈkwestʃənz/ — "KUES-chens"' },
+        ],
+      },
+      reading: {
+        title: 'The 10-20-30 rule',
+        paragraphs: [
+          "Guy Kawasaki, a former Apple marketing executive, popularized a simple rule for business presentations: no more than ten slides, no longer than twenty minutes and no font smaller than thirty points. The rule was designed for startup pitches, but its logic applies to almost any presentation.",
+          "Ten slides force you to focus on the essential ideas. Twenty minutes leaves time for questions, technical problems and late arrivals, even in a one-hour meeting. And a thirty-point font makes it impossible to put long paragraphs on a slide, so you have to talk instead of reading.",
+          "Of course, it isn't a law. A detailed training session may need more slides, and a lightning talk may need fewer. But when you are presenting in a second language, the rule has an extra benefit: fewer words on the screen means fewer things to read aloud, and more chances to connect with your audience naturally.",
+        ],
+        glossary: [
+          { en: 'former', es: 'exejecutivo, anterior' },
+          { en: 'pitch', es: 'presentación para vender una idea' },
+          { en: 'font', es: 'tipo de letra' },
+          { en: 'lightning talk', es: 'charla relámpago' },
+        ],
+        questions: [
+          { q: 'What does the "30" in the rule refer to?', options: ['Minutes', 'Slides', 'Font size'], answer: 2 },
+          { q: 'Why is twenty minutes recommended?', options: ['People get bored after twenty minutes', 'It leaves time for questions and problems', "It's the length of a TED talk"], answer: 1 },
+          { q: 'What is the extra benefit for non-native speakers?', options: ['Fewer words to read aloud', 'They can speak faster', 'They don\'t need to answer questions'], answer: 0 },
+          { q: 'According to the text, the rule is…', options: ['a strict law', 'a useful guideline', 'only for Apple employees'], answer: 1 },
+        ],
+      },
+      culture: {
+        title: 'El humor y las historias abren presentaciones',
+        body: 'En presentaciones en EE. UU. es muy común abrir con una historia personal corta, una pregunta al público o un dato sorprendente, en lugar de "Buenos días, mi nombre es… y hoy les voy a hablar de…". Un poco de humor (sobre ti mismo, nunca sobre el público) relaja el ambiente. En Alemania o Japón, en cambio, se espera ir más directo al contenido.',
+      },
+      mission: {
+        title: 'Presentación relámpago de 3 minutos',
+        task: 'Prepara una presentación de 3 minutos sobre un proyecto, producto o idea que conozcas bien. Usa máximo 3 diapositivas (o ninguna). Grábate en video.',
+        steps: ['Gancho: pregunta o dato sorprendente', 'Agenda en una frase', '3 puntos con transiciones (That brings me to…)', 'Mensaje clave y cierre con preguntas'],
+        model: "Did you know that 70% of online shopping carts are abandoned? Today I'll walk you through three ways we cut that number in half. First, … That brings me to my second point… Finally, … So the key takeaway is: make checkout ridiculously simple. Thank you! I'm happy to take any questions.",
+      },
+      exercises: [
+        { type: 'fix', sentence: 'In this slide we can see the results.', answers: ['On this slide, you can see the results.', 'On this slide you can see the results.', 'On this slide, we can see the results.'], explanation: 'ON this slide.' },
+        { type: 'dictation', audio: 'Let me walk you through the results.', translation: 'Déjenme explicarles los resultados paso a paso.' },
+        { type: 'choice', prompt: '¿Cuál es el mejor gancho para empezar?', options: ['Hello, my name is Juan and today I will talk about sales.', 'What if I told you we lose $1 million a year to returns?', 'OK, so… let\'s start, I guess.'], answer: 1 },
+        { type: 'listen', audio: 'Bear with me while I share my screen.', options: ['Ténganme paciencia mientras comparto pantalla.', 'Compartan su pantalla conmigo.', 'Tengan un oso mientras comparto.'], answer: 0 },
+        { type: 'fix', sentence: "I don't know.", answers: ["That's a great question. I'll get back to you.", "That's a great question. Let me check and get back to you."], explanation: 'Agradece y comprométete a responder.' },
+        { type: 'match', prompt: 'Une la frase con su función', pairs: [['That brings me to…', 'Transición'], ['As you can see…', 'Señalar un dato'], ['To sum up…', 'Resumir'], ['Bear with me', 'Pedir paciencia']] },
+        { type: 'dictation', audio: 'The key takeaway is simple.', translation: 'El mensaje clave es sencillo.' },
+        { type: 'fill', sentence: "That ___ me to my next point.", answers: ['brings'], hint: 'me lleva a' },
+        { type: 'order', words: ["I'm", 'happy', 'to', 'take', 'any', 'questions'], translation: 'Con gusto respondo sus preguntas.' },
+        { type: 'truefalse', statement: 'La regla 10-20-30 recomienda letra de mínimo 30 puntos.', answer: true },
+      ],
+    },
+  ],
+];

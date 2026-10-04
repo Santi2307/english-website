@@ -37,13 +37,14 @@ export async function seedContent(prisma: PrismaClient) {
           problems.push(`${where}: la lección no existe en la BD`);
           continue;
         }
-        const exercises = parsed.data.exercises.length;
+        const c = parsed.data;
+        // Duración realista: mini-clase y vocabulario + ~1,2 min por ejercicio + lectura y misión
+        const minutes = 10 + Math.round(c.exercises.length * 1.2) + (c.reading ? 6 : 0) + (c.mission ? 5 : 0) + (c.pronunciation ? 3 : 0);
         await prisma.lesson.update({
           where: { id: lesson.id },
           data: {
             content: parsed.data as unknown as Prisma.InputJsonValue,
-            // Duración realista: mini-clase + vocabulario + ~1,5 min por ejercicio
-            durationMinutes: Math.max(lesson.durationMinutes, 8 + Math.round(exercises * 1.5)),
+            durationMinutes: Math.max(lesson.durationMinutes, minutes),
           },
         });
         updated++;

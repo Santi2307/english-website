@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { motion, Reorder } from 'framer-motion';
-import { Check, Mic, Volume2, X } from 'lucide-react';
+import { Check, Mic, PenLine, Volume2, X } from 'lucide-react';
 import { pronunciationScore, useListen, useSpeak } from '@/hooks/useSpeech';
 import { cn } from '@/lib/format';
-import { normalizeAnswer, shuffle, type Exercise } from '@/lib/lessonContent';
+import { isFixCorrect, isUnchanged, normalizeAnswer, shuffle, wordAccuracy, type Exercise } from '@/lib/lessonContent';
 
 /** Contrato común: cada ejercicio informa una sola vez si fue correcto. */
 export type ExerciseProps<T extends Exercise['type']> = {
@@ -21,7 +21,7 @@ const optionClass = (state: 'idle' | 'right' | 'wrong' | 'dim') =>
     state === 'dim' && 'border-transparent bg-white/40 text-slate-400',
   );
 
-function Options({ options, answer, done, onPick }: { options: string[]; answer: number; done: boolean; onPick: (i: number) => void }) {
+export function Options({ options, answer, done, onPick }: { options: string[]; answer: number; done: boolean; onPick: (i: number) => void }) {
   const [picked, setPicked] = useState<number | null>(null);
   return (
     <div className="grid gap-2.5" role="radiogroup">
@@ -315,6 +315,159 @@ export function SpeakExercise({ ex, done, onAnswer }: ExerciseProps<'speak'>) {
           </>
         )}
       </div>
+    </div>
+  );
+}
+
+/** Botón grande de audio con modo lento; se reutiliza en dictado. */
+function AudioButtons({ text }: { text: string }) {
+  const { speak, speaking } = useSpeak();
+  return (
+    <div className="mb-5 flex gap-3">
+      <motion.button
+        onClick={() => speak(text)}
+        animate={speaking ? { scale: [1, 1.08, 1] } : {}}
+        transition={{ repeat: speaking ? Infinity : 0, duration: 0.8 }}
+        className="grid h-16 w-16 place-items-center rounded-full bg-brand-600 text-white shadow-lg"
+        aria-label="Reproducir audio"
+      >
+        <Volume2 size={28} aria-hidden />
+      </motion.button>
+      <button onClick={() => speak(text, { rate: 0.6 })} className="btn-glass self-center px-4 py-2 text-sm" aria-label="Reproducir lento">
+        🐢 Lento
+      </button>
+    </div>
+  );
+}
+
+/** Palabras coloreadas según si el estudiante las escribió (dictado). */
+function WordDiff({ words }: { words: { word: string; ok: boolean }[] }) {
+  return (
+    <p className="mt-4 flex flex-wrap gap-1.5 text-lg font-semibold">
+      {words.map((w, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.04 }}
+          className={cn('rounded-lg px-2 py-0.5', w.ok ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700')}
+        >
+          {w.word}
+        </motion.span>
+      ))}
+    </p>
+  );
+}
+
+export function DictationExercise({ ex, done, onAnswer }: ExerciseProps<'dictation'>) {
+  const [value, setValue] = useState('');
+  const [result, setResult] = useState<ReturnType<typeof wordAccuracy> | null>(null);
+  const check = () => {
+    if (!value.trim() || done) return;
+    const r = wordAccuracy(ex.audio, value);
+    setResult(r);
+    // Tolera un error menor (una tilde, una palabra corta) en frases largas
+    onAnswer(r.pct >= 85);
+  };
+  return (
+    <div>
+      <p className="mb-1 text-lg font-bold text-slate-900">Dictado: escucha y escribe</p>
+      <p className="mb-4 text-sm text-slate-500">Escucha cuantas veces quieras. Usa el modo lento si lo necesitas.</p>
+      <AudioButtons text={ex.audio} />
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          check();
+        }}
+      >
+        <input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          disabled={done}
+          autoFocus
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
+          placeholder="Escribe lo que escuchas…"
+          aria-label="Lo que escuchaste"
+          className={cn(
+            'w-full rounded-2xl border-2 bg-white/80 px-4 py-3.5 text-lg font-semibold outline-none transition',
+            !result ? 'border-white focus:border-brand-500' : result.pct >= 85 ? 'border-emerald-500' : 'border-rose-400',
+          )}
+        />
+        {!done && <button type="submit" disabled={!value.trim()} className="btn-primary mt-4 w-full sm:w-auto">Comprobar</button>}
+      </form>
+      {result && (
+        <div aria-live="polite">
+          <WordDiff words={result.words} />
+          <p className="mt-2 text-sm text-slate-600">
+            Precisión: <strong>{result.pct}%</strong> · Frase: “{ex.audio}”{ex.translation && <> · <em>{ex.translation}</em></>}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function FixExercise({ ex, done, onAnswer }: ExerciseProps<'fix'>) {
+  const [value, setValue] = useState(ex.sentence);
+  const [correct, setCorrect] = useState<boolean | null>(null);
+  const check = () => {
+    if (done || isUnchanged(ex.sentence, value)) return;
+    const ok = isFixCorrect(ex.sentence, ex.answers, value);
+    setCorrect(ok);
+    onAnswer(ok);
+  };
+  return (
+    <div>
+      <p className="mb-1 flex items-center gap-2 text-lg font-bold text-slate-900"><PenLine size={20} className="text-brand-600" aria-hidden /> Corrige el error</p>
+      <p className="mb-4 text-sm text-slate-500">Esta frase tiene un error típico de hispanohablantes. Edítala y comprueba.</p>
+      <motion.p
+        initial={{ rotate: -1, scale: 0.97 }}
+        animate={{ rotate: 0, scale: 1 }}
+        className="mb-4 rounded-2xl border-2 border-dashed border-rose-200 bg-rose-50/70 p-4 text-lg font-semibold text-rose-900"
+      >
+        <X size={18} className="mr-1.5 inline -translate-y-0.5" aria-hidden />
+        {ex.sentence}
+      </motion.p>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          check();
+        }}
+      >
+        <textarea
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          disabled={done}
+          rows={2}
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
+          aria-label="Frase corregida"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              check();
+            }
+          }}
+          className={cn(
+            'w-full resize-none rounded-2xl border-2 bg-white/80 px-4 py-3 text-lg font-semibold outline-none transition',
+            correct === null ? 'border-white focus:border-brand-500' : correct ? 'border-emerald-500 text-emerald-800' : 'border-rose-400',
+          )}
+        />
+        {!done && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button type="submit" disabled={isUnchanged(ex.sentence, value)} className="btn-primary">Comprobar</button>
+            <button type="button" onClick={() => setValue(ex.sentence)} className="btn-glass">Restaurar</button>
+          </div>
+        )}
+      </form>
+      {done && !correct && (
+        <p className="mt-3 flex items-start gap-2 rounded-2xl bg-emerald-50 p-3 text-emerald-900">
+          <Check size={18} className="mt-1 shrink-0" aria-hidden /> <span><strong>Versión correcta:</strong> {ex.answers[0]}</span>
+        </p>
+      )}
     </div>
   );
 }

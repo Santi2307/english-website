@@ -85,6 +85,8 @@ export const track = {
     window.fbq?.('track', 'Lead', { content_name: `Test de nivel ${level}` });
   },
   demoLessonInteracted: (exercise: string) => window.gtag?.('event', 'demo_lesson_interaction', { exercise }),
+  phraseSpoken: (accuracy: number) => window.gtag?.('event', 'phrase_of_day_spoken', { accuracy }),
+  planCalculated: (from: string, to: string, minutes: number) => window.gtag?.('event', 'plan_calculated', { from, to, minutes }),
   viewItem: (i: Item) => {
     window.gtag?.('event', 'view_item', { currency: 'COP', value: i.price, items: [{ item_id: i.id, item_name: i.name, price: i.price }] });
     window.fbq?.('track', 'ViewContent', { content_ids: [i.id], content_name: i.name, content_type: 'product', value: i.price, currency: 'COP' });

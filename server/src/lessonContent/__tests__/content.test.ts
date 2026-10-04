@@ -42,3 +42,30 @@ describe('contenido de los cursos', () => {
     }
   });
 });
+
+describe('material de profundización', () => {
+  it.each(lessons)('$id tiene lectura, errores típicos, pronunciación, cultura y misión', ({ content }) => {
+    const c = lessonContentSchema.parse(content);
+    expect(c.reading?.questions.length).toBeGreaterThanOrEqual(3);
+    expect(c.mistakes.length).toBeGreaterThanOrEqual(3);
+    expect(c.pronunciation?.words.length).toBeGreaterThanOrEqual(4);
+    expect(c.culture).toBeDefined();
+    expect(c.mission).toBeDefined();
+    expect(c.exercises.length).toBeGreaterThanOrEqual(15);
+    expect(c.exercises.some((e) => e.type === 'dictation')).toBe(true);
+    expect(c.exercises.some((e) => e.type === 'fix')).toBe(true);
+  });
+
+  it.each(lessons)('$id no repite vocabulario', ({ content }) => {
+    const words = (content.vocabulary ?? []).map((v) => v.en.toLowerCase());
+    expect(new Set(words).size).toBe(words.length);
+  });
+
+  it('las preguntas de lectura no repiten opciones', () => {
+    for (const { id, content } of lessons) {
+      for (const q of content.reading?.questions ?? []) {
+        expect(new Set(q.options).size, `${id}: ${q.q}`).toBe(q.options.length);
+      }
+    }
+  });
+});

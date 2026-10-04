@@ -86,21 +86,78 @@ const truefalse = z.object({
   explanation: text(300).optional(),
 });
 
+/** Dictado: se reproduce la frase y el estudiante la escribe. */
+const dictation = z.object({
+  type: z.literal('dictation'),
+  audio: text(200),
+  translation: text(240).optional(),
+});
+
+/** Corrección de errores: frase con un error típico; el estudiante la reescribe bien. */
+const fix = z.object({
+  type: z.literal('fix'),
+  sentence: text(240),
+  /** Versiones correctas aceptadas */
+  answers: z.array(text(240)).min(1).max(4),
+  explanation: text(400).optional(),
+});
+
 export const exerciseSchema = z
-  .discriminatedUnion('type', [choice, fill, order, match, listen, speak, truefalse])
+  .discriminatedUnion('type', [choice, fill, order, match, listen, speak, truefalse, dictation, fix])
   .superRefine((ex, ctx) => {
     if ((ex.type === 'choice' || ex.type === 'listen') && ex.answer >= ex.options.length) {
       ctx.addIssue({ code: 'custom', message: 'answer fuera de rango', path: ['answer'] });
     }
   });
 
+/** Lectura con preguntas de comprensión. */
+const reading = z.object({
+  title: text(120),
+  /** Párrafos en inglés */
+  paragraphs: z.array(text(900)).min(1).max(6),
+  glossary: z.array(z.object({ en: text(60), es: text(120) })).max(10).default([]),
+  questions: z
+    .array(z.object({ q: text(300), options: z.array(text(200)).min(2).max(4), answer: z.number().int().min(0), explanation: text(300).optional() }))
+    .min(1)
+    .max(6),
+});
+
+/** Errores típicos de hispanohablantes. */
+const mistake = z.object({ wrong: text(200), right: text(200), why: text(400) });
+
+/** Laboratorio de pronunciación. */
+const pronunciation = z.object({
+  focus: text(120),
+  tip: text(600),
+  words: z.array(z.object({ word: text(80), sounds: text(80), es: text(120).optional() })).min(2).max(10),
+});
+
+const culture = z.object({ title: text(120), body: text(900) });
+
+/** Reto para aplicar la lección en la vida real, con respuesta modelo. */
+const mission = z.object({
+  title: text(120),
+  task: text(600),
+  steps: z.array(text(200)).max(5).default([]),
+  model: text(1200).optional(),
+});
+
 export const lessonContentSchema = z.object({
   objective: text(300),
   slides: z.array(slide).min(2).max(10),
-  vocabulary: z.array(vocab).max(14).default([]),
+  vocabulary: z.array(vocab).max(20).default([]),
   grammar: grammar.optional(),
+  mistakes: z.array(mistake).max(6).default([]),
+  pronunciation: pronunciation.optional(),
   dialogue: dialogue.optional(),
-  exercises: z.array(exerciseSchema).min(1).max(15),
+  reading: reading.optional(),
+  culture: culture.optional(),
+  exercises: z.array(exerciseSchema).min(1).max(30),
+  mission: mission.optional(),
+}).superRefine((c, ctx) => {
+  c.reading?.questions.forEach((q, i) => {
+    if (q.answer >= q.options.length) ctx.addIssue({ code: 'custom', message: 'answer fuera de rango', path: ['reading', 'questions', i, 'answer'] });
+  });
 });
 
 export type LessonContent = z.infer<typeof lessonContentSchema>;

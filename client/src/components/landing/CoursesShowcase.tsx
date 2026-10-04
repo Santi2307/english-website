@@ -5,7 +5,7 @@ import { CourseCard } from '../course/CourseCard';
 import { Reveal } from '../ui/Reveal';
 
 function Skeleton() {
-  return <div className="h-[440px] animate-pulse rounded-2xl bg-white/60" />;
+  return <div className="h-[480px] animate-pulse rounded-3xl bg-white/60" />;
 }
 
 export function CoursesShowcase() {

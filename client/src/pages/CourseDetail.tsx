@@ -190,7 +190,7 @@ export default function CourseDetail() {
             {course.previewVideoUrl ? (
               <iframe src={course.previewVideoUrl} title={`Trailer ${course.title}`} loading="lazy" className="h-full w-full" allowFullScreen />
             ) : (
-              <CourseCover title={course.title} level={course.level} color={course.coverColor} image={course.coverImage} />
+              <CourseCover title={course.title} level={course.level} goal={course.goal} color={course.coverColor} image={course.coverImage} />
             )}
           </div>
 
@@ -259,7 +259,7 @@ export default function CourseDetail() {
               {course.previewVideoUrl ? (
                 <iframe src={course.previewVideoUrl} title={`Trailer ${course.title}`} loading="lazy" className="h-full w-full" allowFullScreen />
               ) : (
-                <CourseCover title={course.title} level={course.level} color={course.coverColor} image={course.coverImage} />
+                <CourseCover title={course.title} level={course.level} goal={course.goal} color={course.coverColor} image={course.coverImage} />
               )}
             </div>
             <div className="space-y-4 p-6">

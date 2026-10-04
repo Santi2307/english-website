@@ -136,7 +136,7 @@ export default function Catalog() {
           <motion.div layout className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             <AnimatePresence mode="popLayout">
               {isLoading
-                ? Array.from({ length: 6 }, (_, i) => <div key={i} className="h-[440px] animate-pulse rounded-2xl bg-slate-100" />)
+                ? Array.from({ length: 6 }, (_, i) => <div key={i} className="h-[480px] animate-pulse rounded-3xl bg-slate-100" />)
                 : data?.map((c) => (
                     <motion.div key={c.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
                       <CourseCard course={c} highlight={myLevel === c.level ? t('catalog.recommendedForYou', { level: myLevel }) : undefined} />

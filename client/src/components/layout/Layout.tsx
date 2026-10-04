@@ -12,8 +12,32 @@ function useRouteEffects() {
   useEffect(() => {
     trackPageView(pathname);
     if (hash) {
-      const t = setTimeout(() => document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth' }), 80);
-      return () => clearTimeout(t);
+      // La sección puede estar cargando (chunk lazy) y las de arriba aún cambian de altura:
+      // espera a que exista y corrige la posición hasta que el layout se estabilice (~3 s)
+      let tries = 0;
+      let settled = 0;
+      const t = setInterval(() => {
+        const el = document.getElementById(hash.slice(1));
+        tries++;
+        if (el) {
+          const top = el.getBoundingClientRect().top;
+          const offset = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+          if (Math.abs(top - offset) > 24) {
+            el.scrollIntoView({ behavior: settled === 0 ? 'smooth' : 'auto' });
+            settled = 1;
+          } else if (settled++ > 3) clearInterval(t);
+        }
+        if (tries > 30) clearInterval(t);
+      }, 120);
+      // Si el usuario hace scroll a mano, se deja de corregir
+      const stop = () => clearInterval(t);
+      window.addEventListener('wheel', stop, { once: true, passive: true });
+      window.addEventListener('touchmove', stop, { once: true, passive: true });
+      return () => {
+        clearInterval(t);
+        window.removeEventListener('wheel', stop);
+        window.removeEventListener('touchmove', stop);
+      };
     }
     window.scrollTo(0, 0);
   }, [pathname, hash]);

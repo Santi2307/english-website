@@ -208,6 +208,7 @@ export default function Learn() {
 
             {content && (
               <LessonContentView
+                lessonId={current.id}
                 title={current.title}
                 content={content}
                 bestScore={lessonContent?.bestScore ?? null}

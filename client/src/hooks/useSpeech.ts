@@ -27,7 +27,11 @@ export function useSpeak() {
         setSpeaking(false);
         opts.onEnd?.();
       };
-      u.onerror = () => setSpeaking(false);
+      u.onerror = (e) => {
+        setSpeaking(false);
+        // "interrupted"/"canceled" son nuestros propios stop(): no se cuentan como fin
+        if (e.error !== 'interrupted' && e.error !== 'canceled') opts.onEnd?.();
+      };
       window.speechSynthesis.speak(u);
     },
     [supported],

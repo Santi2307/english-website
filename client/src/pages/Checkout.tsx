@@ -86,7 +86,7 @@ export default function Checkout() {
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_400px]">
         <section className="card flex gap-4 self-start p-5">
           <div className="h-24 w-32 shrink-0 overflow-hidden rounded-xl">
-            <CourseCover title={course.title} level={course.level} color={course.coverColor} image={course.coverImage} />
+            <CourseCover title={course.title} level={course.level} goal={course.goal} color={course.coverColor} image={course.coverImage} />
           </div>
           <div>
             <p className="text-xs font-semibold uppercase text-brand-600">{t(`goals.${course.goal}`)} · {course.level}</p>

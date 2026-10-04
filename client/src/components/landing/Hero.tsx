@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { Award, BadgeCheck, CheckCircle2, ShieldCheck, Star } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Award, BadgeCheck, Mic, ShieldCheck, Star, Volume2 } from 'lucide-react';
+import { pronunciationScore, useListen, useSpeak } from '@/hooks/useSpeech';
+import { phraseOfTheDay } from '@/data/home';
 import { track } from '@/lib/analytics';
 import { cn } from '@/lib/format';
 
@@ -29,32 +31,71 @@ export function CommunityRow({ className }: { className?: string }) {
   );
 }
 
-/** Chip de "clase de hoy" que se completa sola: muestra el producto en uso. */
-function LessonChip() {
-  const { t } = useTranslation();
-  const [done, setDone] = useState(false);
+/**
+ * Frase del día: el visitante la escucha, la oye lenta y la dice con su micrófono.
+ * Es la primera experiencia real del producto, antes de registrarse.
+ */
+function PhraseOfTheDay() {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language.startsWith('en') ? 'en' : 'es';
+  const phrase = useMemo(() => phraseOfTheDay(), []);
+  const { speak, speaking } = useSpeak();
+  const { start, listening, transcript, supported, reset } = useListen();
+  const result = transcript ? pronunciationScore(phrase.en, transcript) : null;
+
   useEffect(() => {
-    const id = setTimeout(() => setDone(true), 2600);
-    return () => clearTimeout(id);
-  }, []);
+    if (result) track.phraseSpoken(result.pct);
+  }, [transcript]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
-    <div className="glass w-60 rounded-2xl p-3.5">
-      <p className="whitespace-nowrap text-xs font-semibold text-slate-700">{t('hero.lessonChip')}</p>
-      <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-white/70">
-        <motion.div
-          className="h-full rounded-full bg-emerald-500"
-          initial={{ width: '15%' }}
-          animate={{ width: '100%' }}
-          transition={{ duration: 2.4, delay: 0.4, ease: 'easeInOut' }}
-        />
-      </div>
-      <p className="mt-2 flex h-5 items-center gap-1 text-sm font-semibold text-emerald-700" aria-live="polite">
-        {done && (
-          <motion.span initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-1">
-            <CheckCircle2 size={16} aria-hidden /> {t('hero.lessonDone')}
-          </motion.span>
-        )}
+    <div className="glass-strong w-[17.5rem] rounded-3xl p-4 sm:w-80">
+      <p className="text-xs font-bold uppercase tracking-widest text-slate-500">{t('hero.phraseTitle')}</p>
+      <p className="mt-1.5 text-lg font-bold leading-snug text-slate-900">
+        {result
+          ? result.words.map((w, i) => (
+              <span key={i} className={cn('mr-1 inline-block rounded px-0.5', !w.ok && 'bg-rose-100 text-rose-700')}>{w.word}</span>
+            ))
+          : phrase.en}
       </p>
+      <p className="text-sm text-slate-600">{phrase.es}</p>
+
+      <div className="mt-3 flex items-center gap-2">
+        <motion.button
+          onClick={() => speak(phrase.en, { rate: 0.9 })}
+          animate={speaking ? { scale: [1, 1.08, 1] } : {}}
+          transition={{ repeat: speaking ? Infinity : 0, duration: 0.8 }}
+          className="grid h-10 w-10 place-items-center rounded-full bg-slate-900 text-white"
+          aria-label={t('hero.listen')}
+        >
+          <Volume2 size={18} aria-hidden />
+        </motion.button>
+        <button onClick={() => speak(phrase.en, { rate: 0.6 })} className="rounded-full bg-white/80 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-white" aria-label={t('hero.slow')}>
+          🐢
+        </button>
+        {supported && (
+          <button
+            onClick={() => {
+              reset();
+              start();
+            }}
+            disabled={listening}
+            className={cn('ml-auto flex items-center gap-1.5 rounded-full bg-brand-600 px-3.5 py-2 text-sm font-semibold text-white', listening && 'animate-pulse')}
+          >
+            <Mic size={15} aria-hidden /> {listening ? t('hero.listening') : result ? t('hero.tryAgain') : t('hero.sayIt')}
+          </button>
+        )}
+      </div>
+
+      <AnimatePresence>
+        {result ? (
+          <motion.p key="r" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="mt-3 text-sm font-semibold text-slate-700" aria-live="polite">
+            {result.pct >= 80 ? '🎉 ' : '💪 '}
+            {t('hero.accuracy', { pct: result.pct })}
+          </motion.p>
+        ) : (
+          <motion.p key="tip" className="mt-3 text-xs text-slate-500">💡 {phrase.tip[locale]}</motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -140,8 +181,8 @@ export function Hero() {
             </div>
           </motion.div>
 
-          <motion.div {...float(0.9)} className="absolute -left-3 bottom-10 sm:-left-8">
-            <LessonChip />
+          <motion.div {...float(0.9)} className="absolute -left-3 bottom-6 sm:-left-10">
+            <PhraseOfTheDay />
           </motion.div>
         </div>
       </div>

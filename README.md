@@ -162,12 +162,17 @@ Las 36 lecciones (4 cursos × 3 módulos × 3 lecciones) tienen contenido intera
 | Paso | Qué es |
 |---|---|
 | **Mini-clase** | Diapositivas animadas narradas en inglés con la voz del navegador. Reemplaza al video mientras no grabes uno; cuando una lección tiene `videoId` (Bunny/Mux), el video aparece arriba. |
-| **Vocabulario** | Tarjetas que giran, con traducción, ejemplo y audio |
+| **Vocabulario** | 12-15 palabras por lección. Modo *Explorar* (tarjetas que giran, con ejemplo y audio) y modo *Repasar* (flashcards que se deslizan; las que no sabes vuelven a salir pronto) |
 | **Gramática** | Explicación en español, ejemplos con audio y un tip |
-| **Diálogo** | Conversación tipo chat que se reproduce línea por línea, con traducción opcional |
-| **Práctica** | 7-9 ejercicios: opción múltiple, completar, ordenar, emparejar, escuchar, hablar (reconocimiento de voz) y verdadero/falso. Termina con una nota que queda guardada; se conserva la mejor. |
+| **Errores típicos** | 3-5 errores frecuentes de hispanohablantes: el estudiante intenta detectarlo y luego ve la corrección y el porqué |
+| **Pronunciación** | Laboratorio con 4-7 palabras o frases: guía de sonido, audio y grabación con micrófono que califica cada intento |
+| **Diálogo** | Conversación tipo chat con traducción opcional y **juego de roles**: escoges un personaje, la voz dice el otro y tú respondes con el micrófono (con "modo reto" de memoria) |
+| **Lectura** | Texto original de 80-200 palabras con audio por párrafo, glosario y 4 preguntas de comprensión (en IELTS, estilo True/False/Not Given), más un **dato cultural** |
+| **Práctica** | 17-19 ejercicios de 9 tipos: opción múltiple, completar, ordenar, emparejar, escuchar, hablar, verdadero/falso, **dictado** y **corregir el error**. XP, rachas con bono y una ronda de **repaso de fallos**. La nota queda guardada; se conserva la mejor. |
+| **Misión** | Reto para usar el inglés en la vida real, con lista de pasos, borrador guardado en el dispositivo y respuesta modelo con audio |
 
-- **Dónde vive:** `server/prisma/content/<slug>.ts`, validado con Zod (`server/src/lessonContent/schema.ts`). También se edita desde **Admin → Cursos → lección → Contenido interactivo (JSON)**; el servidor rechaza contenido inválido.
+- **Dónde vive:** contenido base en `server/prisma/content/<slug>.ts` y material de profundización (lectura, errores, pronunciación, cultura, misión y ejercicios extra) en `server/prisma/content/extras/<slug>.ts`; `content/index.ts` los fusiona. Todo se valida con Zod (`server/src/lessonContent/schema.ts`).
+- **Edición:** también se edita desde **Admin → Cursos → lección → Contenido interactivo (JSON)**; el servidor rechaza contenido inválido.
 - **Acceso:** solo estudiantes inscritos, o cualquiera en las lecciones marcadas como gratuitas, cuya vista previa muestra la mini-clase.
 - **Cargar o actualizar el contenido** (idempotente; no borra progreso ni inscripciones):
   ```bash
@@ -175,7 +180,7 @@ Las 36 lecciones (4 cursos × 3 módulos × 3 lecciones) tienen contenido intera
   # En producción (Neon):
   DATABASE_URL="postgresql://...neon.tech/neondb?sslmode=require" npm run seed:content --workspace server
   ```
-- **Tests:** `npm test --workspace server` valida las 36 lecciones: estructura, respuestas dentro de rango, variedad de ejercicios y opciones sin repetir.
+- **Tests:** `npm test --workspace server` valida las 36 lecciones: estructura, respuestas dentro de rango, variedad de ejercicios, opciones sin repetir, vocabulario sin duplicados y que cada lección tenga todas las secciones.
 - **Por qué no hay videos de terceros:** copiar material de otros cursos o meter videos de YouTube dentro de un curso pago infringe derechos de autor y los términos de YouTube. Graba tus propios videos, súbelos a Bunny Stream y pega el `videoId` en cada lección desde el admin.
 
 ## Notificaciones y emails

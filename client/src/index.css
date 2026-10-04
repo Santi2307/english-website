@@ -16,6 +16,7 @@
   --color-accent-300: #fcd34d;
   --color-accent-400: #fbbf24;
   --color-accent-500: #f59e0b;
+  --color-peach-200: #fed7c3;
 }
 
 @layer base {
@@ -140,4 +141,42 @@
 @media (prefers-reduced-transparency: reduce) {
   .glass, .glass-strong, .btn-glass { background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; }
   .glass-dark { background: #1e1b4b; backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+/* Cinta infinita (situaciones del home). Solo transform: corre en el compositor */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@utility marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 60s) linear infinite;
+  &:hover { animation-play-state: paused; }
+}
+@utility marquee-mask {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+/* Slider con perilla de vidrio (la pista se pinta con un gradiente inline) */
+@utility range-glass {
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    background: #fff;
+    border: 1px solid rgb(255 255 255 / 0.9);
+    box-shadow: 0 0 0 4px rgb(79 70 229 / 0.18), 0 6px 16px -4px rgb(30 27 75 / 0.35);
+    transition: transform 0.15s;
+  }
+  &::-webkit-slider-thumb:active { transform: scale(1.15); }
+  &::-moz-range-thumb {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    background: #fff;
+    border: 1px solid rgb(255 255 255 / 0.9);
+    box-shadow: 0 0 0 4px rgb(79 70 229 / 0.18), 0 6px 16px -4px rgb(30 27 75 / 0.35);
+  }
 }

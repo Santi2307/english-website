@@ -48,6 +48,13 @@ const en: Messages = {
     lessonDone: 'Completed',
     community: '12,500+ Colombians are already learning',
     photoAlt: 'Santiago smiling in front of the CN Tower in Toronto, Canada',
+    phraseTitle: 'Phrase of the day',
+    listen: 'Listen to the phrase',
+    slow: 'Listen slowly',
+    sayIt: 'Say it',
+    listening: 'Listening…',
+    tryAgain: 'Again',
+    accuracy: 'Accuracy: {{pct}}%',
   },
   teachers: {
     title: 'Meet your teachers',
@@ -57,7 +64,7 @@ const en: Messages = {
   stats: {
     students: 'active students',
     rating: 'average rating',
-    lessons: 'video lessons',
+    lessons: 'interactive exercises',
     cities: 'Colombian cities',
   },
   levelTest: {
@@ -71,6 +78,11 @@ const en: Messages = {
     recommended: 'Your recommended course',
     recommendedCta: 'See my recommended course',
     retake: 'Retake test',
+    perk1: '15 questions, 3 minutes',
+    perk2: 'Instant result from A1 to C1',
+    perk3: 'A course recommended for your level',
+    perk4: 'Free, no sign-up',
+    sample: 'What a question looks like',
     levels: {
       A1: 'Beginner: you understand very basic words and phrases.',
       A2: 'Elementary: you can handle simple everyday situations.',
@@ -96,7 +108,7 @@ const en: Messages = {
     youSaid: 'You said:',
     accuracy: 'Accuracy: {{pct}}%',
     unsupported: "Your browser doesn't support speech recognition. Try Chrome on Android or desktop.",
-    ctaTitle: 'Liked it? There are 200+ lessons like this.',
+    ctaTitle: 'Liked it? There are 600+ exercises like this.',
     cta: 'See full courses',
   },
   coursesSection: {

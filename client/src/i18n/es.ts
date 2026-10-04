@@ -46,6 +46,13 @@ const es = {
     lessonDone: 'Completada',
     community: '+12.500 colombianos ya están aprendiendo',
     photoAlt: 'Santiago sonriendo frente a la CN Tower en Toronto, Canadá',
+    phraseTitle: 'Frase del día',
+    listen: 'Escuchar la frase',
+    slow: 'Escuchar lento',
+    sayIt: 'Dilo tú',
+    listening: 'Te escucho…',
+    tryAgain: 'Otra vez',
+    accuracy: 'Precisión: {{pct}}%',
   },
   teachers: {
     title: 'Conoce a tus profes',
@@ -55,7 +62,7 @@ const es = {
   stats: {
     students: 'estudiantes activos',
     rating: 'calificación promedio',
-    lessons: 'lecciones en video',
+    lessons: 'ejercicios interactivos',
     cities: 'ciudades de Colombia',
   },
   levelTest: {
@@ -69,6 +76,11 @@ const es = {
     recommended: 'Tu curso recomendado',
     recommendedCta: 'Ver mi curso recomendado',
     retake: 'Repetir test',
+    perk1: '15 preguntas, 3 minutos',
+    perk2: 'Resultado inmediato de A1 a C1',
+    perk3: 'Curso recomendado para tu nivel',
+    perk4: 'Sin registro y gratis',
+    sample: 'Así se ve una pregunta',
     levels: {
       A1: 'Principiante: entiendes palabras y frases muy básicas.',
       A2: 'Básico: te comunicas en situaciones simples y cotidianas.',
@@ -94,7 +106,7 @@ const es = {
     youSaid: 'Dijiste:',
     accuracy: 'Precisión: {{pct}}%',
     unsupported: 'Tu navegador no soporta reconocimiento de voz. Prueba con Chrome en Android o escritorio.',
-    ctaTitle: '¿Te gustó? Hay más de 200 lecciones así.',
+    ctaTitle: '¿Te gustó? Hay más de 600 ejercicios así.',
     cta: 'Ver cursos completos',
   },
   coursesSection: {

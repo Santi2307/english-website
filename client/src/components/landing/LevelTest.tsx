@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
-import { RotateCcw, Sparkles } from 'lucide-react';
+import { CheckCircle2, RotateCcw, Sparkles } from 'lucide-react';
 import { QUESTIONS, LEVELS, computeLevel, recommendCourse, saveLevel } from '@/data/levelTest';
 import { useCourses } from '@/hooks/useCourses';
 import { track } from '@/lib/analytics';
@@ -77,7 +77,7 @@ export function LevelTest() {
           <p className="mt-3 text-slate-600">{t('levelTest.subtitle')}</p>
         </div>
 
-        <div className="glass-strong relative mx-auto mt-10 max-w-2xl overflow-hidden rounded-[2rem] p-6 sm:p-10">
+        <div className={cn('glass-strong relative mx-auto mt-10 overflow-hidden rounded-[2rem] p-6 sm:p-10', phase === 'intro' ? 'max-w-4xl' : 'max-w-2xl')}>
           {phase !== 'intro' && (
             <div className="absolute inset-x-0 top-0 h-1.5 bg-white/60">
               <motion.div className="h-full bg-brand-600" animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
@@ -86,14 +86,64 @@ export function LevelTest() {
 
           <AnimatePresence mode="wait">
             {phase === 'intro' && (
-              <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center">
-                <div className="glass mx-auto mb-5 grid h-16 w-16 place-items-center rounded-2xl text-3xl" aria-hidden>🎯</div>
-                <div className="mb-6 flex justify-center gap-2">
-                  {LEVELS.map((l) => (
-                    <span key={l} className="rounded-full bg-white/70 px-3 py-1 text-xs font-bold text-slate-600">{l}</span>
-                  ))}
+              <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid items-center gap-8 md:grid-cols-[1fr_1fr]">
+                <div>
+                  <ul className="space-y-3">
+                    {(['perk1', 'perk2', 'perk3', 'perk4'] as const).map((k, i) => (
+                      <motion.li
+                        key={k}
+                        initial={{ opacity: 0, x: -12 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.08 }}
+                        className="flex items-center gap-2.5 font-semibold text-slate-800"
+                      >
+                        <CheckCircle2 size={20} className="shrink-0 text-emerald-600" aria-hidden /> {t(`levelTest.${k}`)}
+                      </motion.li>
+                    ))}
+                  </ul>
+                  <button onClick={start} className="btn-primary mt-8 w-full px-8 py-4 text-base sm:w-auto">{t('levelTest.start')} →</button>
                 </div>
-                <button onClick={start} className="btn-primary px-8 py-4 text-base">{t('levelTest.start')}</button>
+
+                {/* Vista previa de una pregunta: muestra que el test es corto y concreto */}
+                <div className="relative" aria-hidden>
+                  <motion.div
+                    initial={{ rotate: 0, y: 10, opacity: 0 }}
+                    whileInView={{ rotate: -3, y: 0, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ type: 'spring', stiffness: 90, damping: 14 }}
+                    className="rounded-3xl bg-white p-5 shadow-xl"
+                  >
+                    <p className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('levelTest.sample')}</p>
+                    <p className="mt-2 text-lg font-bold text-slate-900">{QUESTIONS[0].prompt}</p>
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      {QUESTIONS[0].options.map((o, i) => (
+                        <motion.span
+                          key={o}
+                          animate={i === QUESTIONS[0].answer ? { backgroundColor: ['#f1f5f9', '#d1fae5', '#d1fae5', '#f1f5f9'] } : {}}
+                          transition={{ duration: 3, repeat: Infinity, times: [0, 0.3, 0.8, 1], delay: 1 }}
+                          className="rounded-xl bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700"
+                        >
+                          {String.fromCharCode(65 + i)}. {o}
+                        </motion.span>
+                      ))}
+                    </div>
+                  </motion.div>
+                  <div className="mt-5 flex justify-center gap-1.5">
+                    {LEVELS.map((l, i) => (
+                      <motion.span
+                        key={l}
+                        initial={{ opacity: 0, y: 8 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.4 + i * 0.08 }}
+                        className="rounded-full bg-white/80 px-3 py-1 text-xs font-bold text-slate-600"
+                      >
+                        {l}
+                      </motion.span>
+                    ))}
+                  </div>
+                </div>
               </motion.div>
             )}
 

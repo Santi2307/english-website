@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Languages, Lightbulb, Pause, Play, Volume2 } from 'lucide-react';
-import { useSpeak } from '@/hooks/useSpeech';
+import { Check, Drama, EyeOff, Languages, Lightbulb, Mic, Pause, Play, RotateCcw, Volume2 } from 'lucide-react';
+import { pronunciationScore, useListen, useSpeak } from '@/hooks/useSpeech';
 import { cn } from '@/lib/format';
 import type { Dialogue, Grammar } from '@/lib/lessonContent';
 
@@ -39,8 +39,168 @@ export function GrammarCard({ grammar }: { grammar: Grammar }) {
   );
 }
 
+/**
+ * Juego de roles: el estudiante escoge un personaje; las líneas del otro las lee la voz
+ * y las suyas las dice él con el micrófono (o en voz alta si el navegador no reconoce voz).
+ */
+function RolePlay({ dialogue, role, onExit }: { dialogue: Dialogue; role: string; onExit: () => void }) {
+  const { speak } = useSpeak();
+  const { start, listening, transcript, supported, reset } = useListen();
+  const [i, setI] = useState(0);
+  const [scores, setScores] = useState<Record<number, number>>({});
+  const [challenge, setChallenge] = useState(false);
+  const alive = useRef(true);
+  const line = dialogue.lines[i];
+  const mine = line?.speaker === role;
+  const finished = i >= dialogue.lines.length;
+
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!line) return;
+    reset();
+    if (mine) return;
+    // Avanza una sola vez: al terminar la voz o, si el navegador nunca avisa, por tiempo
+    let moved = false;
+    const advance = () => {
+      if (moved || !alive.current) return;
+      moved = true;
+      setI((n) => (n === i ? n + 1 : n));
+    };
+    speak(line.en, { onEnd: () => setTimeout(advance, 350) });
+    const fallback = setTimeout(advance, 1500 + line.en.split(' ').length * 450);
+    return () => clearTimeout(fallback);
+  }, [i]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (mine && transcript) {
+      const pct = pronunciationScore(line.en, transcript).pct;
+      setScores((s) => ({ ...s, [i]: Math.max(pct, s[i] ?? 0) }));
+    }
+  }, [transcript]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const myScores = Object.values(scores);
+  const avg = myScores.length ? Math.round(myScores.reduce((a, b) => a + b, 0) / myScores.length) : null;
+  const restart = () => {
+    setScores({});
+    setI(0);
+  };
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="rounded-full bg-slate-900 px-3 py-1 text-sm font-semibold text-white">Tú eres: {role}</p>
+        <div className="flex gap-2">
+          <button onClick={() => setChallenge((c) => !c)} aria-pressed={challenge} className={cn('btn px-3 py-1.5 text-sm', challenge ? 'bg-amber-500 text-white' : 'btn-glass')}>
+            <EyeOff size={15} aria-hidden /> Modo reto
+          </button>
+          <button onClick={onExit} className="btn-glass px-3 py-1.5 text-sm">Salir</button>
+        </div>
+      </div>
+      {challenge && <p className="mt-2 text-xs text-slate-500">En modo reto ves tu línea en español y la dices en inglés de memoria.</p>}
+
+      <ol className="mt-5 space-y-3">
+        {dialogue.lines.slice(0, Math.min(i + 1, dialogue.lines.length)).map((l, n) => {
+          const isMine = l.speaker === role;
+          const isCurrent = n === i;
+          const hidden = isMine && isCurrent && challenge && scores[n] === undefined;
+          return (
+            <motion.li key={n} initial={{ opacity: 0, y: 12, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} className={cn('flex', isMine ? 'justify-end' : 'justify-start')}>
+              <div className={cn('max-w-[85%] rounded-3xl px-4 py-3 sm:max-w-[75%]', isMine ? 'rounded-br-md bg-brand-600 text-white' : 'rounded-bl-md bg-white text-slate-900 shadow-sm', isCurrent && 'ring-4 ring-accent-300')}>
+                <span className={cn('block text-xs font-bold', isMine ? 'text-white/70' : 'text-slate-500')}>{isMine ? `${l.speaker} (tú)` : l.speaker}</span>
+                <span className="mt-0.5 block font-medium">{hidden ? `🇪🇸 ${l.es}` : l.en}</span>
+                {isMine && scores[n] !== undefined && (
+                  <span className="mt-1 flex items-center gap-1 text-xs font-bold text-white/90">
+                    <Check size={12} aria-hidden /> {scores[n]}% de precisión
+                  </span>
+                )}
+              </div>
+            </motion.li>
+          );
+        })}
+      </ol>
+
+      {!finished && mine && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-5 flex flex-wrap items-center justify-end gap-2" aria-live="polite">
+          <p className="mr-auto text-sm font-semibold text-slate-700">🎙️ Tu turno</p>
+          <button onClick={() => speak(line.en, { rate: 0.85 })} className="btn-glass px-4 py-2 text-sm"><Volume2 size={16} aria-hidden /> Pista</button>
+          {supported && (
+            <button onClick={start} disabled={listening} className={cn('btn-primary px-4 py-2 text-sm', listening && 'animate-pulse')}>
+              <Mic size={16} aria-hidden /> {listening ? 'Te escucho…' : transcript ? 'Otra vez' : 'Decir mi línea'}
+            </button>
+          )}
+          {(!supported || transcript) && (
+            <button onClick={() => setI((n) => n + 1)} className="btn bg-emerald-600 px-4 py-2 text-sm text-white hover:bg-emerald-700">
+              {supported ? 'Continuar' : 'Ya lo dije'} →
+            </button>
+          )}
+        </motion.div>
+      )}
+
+      {finished && (
+        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="mt-6 rounded-3xl bg-emerald-50 p-5 text-center" role="status">
+          <p className="text-lg font-black text-emerald-800">🎭 ¡Escena completa!</p>
+          {avg !== null && <p className="mt-1 text-emerald-900">Precisión promedio: <strong>{avg}%</strong></p>}
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            <button onClick={restart} className="btn-glass"><RotateCcw size={16} aria-hidden /> Repetir</button>
+            <button onClick={onExit} className="btn-primary">Cambiar de rol</button>
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
 /** Diálogo tipo chat. "Reproducir" lee cada línea en orden y resalta quién habla. */
 export function DialogueReader({ dialogue }: { dialogue: Dialogue }) {
+  const [role, setRole] = useState<string | null>(null);
+  const [picking, setPicking] = useState(false);
+  const speakers = [...new Set(dialogue.lines.map((l) => l.speaker))];
+
+  if (role) {
+    return (
+      <section className="glass-strong rounded-[2rem] p-6 sm:p-8">
+        <h3 className="mb-4 text-xl font-bold text-slate-900">🎭 {dialogue.title}</h3>
+        <RolePlay key={role} dialogue={dialogue} role={role} onExit={() => setRole(null)} />
+      </section>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <ChatDialogue dialogue={dialogue} />
+      <div className="glass-strong flex flex-col gap-3 rounded-[2rem] p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <Drama size={28} className="shrink-0 text-brand-600" aria-hidden />
+          <div>
+            <p className="font-bold text-slate-900">Actúa el diálogo</p>
+            <p className="text-sm text-slate-600">Escoge un personaje: la otra parte la dice la voz y tú respondes con tu micrófono.</p>
+          </div>
+        </div>
+        <AnimatePresence mode="wait" initial={false}>
+          {picking ? (
+            <motion.div key="pick" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="flex flex-wrap gap-2">
+              {speakers.map((s) => (
+                <button key={s} onClick={() => setRole(s)} className="btn-primary px-4 py-2 text-sm">Ser {s}</button>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.button key="start" onClick={() => setPicking(true)} className="btn bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800">
+              <Drama size={16} aria-hidden /> Empezar juego de roles
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function ChatDialogue({ dialogue }: { dialogue: Dialogue }) {
   const { speak, stop } = useSpeak();
   const [active, setActive] = useState<number | null>(null);
   const [showEs, setShowEs] = useState(false);
