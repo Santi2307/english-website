@@ -15,7 +15,7 @@ function Kpi({ label, value, hint }: { label: string; value: string; hint?: stri
   return (
     <div className="card p-5">
       <p className="text-sm text-slate-500">{label}</p>
-      <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-900">{value}</p>
+      <p className="mt-1 text-2xl font-semibold tabular-nums text-slate-900">{value}</p>
       {hint && <p className="mt-0.5 text-xs text-slate-500">{hint}</p>}
     </div>
   );
@@ -128,7 +128,7 @@ export default function Metrics() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-extrabold">Métricas de ventas</h1>
+      <h1 className="text-2xl font-semibold">Métricas de ventas</h1>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Kpi label="Ingresos totales" value={formatCOP(data.totalRevenueCOP)} />
         <Kpi label="Últimos 30 días" value={formatCOP(data.revenueLast30COP)} />

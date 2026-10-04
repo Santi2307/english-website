@@ -26,7 +26,7 @@ export default function Orders() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-extrabold">Órdenes</h1>
+      <h1 className="text-2xl font-semibold">Órdenes</h1>
       <div className="flex flex-col gap-3 sm:flex-row">
         <form
           className="relative flex-1"

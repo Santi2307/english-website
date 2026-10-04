@@ -224,9 +224,9 @@ export default function Settings() {
       <Seo title={`${t('settings.title')} · English Academy`} noindex />
       <div>
         <Link to="/mi-cuenta" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-brand-700">
-          <ArrowLeft size={16} aria-hidden /> {t('dashboard.myCourses')}
+          <ArrowLeft size={16} aria-hidden /> {t('nav.myCourses')}
         </Link>
-        <h1 className="mt-2 text-3xl font-extrabold">{t('settings.title')}</h1>
+        <h1 className="mt-2 text-3xl font-semibold">{t('settings.title')}</h1>
       </div>
       <Section id="perfil" icon={UserRound} title={t('settings.profile')}><ProfileForm user={user} /></Section>
       <Section id="seguridad" icon={KeyRound} title={t('settings.security')}><PasswordForm user={user} /></Section>

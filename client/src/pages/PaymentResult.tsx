@@ -76,7 +76,7 @@ export default function PaymentResult() {
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 12, delay: 0.1 }}>
           <Icon size={72} className={`mx-auto ${color}`} aria-hidden />
         </motion.div>
-        <h1 className="mt-4 text-2xl font-extrabold">{t(`result.${s}`)}</h1>
+        <h1 className="mt-4 text-2xl font-semibold">{t(`result.${s}`)}</h1>
         <p className="mt-2 text-slate-600">{t(textKey)}</p>
         {pending && <Spinner className="mx-auto mt-4" />}
 

@@ -30,7 +30,7 @@ function VocabCard({ item, index }: { item: VocabItem; index: number }) {
           <span className="mt-2 text-lg font-bold text-slate-900">{item.en}</span>
           <span className="mt-1 flex items-center gap-1 text-xs text-slate-500"><RotateCw size={12} aria-hidden /> Toca para ver</span>
         </button>
-        <div aria-hidden={!flipped} className="absolute inset-0 flex flex-col justify-center rounded-3xl bg-brand-900 p-4 text-white [backface-visibility:hidden] [transform:rotateY(180deg)]">
+        <div aria-hidden={!flipped} className="absolute inset-0 flex flex-col justify-center rounded-3xl bg-slate-900 p-4 text-white [backface-visibility:hidden] [transform:rotateY(180deg)]">
           <p className="text-lg font-bold">{item.es}</p>
           <p className="mt-2 text-sm italic text-white/80">“{item.example}”</p>
           <div className="mt-3 flex gap-2">
@@ -93,9 +93,9 @@ function Flashcards({ items }: { items: VocabItem[] }) {
 
   if (!card) {
     return (
-      <div className="glass-strong rounded-[2rem] p-8 text-center">
+      <div className="glass-strong rounded-2xl p-8 text-center">
         <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 12 }} className="text-6xl" aria-hidden>🧠</motion.p>
-        <p className="mt-4 text-2xl font-black text-slate-900">¡Vocabulario dominado!</p>
+        <p className="mt-4 text-2xl font-semibold text-slate-900">¡Vocabulario dominado!</p>
         <p className="mt-1 text-slate-600">{items.length} palabras · {reviews} repasos extra</p>
         <button onClick={restart} className="btn-glass mt-6"><RotateCcw size={18} aria-hidden /> Repasar otra vez</button>
       </div>
@@ -112,7 +112,7 @@ function Flashcards({ items }: { items: VocabItem[] }) {
       </div>
 
       <div className="relative h-72 [perspective:1000px]">
-        {queue[1] && <div className="absolute inset-x-4 top-3 h-full rounded-[2rem] bg-white/50 shadow-sm" aria-hidden />}
+        {queue[1] && <div className="absolute inset-x-4 top-3 h-full rounded-2xl bg-white/50 shadow-sm" aria-hidden />}
         <AnimatePresence mode="popLayout">
           <motion.div
             key={card.en + reviews + known}
@@ -135,23 +135,23 @@ function Flashcards({ items }: { items: VocabItem[] }) {
                   setFlipped(true);
                   speak(card.en);
                 }}
-                className="absolute inset-0 flex flex-col items-center justify-center rounded-[2rem] bg-white p-6 text-center shadow-xl [backface-visibility:hidden]"
+                className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl bg-white p-6 text-center shadow-xl [backface-visibility:hidden]"
                 aria-label={`${card.en}: ver traducción`}
               >
                 <span className="text-6xl" aria-hidden>{card.emoji ?? '📘'}</span>
-                <span className="mt-4 text-3xl font-black text-slate-900">{card.en}</span>
+                <span className="mt-4 text-3xl font-semibold text-slate-900">{card.en}</span>
                 <span className="mt-3 flex items-center gap-1 text-sm text-slate-500"><RotateCw size={14} aria-hidden /> ¿Sabes qué significa? Toca para ver</span>
               </button>
-              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-[2rem] bg-brand-900 p-6 text-center text-white shadow-xl [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                <p className="text-2xl font-black">{card.es}</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl bg-slate-900 p-6 text-center text-white shadow-xl [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                <p className="text-2xl font-semibold">{card.es}</p>
                 <p className="mt-3 italic text-white/80">“{card.example}”</p>
                 <button onClick={() => speak(card.example)} className="mt-4 flex items-center gap-1 rounded-full bg-white/15 px-3 py-1.5 text-sm font-semibold hover:bg-white/25">
                   <Volume2 size={14} aria-hidden /> Escuchar ejemplo
                 </button>
               </div>
             </motion.div>
-            <motion.span style={{ opacity: knowOpacity }} className="pointer-events-none absolute left-5 top-5 rounded-xl border-2 border-emerald-500 bg-white px-3 py-1 font-black text-emerald-600" aria-hidden>LO SÉ</motion.span>
-            <motion.span style={{ opacity: againOpacity }} className="pointer-events-none absolute right-5 top-5 rounded-xl border-2 border-rose-400 bg-white px-3 py-1 font-black text-rose-500" aria-hidden>OTRA VEZ</motion.span>
+            <motion.span style={{ opacity: knowOpacity }} className="pointer-events-none absolute left-5 top-5 rounded-xl border-2 border-emerald-500 bg-white px-3 py-1 font-semibold text-emerald-600" aria-hidden>LO SÉ</motion.span>
+            <motion.span style={{ opacity: againOpacity }} className="pointer-events-none absolute right-5 top-5 rounded-xl border-2 border-rose-400 bg-white px-3 py-1 font-semibold text-rose-500" aria-hidden>OTRA VEZ</motion.span>
           </motion.div>
         </AnimatePresence>
       </div>

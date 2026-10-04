@@ -22,7 +22,7 @@ function BuyButton({ course, className }: { course: Course; className?: string }
   if (course.isEnrolled) {
     return <Link to={`/aprender/${course.slug}`} className={cn('btn-primary', className)}>{t('course.goToCourse')} →</Link>;
   }
-  return <Link to={`/checkout/${course.slug}`} className={cn('btn-accent', className)}>{t('common.buyNow')} →</Link>;
+  return <Link to={`/checkout/${course.slug}`} className={cn('btn-primary', className)}>{t('common.buyNow')} →</Link>;
 }
 
 function Syllabus({ course, onPreview }: { course: Course; onPreview: (lessonId: string, title: string) => void }) {
@@ -158,17 +158,17 @@ export default function CourseDetail() {
       />
 
       {/* Cabecera */}
-      <section className="bg-brand-950 text-white">
+      <section className="bg-slate-900 text-white">
         <div className="container-page grid gap-8 py-10 lg:grid-cols-[1fr_380px] lg:py-14">
           <div>
-            <nav aria-label="Breadcrumb" className="text-sm text-brand-300">
+            <nav aria-label="Breadcrumb" className="text-sm text-white/60">
               <Link to="/cursos" className="hover:underline">{t('nav.courses')}</Link> / {t(`goals.${course.goal}`)}
             </nav>
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <BadgePill badge={course.badge} />
               <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold">{t('common.level')} {course.level}</span>
             </div>
-            <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">{course.title}</h1>
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{course.title}</h1>
             <p className="mt-3 text-lg text-brand-100">{course.subtitle}</p>
             <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-brand-100">
               <span className="flex items-center gap-1.5">
@@ -264,7 +264,7 @@ export default function CourseDetail() {
             </div>
             <div className="space-y-4 p-6">
               <PriceTag price={course.priceCOP} compareAt={course.compareAtCOP} size="lg" />
-              <BuyButton course={course} className="w-full py-4 text-base" />
+              <BuyButton course={course} className="btn-lg w-full" />
               <p className="text-center text-xs text-slate-500">{t('course.paymentMethods')}</p>
               <ul className="space-y-2 border-t border-slate-100 pt-4 text-sm text-slate-700">
                 {includes.map((i) => (
@@ -280,7 +280,7 @@ export default function CourseDetail() {
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur lg:hidden">
         <div className="flex items-center gap-3 pr-[4.5rem]">
           <div className="min-w-0 flex-1">
-            <p className="text-lg font-extrabold leading-tight">{formatCOP(course.priceCOP)}</p>
+            <p className="text-lg font-semibold leading-tight">{formatCOP(course.priceCOP)}</p>
             {course.compareAtCOP && <p className="text-xs text-slate-400 line-through">{formatCOP(course.compareAtCOP)}</p>}
           </div>
           <BuyButton course={course} className="px-5" />

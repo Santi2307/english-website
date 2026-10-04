@@ -12,31 +12,42 @@ function useRouteEffects() {
   useEffect(() => {
     trackPageView(pathname);
     if (hash) {
-      // La sección puede estar cargando (chunk lazy) y las de arriba aún cambian de altura:
-      // espera a que exista y corrige la posición hasta que el layout se estabilice (~3 s)
-      let tries = 0;
-      let settled = 0;
-      const t = setInterval(() => {
-        const el = document.getElementById(hash.slice(1));
-        tries++;
-        if (el) {
-          const top = el.getBoundingClientRect().top;
-          const offset = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
-          if (Math.abs(top - offset) > 24) {
-            el.scrollIntoView({ behavior: settled === 0 ? 'smooth' : 'auto' });
-            settled = 1;
-          } else if (settled++ > 3) clearInterval(t);
+      // La sección puede estar en un chunk lazy y las de arriba siguen creciendo al montarse.
+      // Se ancla al destino cada vez que la página cambia de alto, durante ~4 s o hasta
+      // que el usuario haga scroll a mano.
+      const id = hash.slice(1);
+      const started = Date.now();
+      let first = true;
+      let stopped = false;
+      const align = () => {
+        const el = document.getElementById(id);
+        if (!el || stopped) return;
+        // No interrumpir el scroll suave inicial
+        if (!first && Date.now() - started < 700) return;
+        const offset = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+        if (Math.abs(el.getBoundingClientRect().top - offset) > 4) {
+          el.scrollIntoView({ behavior: first ? 'smooth' : 'auto' });
+          first = false;
         }
-        if (tries > 30) clearInterval(t);
-      }, 120);
-      // Si el usuario hace scroll a mano, se deja de corregir
-      const stop = () => clearInterval(t);
+      };
+      const ro = new ResizeObserver(() => align());
+      ro.observe(document.body);
+      const poll = setInterval(align, 150);
+      const end = setTimeout(() => stop(), 4000);
+      const stop = () => {
+        stopped = true;
+        ro.disconnect();
+        clearInterval(poll);
+        clearTimeout(end);
+      };
       window.addEventListener('wheel', stop, { once: true, passive: true });
       window.addEventListener('touchmove', stop, { once: true, passive: true });
+      window.addEventListener('keydown', stop, { once: true });
       return () => {
-        clearInterval(t);
+        stop();
         window.removeEventListener('wheel', stop);
         window.removeEventListener('touchmove', stop);
+        window.removeEventListener('keydown', stop);
       };
     }
     window.scrollTo(0, 0);
@@ -47,8 +58,6 @@ export function Layout() {
   useRouteEffects();
   return (
     <div className="relative isolate flex min-h-dvh flex-col">
-      {/* Fondo ambiente fijo: el vidrio necesita color detrás para verse */}
-      <div className="ambient-bg pointer-events-none fixed inset-0 -z-10" aria-hidden />
       <a href="#main" className="sr-only z-50 rounded bg-brand-600 px-4 py-2 text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
         Saltar al contenido
       </a>

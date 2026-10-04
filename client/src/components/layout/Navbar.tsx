@@ -1,44 +1,77 @@
 import { useEffect, useState } from 'react';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Globe, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useAuth, useAuthActions } from '@/hooks/useAuth';
 import { cn } from '@/lib/format';
 
+export function LogoMark({ size = 26 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 64 64" width={size} height={size} aria-hidden className="shrink-0">
+      <rect width="64" height="64" rx="15" className="fill-slate-900" />
+      <path d="M19 19h21v6.5H26.5v3.75h11.5v6.5H26.5v3.75H40V46H19z" fill="#fff" />
+      <circle cx="48" cy="42.5" r="5.5" className="fill-brand-500" />
+    </svg>
+  );
+}
+
 export function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-2 font-extrabold tracking-tight text-slate-900">
-      <img src="/favicon.svg" alt="" width={32} height={32} />
+    <Link to="/" className="flex items-center gap-2.5 text-[0.95rem] font-semibold tracking-[-0.01em] text-slate-900">
+      <LogoMark />
       <span>English Academy</span>
     </Link>
   );
 }
 
+export function LanguageToggle({ className }: { className?: string }) {
+  const { i18n } = useTranslation();
+  const es = i18n.language.startsWith('es');
+  return (
+    <div className={cn('inline-flex rounded-lg border border-slate-200 bg-white p-0.5 text-xs font-medium', className)} role="group" aria-label="Idioma / Language">
+      {(['es', 'en'] as const).map((l) => (
+        <button
+          key={l}
+          onClick={() => i18n.changeLanguage(l)}
+          aria-pressed={(l === 'es') === es}
+          className={cn('rounded-md px-2.5 py-1 uppercase transition-colors', (l === 'es') === es ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-900')}
+        >
+          {l}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function Navbar() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { logout } = useAuthActions();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => setOpen(false), [pathname, hash]);
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 8);
+    const on = () => setScrolled(window.scrollY > 4);
     on();
     window.addEventListener('scroll', on, { passive: true });
     return () => window.removeEventListener('scroll', on);
   }, []);
+  // Con el menú móvil abierto, la página de atrás no se desplaza
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
 
-  const toggleLang = () => i18n.changeLanguage(i18n.language.startsWith('es') ? 'en' : 'es');
   const links = [
-    { to: '/cursos', label: t('nav.courses') },
-    { to: '/#test-de-nivel', label: t('nav.levelTest') },
-    { to: '/#clase-demo', label: t('nav.demo') },
-    { to: '/#faq', label: t('nav.faq') },
+    { to: '/#como-funciona', label: t('nav.howItWorks') },
+    { to: '/#practicar', label: t('nav.practice') },
+    { to: '/#precios', label: t('nav.pricing') },
   ];
+  const startHref = user ? '/mi-cuenta' : '/registro';
 
   const onLogout = async () => {
     await logout.mutateAsync();
@@ -46,88 +79,80 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-40 px-3 pt-3 sm:px-4">
-      <nav
-        aria-label="Principal"
-        className={cn(
-          'mx-auto flex h-14 max-w-6xl items-center justify-between rounded-full pl-4 pr-2 transition-all duration-300 sm:pl-5',
-          scrolled ? 'glass-strong' : 'glass',
-        )}
-      >
-        <Logo />
-
-        <ul className="hidden items-center gap-7 text-sm font-medium text-slate-700 md:flex">
-          {links.map((l) => (
-            <li key={l.to}>
-              <NavLink to={l.to} className="transition hover:text-slate-950">{l.label}</NavLink>
-            </li>
-          ))}
-        </ul>
-
-        <div className="hidden items-center gap-2 md:flex">
-          <button onClick={toggleLang} className="btn px-3 py-2 text-sm text-slate-600 hover:bg-white/60" aria-label={t('nav.language')}>
-            <Globe size={16} aria-hidden /> {i18n.language.startsWith('es') ? 'EN' : 'ES'}
-          </button>
-          {user ? (
-            <>
-              {user.role === 'ADMIN' && <Link to="/admin" className="btn px-3 py-2 text-sm text-slate-700 hover:bg-white/60">{t('nav.admin')}</Link>}
-              <Link to="/mi-cuenta" className="btn-primary px-4 py-2 text-sm">{t('nav.myCourses')}</Link>
-              <button onClick={onLogout} className="btn px-3 py-2 text-sm text-slate-500 hover:bg-white/60">{t('nav.logout')}</button>
-            </>
-          ) : (
-            <>
-              <Link to="/ingresar" className="btn px-3 py-2 text-sm text-slate-700 hover:bg-white/60">{t('nav.login')}</Link>
-              <Link to="/registro" className="btn-primary px-4 py-2 text-sm">{t('nav.register')}</Link>
-            </>
-          )}
+    <>
+    <header className={cn('sticky top-0 z-40 border-b transition-colors duration-200', open ? 'border-slate-200 bg-slate-50' : scrolled ? 'border-slate-200 bg-slate-50/90 backdrop-blur-md' : 'border-transparent bg-slate-50')}>
+      <nav aria-label="Principal" className="container-page flex h-16 items-center justify-between gap-4">
+        <div className="flex items-center gap-10">
+          <Logo />
+          <ul className="hidden items-center gap-1 md:flex">
+            {links.map((l) => (
+              <li key={l.to}>
+                <Link to={l.to} className="rounded-md px-3 py-2 text-sm text-slate-600 transition-colors hover:text-slate-900">{l.label}</Link>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <button
-          className="rounded-full p-2 text-slate-700 md:hidden"
-          onClick={() => setOpen((o) => !o)}
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label={t('nav.menu')}
-        >
-          {open ? <X aria-hidden /> : <Menu aria-hidden />}
-        </button>
+        <div className="flex items-center gap-1.5">
+          {user ? (
+            <>
+              {user.role === 'ADMIN' && <Link to="/admin" className="btn-quiet btn-sm hidden md:inline-flex">{t('nav.admin')}</Link>}
+              <button onClick={onLogout} className="btn-quiet btn-sm hidden md:inline-flex">{t('nav.logout')}</button>
+            </>
+          ) : (
+            <Link to="/ingresar" className="btn-quiet btn-sm hidden md:inline-flex">{t('nav.signIn')}</Link>
+          )}
+          <Link to={startHref} className="btn-primary btn-sm">{user ? t('nav.dashboard') : t('nav.start')}</Link>
+          <button
+            className="-mr-2 grid h-10 w-10 place-items-center rounded-lg text-slate-700 md:hidden"
+            onClick={() => setOpen((o) => !o)}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={t('nav.menu')}
+          >
+            {open ? <X size={22} aria-hidden /> : <Menu size={22} aria-hidden />}
+          </button>
+        </div>
       </nav>
+    </header>
 
+      {/* Menú móvil: hoja a pantalla completa, con objetivos táctiles grandes.
+          Va fuera del <header>: su backdrop-filter crearía un contenedor para el position:fixed */}
       <AnimatePresence>
         {open && (
           <motion.div
             id="mobile-menu"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="glass-strong mx-auto mt-2 max-w-6xl overflow-hidden rounded-3xl md:hidden"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18 }}
+            className="fixed inset-x-0 bottom-0 top-16 z-30 flex flex-col overflow-y-auto bg-slate-50 px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] md:hidden"
           >
-            <div className="flex flex-col gap-1 p-3">
+            <ul className="divide-y divide-slate-200 border-b border-slate-200">
               {links.map((l) => (
-                <Link key={l.to} to={l.to} className="rounded-2xl px-3 py-3 font-medium text-slate-700 hover:bg-white/60">{l.label}</Link>
+                <li key={l.to}>
+                  <Link to={l.to} className="flex h-14 items-center text-lg font-medium text-slate-900">{l.label}</Link>
+                </li>
               ))}
-              <button onClick={toggleLang} className="flex items-center gap-2 rounded-2xl px-3 py-3 text-left font-medium text-slate-700 hover:bg-white/60">
-                <Globe size={18} aria-hidden /> {t('nav.language')}
-              </button>
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                {user ? (
-                  <>
-                    <Link to="/mi-cuenta" className="btn-primary">{t('nav.myCourses')}</Link>
-                    {user.role === 'ADMIN'
-                      ? <Link to="/admin" className="btn-ghost">{t('nav.admin')}</Link>
-                      : <button onClick={onLogout} className="btn-ghost">{t('nav.logout')}</button>}
-                  </>
-                ) : (
-                  <>
-                    <Link to="/ingresar" className="btn-ghost">{t('nav.login')}</Link>
-                    <Link to="/registro" className="btn-primary">{t('nav.register')}</Link>
-                  </>
-                )}
-              </div>
+              {user?.role === 'ADMIN' && (
+                <li><Link to="/admin" className="flex h-14 items-center text-lg font-medium text-slate-900">{t('nav.admin')}</Link></li>
+              )}
+            </ul>
+            <div className="mt-6 flex items-center justify-between">
+              <span className="text-sm text-slate-500">{t('nav.language')}</span>
+              <LanguageToggle />
+            </div>
+            <div className="mt-auto grid gap-2 pt-8">
+              <Link to={startHref} className="btn-primary btn-lg w-full">{user ? t('nav.dashboard') : t('nav.start')}</Link>
+              {user ? (
+                <button onClick={onLogout} className="btn-secondary btn-lg w-full">{t('nav.logout')}</button>
+              ) : (
+                <Link to="/ingresar" className="btn-secondary btn-lg w-full">{t('nav.signIn')}</Link>
+              )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }

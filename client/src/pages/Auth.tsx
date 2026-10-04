@@ -59,7 +59,7 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
     <div className="container-page grid min-h-[80vh] place-items-center py-10">
       <Seo title={`${t(isLogin ? 'auth.loginTitle' : 'auth.registerTitle')} · English Academy`} noindex />
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="card w-full max-w-md p-6 sm:p-8">
-        <h1 className="text-2xl font-extrabold">{t(isLogin ? 'auth.loginTitle' : 'auth.registerTitle')}</h1>
+        <h1 className="text-2xl font-semibold">{t(isLogin ? 'auth.loginTitle' : 'auth.registerTitle')}</h1>
         {next.startsWith('/checkout') && <p className="mt-1 text-sm text-slate-600">{t('checkout.loginRequired')}</p>}
 
         <div className="mt-6">

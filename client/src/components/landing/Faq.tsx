@@ -13,21 +13,21 @@ export function Faq() {
   const base = useId();
 
   return (
-    <section id="faq" className="scroll-mt-24 py-16 sm:py-24">
-      <div className="container-page max-w-3xl">
-        <h2 className="section-title text-center">{t('faq.title')}</h2>
-        <div className="mt-10 space-y-3">
+    <section id="faq" className="section border-t border-slate-200">
+      <div className="container-page grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+        <h2 className="section-title">{t('faq.title')}</h2>
+        <div className="border-t border-slate-900">
           {items.map((item, i) => {
             const isOpen = open === i;
             return (
-              <div key={item.q} className="glass overflow-hidden rounded-2xl">
+              <div key={item.q} className="overflow-hidden border-b border-slate-200">
                 <h3>
                   <button
                     id={`${base}-h${i}`}
                     aria-expanded={isOpen}
                     aria-controls={`${base}-p${i}`}
                     onClick={() => setOpen(isOpen ? null : i)}
-                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-semibold text-slate-900"
+                    className="flex w-full items-center justify-between gap-4 py-5 text-left font-medium text-slate-900"
                   >
                     {item.q}
                     <ChevronDown size={20} aria-hidden className={cn('shrink-0 text-slate-400 transition-transform', isOpen && 'rotate-180 text-slate-900')} />
@@ -44,7 +44,7 @@ export function Faq() {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.25 }}
                     >
-                      <p className="px-5 pb-5 text-slate-600">{item.a}</p>
+                      <p className="max-w-2xl pb-6 leading-relaxed text-slate-600">{item.a}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>

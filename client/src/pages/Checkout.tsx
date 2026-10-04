@@ -81,7 +81,7 @@ export default function Checkout() {
   return (
     <div className="container-page max-w-5xl py-10">
       <Seo title={`${t('checkout.title')} · ${course.title}`} noindex />
-      <h1 className="text-3xl font-extrabold">{t('checkout.title')}</h1>
+      <h1 className="text-3xl font-semibold">{t('checkout.title')}</h1>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_400px]">
         <section className="card flex gap-4 self-start p-5">
@@ -125,14 +125,14 @@ export default function Checkout() {
             {discount > 0 && (
               <div className="flex justify-between text-emerald-700"><dt>{t('checkout.discount')}</dt><dd>−{formatCOP(discount)}</dd></div>
             )}
-            <div className="flex justify-between border-t border-slate-100 pt-3 text-lg font-extrabold">
+            <div className="flex justify-between border-t border-slate-100 pt-3 text-lg font-semibold">
               <dt>{t('checkout.total')}</dt><dd>{formatCOP(total)} <span className="text-xs font-medium text-slate-500">COP</span></dd>
             </div>
           </dl>
 
           {payError && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert">{payError}</p>}
 
-          <button onClick={onPay} disabled={pay.isPending || applyCoupon.isPending} className="btn-accent w-full py-4 text-base">
+          <button onClick={onPay} disabled={pay.isPending || applyCoupon.isPending} className="btn-primary btn-lg w-full">
             {pay.isPending ? <Spinner className="h-5 w-5" /> : <Lock size={18} aria-hidden />}
             {total === 0 ? t('checkout.payFree') : t('checkout.pay', { amount: formatCOP(total) })}
           </button>

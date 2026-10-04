@@ -97,7 +97,7 @@ export default function Catalog() {
       <Seo title={t('seo.catalogTitle')} description={t('seo.catalogDescription')} />
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{t('catalog.title')}</h1>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{t('catalog.title')}</h1>
           <p className="mt-2 text-slate-600">{t('catalog.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">

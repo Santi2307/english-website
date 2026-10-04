@@ -150,11 +150,11 @@ export function Practice({ exercises, bestScore, onFinish, finishing }: Props) {
     if (mode === 'review') {
       const fixed = results.filter(Boolean).length;
       return (
-        <div className="glass-strong rounded-[2rem] p-8 text-center">
+        <div className="glass-strong rounded-2xl p-8 text-center">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 12 }}>
             <RefreshCcw size={56} className="mx-auto text-brand-600" aria-hidden />
           </motion.div>
-          <p className="mt-4 text-2xl font-black text-slate-900">Repaso completado</p>
+          <p className="mt-4 text-2xl font-semibold text-slate-900">Repaso completado</p>
           <p className="mt-2 text-slate-600">Corregiste {fixed} de {deck.length} ejercicios que habías fallado.</p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
             {results.some((ok) => !ok) && (
@@ -172,12 +172,12 @@ export function Practice({ exercises, bestScore, onFinish, finishing }: Props) {
 
     const great = score >= 80;
     return (
-      <div className="glass-strong relative overflow-hidden rounded-[2rem] p-8 text-center">
+      <div className="glass-strong relative overflow-hidden rounded-2xl p-8 text-center">
         {great && <Burst />}
         <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 180, damping: 12 }}>
           <Trophy size={64} className={cn('mx-auto', great ? 'text-accent-500' : 'text-slate-400')} aria-hidden />
         </motion.div>
-        <p className="mt-4 text-5xl font-black text-slate-900">{score}%</p>
+        <p className="mt-4 text-5xl font-semibold text-slate-900">{score}%</p>
         <p className="mt-2 text-lg font-semibold text-slate-700">
           {great ? '¡Lección dominada! 🎉' : score >= 50 ? '¡Buen trabajo! Un repaso más y la dominas.' : 'Vas bien. Repasa el vocabulario y vuelve a intentarlo.'}
         </p>
@@ -187,15 +187,15 @@ export function Practice({ exercises, bestScore, onFinish, finishing }: Props) {
 
         <div className="mx-auto mt-6 grid max-w-md grid-cols-3 gap-2">
           <div className="rounded-2xl bg-white/80 p-3">
-            <p className="flex items-center justify-center gap-1 text-2xl font-black text-amber-500"><Zap size={20} className="fill-amber-400" aria-hidden /><CountUp to={xp} /></p>
+            <p className="flex items-center justify-center gap-1 text-2xl font-semibold text-amber-500"><Zap size={20} className="fill-amber-400" aria-hidden /><CountUp to={xp} /></p>
             <p className="text-xs font-semibold text-slate-500">XP ganados</p>
           </div>
           <div className="rounded-2xl bg-white/80 p-3">
-            <p className="flex items-center justify-center gap-1 text-2xl font-black text-orange-500"><Flame size={20} className="fill-orange-400" aria-hidden />{bestStreak}</p>
+            <p className="flex items-center justify-center gap-1 text-2xl font-semibold text-orange-500"><Flame size={20} className="fill-orange-400" aria-hidden />{bestStreak}</p>
             <p className="text-xs font-semibold text-slate-500">Mejor racha</p>
           </div>
           <div className="rounded-2xl bg-white/80 p-3">
-            <p className="text-2xl font-black text-slate-900">{missed.length}</p>
+            <p className="text-2xl font-semibold text-slate-900">{missed.length}</p>
             <p className="text-xs font-semibold text-slate-500">Por repasar</p>
           </div>
         </div>
@@ -227,7 +227,7 @@ export function Practice({ exercises, bestScore, onFinish, finishing }: Props) {
   }
 
   return (
-    <div className="glass-strong relative rounded-[2rem] p-5 sm:p-8">
+    <div className="glass-strong relative rounded-2xl p-5 sm:p-8">
       {mode === 'review' && (
         <p className="mb-4 flex items-center gap-2 rounded-2xl bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-800">
           <RefreshCcw size={16} aria-hidden /> Modo repaso: solo los ejercicios que fallaste
@@ -248,7 +248,7 @@ export function Practice({ exercises, bestScore, onFinish, finishing }: Props) {
                 animate={{ opacity: 0, y: -28 }}
                 transition={{ duration: 0.9 }}
                 onAnimationComplete={() => setGain(null)}
-                className="pointer-events-none absolute -top-2 right-0 text-sm font-black text-amber-500"
+                className="pointer-events-none absolute -top-2 right-0 text-sm font-semibold text-amber-500"
                 aria-hidden
               >
                 +{gain.amount}

@@ -19,14 +19,14 @@ export default function ForgotPassword() {
       {send.isSuccess ? (
         <div className="text-center" role="status">
           <MailCheck size={56} className="mx-auto text-brand-600" aria-hidden />
-          <h1 className="mt-4 text-2xl font-extrabold">{t('forgot.sent')}</h1>
+          <h1 className="mt-4 text-2xl font-semibold">{t('forgot.sent')}</h1>
           {/* Mismo mensaje exista o no la cuenta: no revela qué emails están registrados */}
           <p className="mt-2 text-slate-600">{t('forgot.sentText', { email })}</p>
           <Link to="/ingresar" className="btn-ghost mt-6 w-full">{t('forgot.back')}</Link>
         </div>
       ) : (
         <>
-          <h1 className="text-2xl font-extrabold">{t('forgot.title')}</h1>
+          <h1 className="text-2xl font-semibold">{t('forgot.title')}</h1>
           <p className="mt-1 text-slate-600">{t('forgot.subtitle')}</p>
           <form
             className="mt-6 space-y-4"

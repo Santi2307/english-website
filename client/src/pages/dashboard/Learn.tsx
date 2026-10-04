@@ -222,13 +222,13 @@ export default function Learn() {
                 <motion.div
                   initial={{ opacity: 0, y: 12, scale: 0.97 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="flex flex-col items-center gap-4 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-900 p-6 text-center text-white sm:flex-row sm:text-left"
+                  className="flex flex-col items-center gap-4 rounded-2xl bg-slate-900 p-6 text-center text-white sm:flex-row sm:text-left"
                 >
                   <Award size={48} className="shrink-0 text-accent-400" aria-hidden />
                   <div className="flex-1">
                     <p className="text-lg font-bold">{t('learn.courseDone')}</p>
                     {celebrate && (
-                      <p className="mt-1 flex items-center justify-center gap-1 text-sm text-brand-200 sm:justify-start">
+                      <p className="mt-1 flex items-center justify-center gap-1 text-sm text-white/60 sm:justify-start">
                         <Flame size={14} aria-hidden /> {t('dashboard.streakDays', { count: celebrate.streak })}
                       </p>
                     )}

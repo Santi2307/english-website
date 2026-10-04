@@ -60,7 +60,7 @@ export function MiniClass({ slides, title }: { slides: Slide[]; title: string })
   };
 
   return (
-    <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900 text-white shadow-xl">
+    <div className="relative overflow-hidden rounded-2xl bg-slate-900 text-white shadow-xl">
       {/* Fondo animado sutil */}
       <motion.div
         className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-peach-200/20 blur-3xl"
@@ -72,7 +72,7 @@ export function MiniClass({ slides, title }: { slides: Slide[]; title: string })
         {!started ? (
           <div className="text-center">
             <p className="text-sm font-semibold uppercase tracking-widest text-white/60">Mini-clase</p>
-            <h3 className="mx-auto mt-2 max-w-xl text-2xl font-extrabold sm:text-3xl">{title}</h3>
+            <h3 className="mx-auto mt-2 max-w-xl text-2xl font-semibold sm:text-3xl">{title}</h3>
             <motion.button
               onClick={play}
               whileHover={{ scale: 1.06 }}
@@ -94,7 +94,7 @@ export function MiniClass({ slides, title }: { slides: Slide[]; title: string })
               transition={{ duration: 0.4 }}
               aria-live="polite"
             >
-              <p className="text-2xl font-extrabold leading-snug sm:text-4xl">
+              <p className="text-2xl font-semibold leading-snug sm:text-4xl">
                 {slide.en.split(' ').map((w, i) => (
                   <motion.span
                     key={i}

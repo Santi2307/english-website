@@ -14,11 +14,11 @@ export function PriceTag({ price, compareAt, size = 'md' }: { price: number; com
   const pct = discountPct(price, compareAt);
   return (
     <div className="flex flex-wrap items-baseline gap-x-2">
-      <span className={cn('font-extrabold text-slate-900', size === 'lg' ? 'text-3xl' : 'text-xl')}>{formatCOP(price)}</span>
+      <span className={cn('font-semibold text-slate-900', size === 'lg' ? 'text-3xl' : 'text-xl')}>{formatCOP(price)}</span>
       {pct > 0 && (
         <>
           <span className="text-sm text-slate-400 line-through">{formatCOP(compareAt!)}</span>
-          <span className="rounded-md bg-rose-100 px-1.5 py-0.5 text-xs font-bold text-rose-700">{t('common.save', { pct })}</span>
+          <span className="rounded-md bg-brand-50 px-1.5 py-0.5 text-xs font-medium text-brand-700">{t('common.save', { pct })}</span>
         </>
       )}
     </div>
@@ -29,15 +29,7 @@ export function BadgePill({ badge }: { badge: CourseSummary['badge'] }) {
   const { t } = useTranslation();
   if (!badge) return null;
   return (
-    <span
-      className={cn(
-        'rounded-full px-2.5 py-1 text-xs font-bold shadow-sm',
-        badge === 'BESTSELLER' ? 'bg-accent-400 text-brand-950' : 'bg-emerald-500 text-white',
-      )}
-    >
-      {badge === 'BESTSELLER' ? '🔥 ' : '✨ '}
-      {t(`badges.${badge}`)}
-    </span>
+    <span className="rounded-md bg-white px-2 py-0.5 text-xs font-medium text-slate-900 shadow-xs">{t(`badges.${badge}`)}</span>
   );
 }
 
@@ -65,8 +57,8 @@ export function CourseCard({ course, highlight }: { course: CourseSummary; highl
         {/* Frente */}
         <article
           className={cn(
-            'absolute inset-0 flex flex-col overflow-hidden rounded-3xl border border-white/70 bg-white shadow-[0_1px_2px_rgb(15_23_42/0.04),0_12px_32px_-12px_rgb(30_27_75/0.18)] [backface-visibility:hidden]',
-            highlight && 'ring-2 ring-brand-500 ring-offset-2',
+            'absolute inset-0 flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs transition-colors group-hover:border-slate-300 [backface-visibility:hidden]',
+            highlight && 'ring-2 ring-slate-900 ring-offset-2',
           )}
           aria-hidden={flipped}
         >
@@ -75,7 +67,7 @@ export function CourseCard({ course, highlight }: { course: CourseSummary; highl
             <div className="absolute left-3 top-3 flex gap-2">
               <BadgePill badge={course.badge} />
             </div>
-            <span className="absolute right-3 top-3 rounded-full border border-white/40 bg-white/20 px-2.5 py-1 text-xs font-bold text-white backdrop-blur-md">
+            <span className="absolute right-3 top-3 rounded-md bg-white px-2 py-0.5 font-mono text-xs text-slate-700 shadow-xs">
               {t('common.level')} {course.level}
             </span>
             {teacher && (
@@ -85,16 +77,16 @@ export function CourseCard({ course, highlight }: { course: CourseSummary; highl
                 width={48}
                 height={48}
                 loading="lazy"
-                className="absolute -bottom-6 left-5 h-12 w-12 rounded-full object-cover shadow-md ring-4 ring-white"
+                className="absolute -bottom-6 left-5 h-12 w-12 rounded-full object-cover ring-4 ring-white"
               />
             )}
           </div>
           <div className={cn('flex flex-1 flex-col px-5 pb-5', teacher ? 'pt-8' : 'pt-5')}>
             {highlight && <p className="mb-1 text-xs font-bold text-brand-700">★ {highlight}</p>}
-            <p className="text-xs font-bold uppercase tracking-wider" style={{ color: course.coverColor }}>
+            <p className="eyebrow">
               {t(`goals.${course.goal}`)} · <span className="font-semibold normal-case tracking-normal text-slate-500">{course.instructorName}</span>
             </p>
-            <h3 className="mt-1.5 text-lg font-extrabold leading-snug tracking-tight text-slate-900">
+            <h3 className="mt-1.5 text-lg font-semibold leading-snug tracking-tight text-slate-900">
               <Link to={href} className="after:absolute after:inset-0 focus:outline-none" tabIndex={flipped ? -1 : 0}>{course.title}</Link>
             </h3>
             <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-slate-500">{course.subtitle}</p>
@@ -111,7 +103,7 @@ export function CourseCard({ course, highlight }: { course: CourseSummary; highl
               <PriceTag price={course.priceCOP} compareAt={course.compareAtCOP} />
               <span
                 aria-hidden
-                className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-50 text-brand-700 transition group-hover:bg-brand-600 group-hover:text-white [@media(hover:none)]:hidden"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-slate-200 text-slate-700 transition-colors group-hover:border-slate-900 group-hover:bg-slate-900 group-hover:text-white [@media(hover:none)]:hidden"
               >
                 <ArrowUpRight size={18} />
               </span>
@@ -128,21 +120,21 @@ export function CourseCard({ course, highlight }: { course: CourseSummary; highl
 
         {/* Reverso */}
         <div
-          className="absolute inset-0 flex flex-col overflow-hidden rounded-3xl bg-gradient-to-br from-brand-700 to-brand-950 p-6 text-white shadow-xl [backface-visibility:hidden] [transform:rotateY(180deg)]"
+          className="absolute inset-0 flex flex-col overflow-hidden rounded-2xl bg-slate-900 p-6 text-white [backface-visibility:hidden] [transform:rotateY(180deg)]"
           aria-hidden={!flipped}
           onClick={(e) => e.target === e.currentTarget && setFlipped(false)}
         >
           <h3 className="text-lg font-bold">{course.title}</h3>
-          <p className="mt-1 text-sm text-brand-200">{course.subtitle}</p>
+          <p className="mt-1 text-sm text-white/60">{course.subtitle}</p>
           <ul className="mt-4 space-y-2 text-sm">
             {course.whatYouLearn.slice(0, 4).map((w) => (
               <li key={w} className="flex gap-2"><CheckCircle2 size={16} className="mt-0.5 shrink-0 text-accent-400" aria-hidden />{w}</li>
             ))}
           </ul>
           <div className="mt-auto space-y-3">
-            <p className="text-2xl font-extrabold">{formatCOP(course.priceCOP)}</p>
+            <p className="text-2xl font-semibold">{formatCOP(course.priceCOP)}</p>
             <Link to={href} tabIndex={flipped ? 0 : -1} className="btn-accent w-full">{t('common.viewCourse')} →</Link>
-            <button onClick={() => setFlipped(false)} tabIndex={flipped ? 0 : -1} className="w-full text-sm text-brand-200 [@media(hover:hover)]:hidden">
+            <button onClick={() => setFlipped(false)} tabIndex={flipped ? 0 : -1} className="w-full text-sm text-white/60 [@media(hover:hover)]:hidden">
               ← {t('common.back')}
             </button>
           </div>

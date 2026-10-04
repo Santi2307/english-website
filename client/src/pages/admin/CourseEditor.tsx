@@ -278,7 +278,7 @@ export default function CourseEditor() {
     <div className="max-w-4xl space-y-8">
       <div>
         <Link to="/admin/cursos" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-brand-700"><ArrowLeft size={16} aria-hidden /> Cursos</Link>
-        <h1 className="mt-2 text-2xl font-extrabold">{isNew ? 'Nuevo curso' : course!.title}</h1>
+        <h1 className="mt-2 text-2xl font-semibold">{isNew ? 'Nuevo curso' : course!.title}</h1>
       </div>
 
       <form onSubmit={handleSubmit((v) => save.mutate(v))} className="card grid gap-4 p-6 sm:grid-cols-2" noValidate>

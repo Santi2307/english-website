@@ -8,7 +8,7 @@ import type { Dialogue, Grammar } from '@/lib/lessonContent';
 export function GrammarCard({ grammar }: { grammar: Grammar }) {
   const { speak } = useSpeak();
   return (
-    <section className="glass-strong rounded-[2rem] p-6 sm:p-8">
+    <section className="glass-strong rounded-2xl p-6 sm:p-8">
       <h3 className="text-xl font-bold text-slate-900">{grammar.title}</h3>
       <p className="mt-3 leading-relaxed text-slate-700">{grammar.explanation}</p>
       <ul className="mt-5 space-y-2">
@@ -144,7 +144,7 @@ function RolePlay({ dialogue, role, onExit }: { dialogue: Dialogue; role: string
 
       {finished && (
         <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="mt-6 rounded-3xl bg-emerald-50 p-5 text-center" role="status">
-          <p className="text-lg font-black text-emerald-800">🎭 ¡Escena completa!</p>
+          <p className="text-lg font-semibold text-emerald-800">🎭 ¡Escena completa!</p>
           {avg !== null && <p className="mt-1 text-emerald-900">Precisión promedio: <strong>{avg}%</strong></p>}
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             <button onClick={restart} className="btn-glass"><RotateCcw size={16} aria-hidden /> Repetir</button>
@@ -164,7 +164,7 @@ export function DialogueReader({ dialogue }: { dialogue: Dialogue }) {
 
   if (role) {
     return (
-      <section className="glass-strong rounded-[2rem] p-6 sm:p-8">
+      <section className="glass-strong rounded-2xl p-6 sm:p-8">
         <h3 className="mb-4 text-xl font-bold text-slate-900">🎭 {dialogue.title}</h3>
         <RolePlay key={role} dialogue={dialogue} role={role} onExit={() => setRole(null)} />
       </section>
@@ -174,7 +174,7 @@ export function DialogueReader({ dialogue }: { dialogue: Dialogue }) {
   return (
     <div className="space-y-4">
       <ChatDialogue dialogue={dialogue} />
-      <div className="glass-strong flex flex-col gap-3 rounded-[2rem] p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="glass-strong flex flex-col gap-3 rounded-2xl p-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3">
           <Drama size={28} className="shrink-0 text-brand-600" aria-hidden />
           <div>
@@ -233,7 +233,7 @@ function ChatDialogue({ dialogue }: { dialogue: Dialogue }) {
   }, []);
 
   return (
-    <section className="glass-strong rounded-[2rem] p-6 sm:p-8">
+    <section className="glass-strong rounded-2xl p-6 sm:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-xl font-bold text-slate-900">💬 {dialogue.title}</h3>
         <div className="flex gap-2">

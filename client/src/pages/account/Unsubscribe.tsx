@@ -26,7 +26,7 @@ export default function Unsubscribe() {
       ) : (
         <div className="text-center">
           <MailX size={56} className="mx-auto text-brand-600" aria-hidden />
-          <h1 className="mt-4 text-2xl font-extrabold">{t('unsubscribe.confirm')}</h1>
+          <h1 className="mt-4 text-2xl font-semibold">{t('unsubscribe.confirm')}</h1>
           <p className="mt-2 text-slate-600">{t('unsubscribe.note')}</p>
           <button onClick={() => unsub.mutate()} disabled={unsub.isPending} className="btn-primary mt-6 w-full">
             {unsub.isPending ? <Spinner className="h-5 w-5 border-white/40 border-t-white" /> : t('unsubscribe.submit')}

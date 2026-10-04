@@ -22,7 +22,7 @@ export default function Courses() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-extrabold">Cursos</h1>
+        <h1 className="text-2xl font-semibold">Cursos</h1>
         <Link to="/admin/cursos/nuevo" className="btn-primary py-2.5 text-sm"><Plus size={16} aria-hidden /> Nuevo curso</Link>
       </div>
       <div className="card overflow-x-auto">

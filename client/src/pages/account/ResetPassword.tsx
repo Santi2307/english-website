@@ -59,7 +59,7 @@ export default function ResetPassword() {
   return (
     <AuthCard>
       <Seo title={t('reset.title')} noindex />
-      <h1 className="text-2xl font-extrabold">{t('reset.title')}</h1>
+      <h1 className="text-2xl font-semibold">{t('reset.title')}</h1>
       <form className="mt-6 space-y-4" onSubmit={handleSubmit((v) => reset.mutate(v))} noValidate>
         <div>
           <label htmlFor="password" className="label">{t('reset.password')}</label>

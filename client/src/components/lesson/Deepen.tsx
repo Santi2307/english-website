@@ -42,7 +42,7 @@ export function ReadingView({ reading }: { reading: Reading }) {
 
   return (
     <section className="space-y-5">
-      <article className="glass-strong rounded-[2rem] p-6 sm:p-8">
+      <article className="glass-strong rounded-2xl p-6 sm:p-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="flex items-center gap-2 text-xl font-bold text-slate-900">
             <BookOpenText size={22} className="text-brand-600" aria-hidden /> {reading.title}
@@ -92,7 +92,7 @@ export function ReadingView({ reading }: { reading: Reading }) {
         )}
       </article>
 
-      <div className="glass-strong rounded-[2rem] p-6 sm:p-8">
+      <div className="glass-strong rounded-2xl p-6 sm:p-8">
         <div className="flex items-center justify-between gap-3">
           <h4 className="text-lg font-bold text-slate-900">Comprensión de lectura</h4>
           <span className="rounded-full bg-white/80 px-3 py-1 text-sm font-semibold tabular-nums text-slate-700">
@@ -194,7 +194,7 @@ export function PronunciationLab({ pronunciation }: { pronunciation: Pronunciati
   const mastered = Object.values(scores).filter((s) => s >= 70).length;
 
   return (
-    <section className="glass-strong rounded-[2rem] p-6 sm:p-8">
+    <section className="glass-strong rounded-2xl p-6 sm:p-8">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Laboratorio de pronunciación</p>
@@ -271,7 +271,7 @@ export function CultureCard({ culture }: { culture: Culture }) {
     <motion.aside
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-brand-900 to-slate-900 p-6 text-white shadow-xl sm:p-8"
+      className="relative overflow-hidden rounded-2xl bg-slate-900 p-6 text-white shadow-xl sm:p-8"
     >
       <motion.div
         className="pointer-events-none absolute -bottom-16 -right-10 text-[10rem] leading-none opacity-10"
@@ -323,7 +323,7 @@ export function MissionCard({ mission, storageKey }: { mission: Mission; storage
   };
 
   return (
-    <section className="glass-strong relative overflow-hidden rounded-[2rem] p-6 sm:p-8">
+    <section className="glass-strong relative overflow-hidden rounded-2xl p-6 sm:p-8">
       <div className="flex items-start gap-3">
         <motion.span
           className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-slate-900 text-white"

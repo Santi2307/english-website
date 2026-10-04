@@ -67,7 +67,7 @@ export default function Coupons() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-extrabold">Cupones de descuento</h1>
+      <h1 className="text-2xl font-semibold">Cupones de descuento</h1>
 
       <form onSubmit={handleSubmit((v) => create.mutate(v))} className="card grid gap-3 p-5 sm:grid-cols-3 lg:grid-cols-6" noValidate>
         <label className="block"><span className="label">Código</span><input className="input py-2 uppercase" {...register('code')} />{err('code')}</label>
