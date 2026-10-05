@@ -54,7 +54,7 @@ export default function PaymentResult() {
     return (
       <div className="container-page grid min-h-[60vh] place-items-center text-center" aria-live="polite">
         <div>
-          <Spinner className="h-12 w-12" />
+          <Spinner className="h-10 text-slate-900" />
           <p className="mt-4 text-lg font-semibold">{t('result.checking')}</p>
           <p className="text-sm text-slate-500">{t('result.checkingHint')}</p>
         </div>

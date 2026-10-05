@@ -132,8 +132,8 @@ export default function Checkout() {
 
           {payError && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert">{payError}</p>}
 
-          <button onClick={onPay} disabled={pay.isPending || applyCoupon.isPending} className="btn-primary btn-lg w-full">
-            {pay.isPending ? <Spinner className="h-5 w-5" /> : <Lock size={18} aria-hidden />}
+          <button onClick={onPay} disabled={pay.isPending || applyCoupon.isPending} aria-busy={pay.isPending} className="btn-primary btn-lg w-full">
+            {pay.isPending ? <Spinner className="h-4" /> : <Lock size={18} aria-hidden />}
             {total === 0 ? t('checkout.payFree') : t('checkout.pay', { amount: formatCOP(total) })}
           </button>
 

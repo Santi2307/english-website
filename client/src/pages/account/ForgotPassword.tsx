@@ -40,8 +40,8 @@ export default function ForgotPassword() {
               <input id="email" type="email" required autoComplete="email" inputMode="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             {send.error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert">{(send.error as ApiError).message}</p>}
-            <button type="submit" disabled={send.isPending} className="btn-primary w-full">
-              {send.isPending ? <Spinner className="h-5 w-5 border-white/40 border-t-white" /> : t('forgot.submit')}
+            <button type="submit" disabled={send.isPending} aria-busy={send.isPending} className="btn-primary w-full">
+              {send.isPending ? <Spinner className="h-4" /> : t('forgot.submit')}
             </button>
           </form>
           <Link to="/ingresar" className="mt-6 block text-center text-sm font-semibold text-brand-700 hover:underline">{t('forgot.back')}</Link>

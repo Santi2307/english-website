@@ -76,8 +76,8 @@ export default function ResetPassword() {
             {(reset.error as ApiError).message} <Link to="/olvide-contrasena" className="font-semibold underline">{t('forgot.title')}</Link>
           </p>
         )}
-        <button type="submit" disabled={reset.isPending} className="btn-primary w-full">
-          {reset.isPending ? <Spinner className="h-5 w-5 border-white/40 border-t-white" /> : t('reset.submit')}
+        <button type="submit" disabled={reset.isPending} aria-busy={reset.isPending} className="btn-primary w-full">
+          {reset.isPending ? <Spinner className="h-4" /> : t('reset.submit')}
         </button>
       </form>
     </AuthCard>

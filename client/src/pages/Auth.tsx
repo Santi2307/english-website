@@ -111,8 +111,8 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
             </label>
           )}
           {serverError && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert">{serverError.message}</p>}
-          <button type="submit" disabled={mutation.isPending} className="btn-primary w-full py-3.5">
-            {mutation.isPending ? <Spinner className="h-5 w-5 border-white/40 border-t-white" /> : t(isLogin ? 'auth.submitLogin' : 'auth.submitRegister')}
+          <button type="submit" disabled={mutation.isPending} aria-busy={mutation.isPending} className="btn-primary w-full py-3.5">
+            {mutation.isPending ? <Spinner className="h-4" /> : t(isLogin ? 'auth.submitLogin' : 'auth.submitRegister')}
           </button>
         </form>
 

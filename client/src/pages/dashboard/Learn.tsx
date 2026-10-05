@@ -166,7 +166,7 @@ export default function Learn() {
           <div className="bg-black">
             <div className="mx-auto aspect-video max-w-5xl">
               {loadingVideo ? (
-                <div className="grid h-full place-items-center"><Spinner className="h-10 w-10 border-white/20 border-t-white" /></div>
+                <div className="grid h-full place-items-center"><Spinner className="h-8 text-white/70" /></div>
               ) : playback ? (
                 <iframe
                   key={current.id}
@@ -199,8 +199,8 @@ export default function Learn() {
                   <CheckCircle2 size={18} aria-hidden /> {t('learn.completed')}
                 </span>
               ) : (
-                <button onClick={() => complete.mutate(undefined)} disabled={complete.isPending} className="btn-primary shrink-0">
-                  {complete.isPending ? <Spinner className="h-5 w-5 border-white/40 border-t-white" /> : <CheckCircle2 size={18} aria-hidden />}
+                <button onClick={() => complete.mutate(undefined)} disabled={complete.isPending} aria-busy={complete.isPending} className="btn-primary shrink-0">
+                  {complete.isPending ? <Spinner className="h-4" /> : <CheckCircle2 size={18} aria-hidden />}
                   {t('learn.markComplete')}
                 </button>
               )}

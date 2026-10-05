@@ -333,7 +333,7 @@ export default function CourseEditor() {
           {serverError && <p className="text-sm text-rose-600" role="alert">{serverError.message}</p>}
           {saved && <p className="text-sm font-medium text-emerald-700">Guardado ✓</p>}
           <button type="submit" disabled={save.isPending} className="btn-primary">
-            {save.isPending && <Spinner className="h-4 w-4 border-white/40 border-t-white" />} {isNew ? 'Crear curso' : 'Guardar cambios'}
+            {save.isPending && <Spinner className="h-3.5" />} {isNew ? 'Crear curso' : 'Guardar cambios'}
           </button>
         </div>
       </form>

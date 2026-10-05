@@ -41,7 +41,7 @@ export default function VerifyEmail() {
       <Seo title={t('verify.checking')} noindex />
       {state === 'loading' && (
         <div className="py-6 text-center" role="status">
-          <Spinner className="h-10 w-10" />
+          <Spinner className="h-8 text-slate-900" />
           <p className="mt-4 font-semibold">{t('verify.checking')}</p>
         </div>
       )}
