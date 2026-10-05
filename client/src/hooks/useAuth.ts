@@ -9,12 +9,12 @@ const currentLocale = () => (i18n.language?.startsWith('en') ? 'en' : 'es');
 const ME = ['me'] as const;
 
 export function useAuth() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ME,
     queryFn: () => api<{ user: User | null }>('/auth/me').then((r) => r.user),
     staleTime: 5 * 60_000,
   });
-  return { user: data ?? null, isLoading };
+  return { user: data ?? null, isLoading, error, refetch };
 }
 
 export function useAuthActions() {

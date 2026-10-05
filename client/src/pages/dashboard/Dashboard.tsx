@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLocale } from '@/hooks/useLocale';
 import { Seo } from '@/components/ui/Seo';
 import { PageLoader } from '@/components/ui/Spinner';
+import { ErrorState, errorKind } from '@/components/ui/ErrorState';
 import { LiveDot } from '@/components/ui/product';
 import { SCENARIOS } from '@/data/landing';
 import { savedLevel } from '@/data/levelTest';
@@ -75,8 +76,9 @@ export default function Dashboard() {
   const { t } = useTranslation();
   const locale = useLocale();
   const { user } = useAuth();
-  const { data, isLoading } = useQuery({ queryKey: ['my-courses'], queryFn: () => api<MyCourses>('/me/courses') });
+  const { data, isLoading, error, refetch } = useQuery({ queryKey: ['my-courses'], queryFn: () => api<MyCourses>('/me/courses') });
 
+  if (error) return <ErrorState kind={errorKind(error)} onRetry={() => refetch()} />;
   if (isLoading || !data) return <PageLoader />;
 
   const days = last7Days(locale === 'es' ? 'es-CO' : 'en-US');

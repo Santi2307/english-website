@@ -236,31 +236,16 @@
 }
 
 /* ─── Indicadores de carga (components/ui/Spinner.tsx) ─── */
-@keyframes loader-wave {
-  0%, 100% { transform: scaleY(0.35); }
-  50% { transform: scaleY(1); }
-}
-@keyframes loader-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.25; }
-}
-@keyframes loader-line {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(200%); }
+@keyframes loader-spin {
+  to { transform: rotate(360deg); }
 }
 @keyframes loader-reveal {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-@utility loader-wave {
-  animation: loader-wave 0.9s ease-in-out infinite;
+@utility loader-spin {
+  animation: loader-spin 0.9s linear infinite;
   transform-origin: center;
-}
-@utility loader-dot {
-  animation: loader-dot 1.4s ease-in-out infinite;
-}
-@utility loader-line {
-  animation: loader-line 1.1s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 @utility loader-reveal {
   animation: loader-reveal 0.3s ease-out 0.25s both;

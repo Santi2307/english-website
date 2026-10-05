@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { ArrowLeft, Check, Plus, Trash2, Video } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
 import { PageLoader, Spinner } from '@/components/ui/Spinner';
+import { ErrorState, errorKind } from '@/components/ui/ErrorState';
 import type { AdminCourse, AdminLesson, AdminModule } from './types';
 
 const url = z.string().trim().refine((v) => v === '' || /^https?:\/\//.test(v), 'URL http(s)');
@@ -228,7 +229,7 @@ export default function CourseEditor() {
   const [newModule, setNewModule] = useState('');
   const [saved, setSaved] = useState(false);
 
-  const { data: course, isLoading } = useQuery({
+  const { data: course, isLoading, error, refetch } = useQuery({
     queryKey: ['admin', 'course', id],
     queryFn: () => api<AdminCourse>(`/admin/courses/${id}`),
     enabled: !isNew,
@@ -269,6 +270,7 @@ export default function CourseEditor() {
     },
   });
 
+  if (!isNew && error) return <ErrorState kind={errorKind(error)} onRetry={() => refetch()} />;
   if (!isNew && (isLoading || !course)) return <PageLoader />;
 
   const e = (k: keyof FormValues) => errors[k]?.message as string | undefined;

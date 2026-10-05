@@ -8,6 +8,7 @@ import { useCourse } from '@/hooks/useCourses';
 import { useAuth } from '@/hooks/useAuth';
 import { Seo } from '@/components/ui/Seo';
 import { PageLoader, Spinner } from '@/components/ui/Spinner';
+import { ErrorState, errorKind } from '@/components/ui/ErrorState';
 import { CourseCover } from '@/components/ui/CourseCover';
 import { api, ApiError } from '@/lib/api';
 import { loadWompiWidget, openWompiCheckout } from '@/lib/wompi';
@@ -23,7 +24,7 @@ export default function Checkout() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { data: course, isLoading } = useCourse(slug);
+  const { data: course, isLoading, error, refetch } = useCourse(slug);
   const [code, setCode] = useState('');
   const [coupon, setCoupon] = useState<CouponPreview | null>(null);
 
@@ -71,6 +72,7 @@ export default function Checkout() {
   };
 
   if (isLoading) return <PageLoader />;
+  if (error && errorKind(error) !== 'notFound') return <ErrorState kind={errorKind(error)} onRetry={() => refetch()} />;
   if (!course) return <NotFound />;
 
   const subtotal = course.priceCOP;

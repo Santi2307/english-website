@@ -319,6 +319,18 @@ const en: Messages = {
     error: 'This link is invalid.',
     manage: 'Manage preferences',
   },
+  status: {
+    errorTitle: 'Something went wrong on our end',
+    errorText: "It's not you. We're on it, and things should be back to normal in a moment.",
+    offlineTitle: "We couldn't connect",
+    offlineText: 'Check your internet connection. If it looks fine, our server may be waking up: try again in a few seconds.',
+    notFoundTitle: "This page doesn't exist",
+    notFoundText: 'The link may be mistyped, or the page may have moved.',
+    retry: 'Try again',
+    home: 'Go home',
+    paths: 'See learning paths',
+    code: 'Code',
+  },
   seo: {
     homeTitle: 'English Academy · Stop studying English, start speaking it',
     homeDescription: 'Practice real conversations in English, get instant feedback and build confidence for interviews, work and travel.',

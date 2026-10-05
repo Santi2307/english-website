@@ -1,8 +1,9 @@
 import { lazy, Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
 import { RequireAuth } from './components/auth/RequireAuth';
 import { PageLoader } from './components/ui/Spinner';
+import { ErrorBoundary } from './components/ui/ErrorState';
 import Home from './pages/Home';
 
 // Code splitting por ruta
@@ -27,7 +28,9 @@ const Settings = lazy(() => import('./pages/account/Settings'));
 const Unsubscribe = lazy(() => import('./pages/account/Unsubscribe'));
 
 export default function App() {
+  const { pathname } = useLocation();
   return (
+    <ErrorBoundary resetKey={pathname}>
     <Suspense fallback={<PageLoader />}>
       <Routes>
         <Route element={<Layout />}>
@@ -60,5 +63,6 @@ export default function App() {
         </Route>
       </Routes>
     </Suspense>
+    </ErrorBoundary>
   );
 }

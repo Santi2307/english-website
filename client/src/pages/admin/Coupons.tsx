@@ -6,6 +6,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
 import { formatCOP } from '@/lib/format';
 import { PageLoader } from '@/components/ui/Spinner';
+import { ErrorState, errorKind } from '@/components/ui/ErrorState';
 import type { AdminCoupon, AdminCourse } from './types';
 
 const schema = z
@@ -22,7 +23,7 @@ type FormValues = z.infer<typeof schema>;
 
 export default function Coupons() {
   const qc = useQueryClient();
-  const { data: coupons, isLoading } = useQuery({ queryKey: ['admin', 'coupons'], queryFn: () => api<AdminCoupon[]>('/admin/coupons') });
+  const { data: coupons, isLoading, error, refetch } = useQuery({ queryKey: ['admin', 'coupons'], queryFn: () => api<AdminCoupon[]>('/admin/coupons') });
   const { data: courses } = useQuery({ queryKey: ['admin', 'courses'], queryFn: () => api<AdminCourse[]>('/admin/courses') });
   const invalidate = () => qc.invalidateQueries({ queryKey: ['admin', 'coupons'] });
 
@@ -62,6 +63,7 @@ export default function Coupons() {
   });
   const remove = useMutation({ mutationFn: (id: string) => api(`/admin/coupons/${id}`, { method: 'DELETE' }), onSuccess: invalidate });
 
+  if (error) return <ErrorState kind={errorKind(error)} onRetry={() => refetch()} />;
   if (isLoading || !coupons) return <PageLoader />;
   const err = (k: keyof FormValues) => errors[k] && <span className="mt-1 block text-xs text-rose-600">{errors[k]!.message}</span>;
 

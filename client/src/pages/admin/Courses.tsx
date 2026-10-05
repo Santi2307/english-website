@@ -4,11 +4,12 @@ import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { formatCOP } from '@/lib/format';
 import { PageLoader } from '@/components/ui/Spinner';
+import { ErrorState, errorKind } from '@/components/ui/ErrorState';
 import type { AdminCourse } from './types';
 
 export default function Courses() {
   const qc = useQueryClient();
-  const { data, isLoading } = useQuery({ queryKey: ['admin', 'courses'], queryFn: () => api<AdminCourse[]>('/admin/courses') });
+  const { data, isLoading, error, refetch } = useQuery({ queryKey: ['admin', 'courses'], queryFn: () => api<AdminCourse[]>('/admin/courses') });
   const remove = useMutation({
     mutationFn: (id: string) => api(`/admin/courses/${id}`, { method: 'DELETE' }),
     onSuccess: () => {
@@ -17,6 +18,7 @@ export default function Courses() {
     },
   });
 
+  if (error) return <ErrorState kind={errorKind(error)} onRetry={() => refetch()} />;
   if (isLoading || !data) return <PageLoader />;
 
   return (

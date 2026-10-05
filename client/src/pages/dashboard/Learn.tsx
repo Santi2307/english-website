@@ -4,10 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, Award, CheckCircle2, ChevronLeft, ChevronRight, Circle, Download, Flame, ListVideo, PlayCircle } from 'lucide-react';
-import { api } from '@/lib/api';
+import { api, ApiError } from '@/lib/api';
 import { cn } from '@/lib/format';
 import { Seo } from '@/components/ui/Seo';
 import { PageLoader, Spinner } from '@/components/ui/Spinner';
+import { ErrorState, errorKind } from '@/components/ui/ErrorState';
 import type { LearningCourse, Playback } from '@/lib/types';
 import type { LessonContentResponse } from '@/lib/lessonContent';
 import { LessonContentView } from '@/components/lesson/LessonContentView';
@@ -72,7 +73,7 @@ export default function Learn() {
   const qc = useQueryClient();
   const [celebrate, setCelebrate] = useState<CompleteResponse | null>(null);
 
-  const { data: course, isLoading, error } = useQuery({
+  const { data: course, isLoading, error, refetch } = useQuery({
     queryKey: ['learn', slug],
     queryFn: () => api<LearningCourse>(`/me/courses/${slug}`),
   });
@@ -122,6 +123,9 @@ export default function Learn() {
   }, [current?.id]);
 
   if (isLoading) return <PageLoader />;
+  if (error && !(error instanceof ApiError && error.status === 403)) {
+    return <ErrorState kind={errorKind(error)} onRetry={() => refetch()} className="min-h-dvh" />;
+  }
   if (error || !course || !current) {
     return (
       <div className="grid min-h-dvh place-items-center p-6 text-center">

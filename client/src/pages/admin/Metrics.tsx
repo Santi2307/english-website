@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { formatCOP } from '@/lib/format';
 import { PageLoader } from '@/components/ui/Spinner';
+import { ErrorState, errorKind } from '@/components/ui/ErrorState';
 import { StatusBadge } from './StatusBadge';
 import type { Metrics as MetricsData } from './types';
 import type { OrderStatus } from '@/lib/types';
@@ -121,7 +122,8 @@ function RevenueChart({ data }: { data: MetricsData['daily'] }) {
 }
 
 export default function Metrics() {
-  const { data, isLoading } = useQuery({ queryKey: ['admin', 'metrics'], queryFn: () => api<MetricsData>('/admin/metrics') });
+  const { data, isLoading, error, refetch } = useQuery({ queryKey: ['admin', 'metrics'], queryFn: () => api<MetricsData>('/admin/metrics') });
+  if (error) return <ErrorState kind={errorKind(error)} onRetry={() => refetch()} />;
   if (isLoading || !data) return <PageLoader />;
 
   const statuses: OrderStatus[] = ['APPROVED', 'PENDING', 'DECLINED', 'VOIDED', 'ERROR'];

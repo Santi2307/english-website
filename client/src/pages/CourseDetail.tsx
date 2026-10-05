@@ -8,6 +8,7 @@ import { Seo } from '@/components/ui/Seo';
 import { Stars } from '@/components/ui/Stars';
 import { CourseCover } from '@/components/ui/CourseCover';
 import { PageLoader } from '@/components/ui/Spinner';
+import { ErrorState, errorKind } from '@/components/ui/ErrorState';
 import { BadgePill, PriceTag } from '@/components/course/CourseCard';
 import { api } from '@/lib/api';
 import { track } from '@/lib/analytics';
@@ -126,7 +127,7 @@ function PreviewModal({ lessonId, title, onClose }: { lessonId: string; title: s
 export default function CourseDetail() {
   const { slug = '' } = useParams();
   const { t } = useTranslation();
-  const { data: course, isLoading, error } = useCourse(slug);
+  const { data: course, isLoading, error, refetch } = useCourse(slug);
   const [preview, setPreview] = useState<{ id: string; title: string } | null>(null);
 
   useEffect(() => {
@@ -134,6 +135,7 @@ export default function CourseDetail() {
   }, [course]);
 
   if (isLoading) return <PageLoader />;
+  if (error && errorKind(error) !== 'notFound') return <ErrorState kind={errorKind(error)} onRetry={() => refetch()} />;
   if (error || !course) return <NotFound />;
 
   const includes = t('course.includes', { returnObjects: true }) as string[];

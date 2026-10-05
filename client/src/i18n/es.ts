@@ -317,6 +317,18 @@ const es = {
     error: 'Este enlace no es válido.',
     manage: 'Administrar preferencias',
   },
+  status: {
+    errorTitle: 'Algo salió mal de nuestro lado',
+    errorText: 'No es tu culpa. Estamos en ello y todo debería volver a la normalidad en un momento.',
+    offlineTitle: 'No pudimos conectar',
+    offlineText: 'Revisa tu conexión a internet. Si todo está bien, nuestro servidor puede estar despertando: intenta de nuevo en unos segundos.',
+    notFoundTitle: 'Esta página no existe',
+    notFoundText: 'Puede que el enlace esté mal escrito o que la página se haya movido.',
+    retry: 'Intentar de nuevo',
+    home: 'Ir al inicio',
+    paths: 'Ver rutas de aprendizaje',
+    code: 'Código',
+  },
   seo: {
     homeTitle: 'English Academy · Deja de estudiar inglés, empieza a hablarlo',
     homeDescription: 'Practica conversaciones reales en inglés, recibe feedback al instante y gana confianza para entrevistas, trabajo y viajes.',

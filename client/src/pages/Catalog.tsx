@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { Seo } from '@/components/ui/Seo';
+import { ErrorState, errorKind } from '@/components/ui/ErrorState';
 import { CourseCard } from '@/components/course/CourseCard';
 import { useCourses, type CourseFilters } from '@/hooks/useCourses';
 import { LEVELS, savedLevel } from '@/data/levelTest';
@@ -53,7 +54,7 @@ export default function Catalog() {
     setParams(next, { replace: true });
   };
 
-  const { data, isLoading, isError, refetch } = useCourses(filters);
+  const { data, isLoading, isError, error, refetch } = useCourses(filters);
   const activeCount = [filters.level, filters.goal, filters.maxPrice].filter(Boolean).length;
 
   const filterPanel = (
@@ -122,9 +123,8 @@ export default function Catalog() {
         <section aria-live="polite" aria-busy={isLoading}>
           <p className="mb-4 text-sm text-slate-500">{data && t('catalog.results', { count: data.length })}</p>
           {isError && (
-            <div className="card p-8 text-center">
-              <p>{t('common.error')}</p>
-              <button onClick={() => refetch()} className="btn-primary mt-4">{t('common.retry')}</button>
+            <div className="card">
+              <ErrorState kind={errorKind(error)} onRetry={() => refetch()} size="inline" />
             </div>
           )}
           {data?.length === 0 && (
