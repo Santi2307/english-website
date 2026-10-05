@@ -25,7 +25,7 @@ export function requestContext(req: Request): RequestContext {
  * Idioma con el que el usuario ve la web. La SPA lo envía en X-Client-Locale
  * (en la primera visita sale del idioma del sistema); si falta, Accept-Language.
  */
-function clientLocale(req: Request): Locale | undefined {
+export function clientLocale(req: Request): Locale | undefined {
   const explicit = req.get('x-client-locale')?.toLowerCase();
   if (explicit === 'es' || explicit === 'en') return explicit;
   const accepted = req.acceptsLanguages('es', 'en');

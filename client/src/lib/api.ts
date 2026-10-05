@@ -8,7 +8,7 @@ export class ApiError extends Error {
 
 type Options = Omit<RequestInit, 'body'> & { body?: unknown };
 
-const CONNECTION_ERROR = 'No pudimos conectar con el servidor. Revisa tu conexión e intenta de nuevo.';
+const connectionError = () => i18n.t('common.connectionError');
 
 /**
  * Idioma y zona horaria del usuario en cada petición: el backend los usa para
@@ -38,7 +38,7 @@ export async function api<T>(path: string, { body, headers, ...opts }: Options =
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new ApiError(0, CONNECTION_ERROR);
+    throw new ApiError(0, connectionError());
   }
   if (res.status === 204) return undefined as T;
 
@@ -47,7 +47,7 @@ export async function api<T>(path: string, { body, headers, ...opts }: Options =
   const data = isJson ? await res.json().catch(() => ({})) : {};
   if (!res.ok) {
     if (!isJson) console.error(`[api] ${res.status} sin JSON en /api${path}: ¿el backend está corriendo y /api apunta a él?`);
-    throw new ApiError(res.status, data.error ?? (isJson ? 'Algo salió mal. Intenta de nuevo.' : CONNECTION_ERROR), data.details);
+    throw new ApiError(res.status, data.error ?? (isJson ? i18n.t('common.error') : connectionError()), data.details);
   }
   return data as T;
 }

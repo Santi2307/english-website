@@ -32,6 +32,7 @@ const en: Messages = {
     loading: 'Loading…',
     error: 'Something went wrong. Please try again.',
     retry: 'Retry',
+    connectionError: "We couldn't reach the server. Check your connection and try again.",
     free: 'Free',
     save: 'Save {{pct}}%',
     back: 'Back',

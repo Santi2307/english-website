@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
@@ -36,6 +37,15 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
   const { login, register, google } = useAuthActions();
   const isLogin = mode === 'login';
   const mutation = isLogin ? login : register;
+
+  // El mensaje del servidor viene en el idioma de la petición: al cambiar de idioma se descarta
+  const { i18n } = useTranslation();
+  useEffect(() => {
+    login.reset();
+    register.reset();
+    google.reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language]);
 
   const { register: field, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(isLogin ? loginSchema : registerSchema),

@@ -30,6 +30,7 @@ const es = {
     loading: 'Cargando…',
     error: 'Algo salió mal. Intenta de nuevo.',
     retry: 'Reintentar',
+    connectionError: 'No pudimos conectar con el servidor. Revisa tu conexión e intenta de nuevo.',
     free: 'Gratis',
     save: 'Ahorras {{pct}}%',
     back: 'Volver',

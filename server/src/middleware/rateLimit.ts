@@ -1,4 +1,9 @@
 import rateLimit from 'express-rate-limit';
+import type { Request } from 'express';
+import { localize } from '../utils/errorMessages.js';
+
+/** Mensaje del límite en el idioma del usuario */
+const limited = (msg: string) => (req: Request) => ({ error: localize(req, msg) });
 
 export const apiLimiter = rateLimit({
   windowMs: 60_000,
@@ -12,7 +17,7 @@ export const authLimiter = rateLimit({
   limit: 20,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
-  message: { error: 'Demasiados intentos. Intenta de nuevo en unos minutos.' },
+  message: limited('Demasiados intentos. Intenta de nuevo en unos minutos.'),
 });
 
 export const orderLimiter = rateLimit({
@@ -20,7 +25,7 @@ export const orderLimiter = rateLimit({
   limit: 15,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
-  message: { error: 'Demasiadas solicitudes de pago. Espera un momento.' },
+  message: limited('Demasiadas solicitudes de pago. Espera un momento.'),
 });
 
 /** Endpoints que disparan emails (reset, reenvío de verificación): evita usarlos para spamear buzones. */
@@ -29,5 +34,5 @@ export const emailActionLimiter = rateLimit({
   limit: 5,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
-  message: { error: 'Demasiadas solicitudes. Intenta de nuevo en una hora.' },
+  message: limited('Demasiadas solicitudes. Intenta de nuevo en una hora.'),
 });
