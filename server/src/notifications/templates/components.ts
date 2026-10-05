@@ -9,17 +9,18 @@ import type { Locale, NotificationCategory } from '../types.js';
 // ─── Tema ────────────────────────────────────────────────────────────────────
 export const BRAND = { name: 'English Academy' };
 
+// Misma paleta que la web: un color de marca (bermellón) sobre neutros cálidos
 const C = {
-  bg: '#f4f5f7',
+  bg: '#f3f3f0',
   card: '#ffffff',
-  border: '#e2e8f0',
-  panel: '#f8fafc',
-  text: '#0f172a',
-  muted: '#475569',
-  subtle: '#64748b',
-  brand: '#4f46e5',
+  border: '#e6e5e1',
+  panel: '#fafaf8',
+  text: '#191815',
+  muted: '#56554f',
+  subtle: '#73726c',
+  brand: '#d2361a',
   brandText: '#ffffff',
-  link: '#4338ca',
+  link: '#ae2a14',
 };
 const FONT = `-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif`;
 
@@ -71,7 +72,7 @@ const SHARED = {
     preferences: 'Preferencias de email',
     unsubscribe: 'Cancelar suscripción',
     help: '¿Necesitas ayuda? Escríbenos a',
-    tagline: 'Cursos de inglés online para Colombia',
+    tagline: 'Practica inglés hablando',
   },
   en: {
     fallback: "Button not working? Copy and paste this link into your browser:",
@@ -80,7 +81,7 @@ const SHARED = {
     preferences: 'Email preferences',
     unsubscribe: 'Unsubscribe',
     help: 'Need help? Write to',
-    tagline: 'Online English courses for Colombia',
+    tagline: 'Practice English by speaking it',
   },
 };
 
@@ -88,7 +89,7 @@ export const isServiceCategory = (c: NotificationCategory) => c === 'SECURITY' |
 
 // ─── Componentes ────────────────────────────────────────────────────────────
 export function heading(text: string) {
-  return `<h1 class="ea-text ea-h1" style="margin:0 0 16px;font-family:${FONT};font-size:24px;line-height:32px;font-weight:700;color:${C.text};">${esc(text)}</h1>`;
+  return `<h1 class="ea-text ea-h1" style="margin:0 0 16px;font-family:${FONT};font-size:26px;line-height:32px;font-weight:600;letter-spacing:-0.02em;color:${C.text};">${esc(text)}</h1>`;
 }
 
 /** Párrafo con texto plano (se escapa). */
@@ -161,8 +162,8 @@ const TONES: Record<Tone, { bg: string; fg: string; icon: string }> = {
   success: { bg: '#dcfce7', fg: '#14532d', icon: '✓' },
   warning: { bg: '#fef3c7', fg: '#78350f', icon: '!' },
   danger: { bg: '#fee2e2', fg: '#7f1d1d', icon: '✕' },
-  info: { bg: '#e0e7ff', fg: '#312e81', icon: 'i' },
-  neutral: { bg: '#e2e8f0', fg: '#1e293b', icon: '•' },
+  info: { bg: '#f3f3f0', fg: '#292824', icon: 'i' },
+  neutral: { bg: '#e6e5e1', fg: '#292824', icon: '•' },
 };
 
 /** Estado con ícono + texto: nunca depende solo del color. */
@@ -177,7 +178,7 @@ export function divider() {
 
 /** Aviso de seguridad discreto al final del contenido. */
 export function securityNote(text: string) {
-  return `<p class="ea-muted" style="margin:0;font-family:${FONT};font-size:13px;line-height:20px;color:${C.subtle};">🔒&nbsp;${esc(text)}</p>`;
+  return `<p class="ea-muted" style="margin:0;font-family:${FONT};font-size:13px;line-height:20px;color:${C.subtle};">${esc(text)}</p>`;
 }
 
 /** Lista de pasos o beneficios. */
@@ -196,8 +197,8 @@ function header() {
   return `
 <tr><td style="padding:0 4px 24px;">
   <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
-    <td style="vertical-align:middle;padding-right:10px;"><img src="${logo}" width="36" height="36" alt="" style="display:block;border:0;border-radius:8px;"></td>
-    <td class="ea-text" style="vertical-align:middle;font-family:${FONT};font-size:18px;line-height:24px;font-weight:800;color:${C.text};">English<span style="color:${C.brand};">Academy</span></td>
+    <td style="vertical-align:middle;padding-right:10px;"><img src="${logo}" width="28" height="28" alt="" style="display:block;border:0;border-radius:7px;"></td>
+    <td class="ea-text" style="vertical-align:middle;font-family:${FONT};font-size:16px;line-height:24px;font-weight:600;color:${C.text};">${esc(BRAND.name)}</td>
   </tr></table>
 </td></tr>`;
 }
@@ -253,18 +254,18 @@ export function emailLayout({ title, preheader, content, ...foot }: LayoutOption
   }
   /* Modo oscuro: Apple Mail, iOS, Outlook (macOS/iOS). Gmail aplica su propia inversión. */
   @media (prefers-color-scheme: dark){
-    .ea-bg{background:#0b1020!important;}
-    .ea-card{background:#111827!important;border-color:#1f2937!important;}
-    .ea-panel{background:#0f172a!important;border-color:#1f2937!important;}
-    .ea-text{color:#f1f5f9!important;}
-    .ea-muted{color:#94a3b8!important;}
-    .ea-link{color:#a5b4fc!important;}
-    .ea-divider{border-color:#1f2937!important;}
+    .ea-bg{background:#0e0e0c!important;}
+    .ea-card{background:#191815!important;border-color:#292824!important;}
+    .ea-panel{background:#0e0e0c!important;border-color:#292824!important;}
+    .ea-text{color:#f3f3f0!important;}
+    .ea-muted{color:#a2a19b!important;}
+    .ea-link{color:#ffa28c!important;}
+    .ea-divider{border-color:#292824!important;}
   }
   /* Outlook.com / Outlook app en modo oscuro */
-  [data-ogsc] .ea-text{color:#f1f5f9!important;}
-  [data-ogsc] .ea-muted{color:#94a3b8!important;}
-  [data-ogsc] .ea-link{color:#a5b4fc!important;}
+  [data-ogsc] .ea-text{color:#f3f3f0!important;}
+  [data-ogsc] .ea-muted{color:#a2a19b!important;}
+  [data-ogsc] .ea-link{color:#ffa28c!important;}
 </style>
 </head>
 <body class="ea-bg" style="margin:0;padding:0;width:100%;background:${C.bg};">
@@ -275,7 +276,7 @@ export function emailLayout({ title, preheader, content, ...foot }: LayoutOption
     <!--[if mso]><table role="presentation" width="600" border="0" cellpadding="0" cellspacing="0"><tr><td><![endif]-->
     <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width:600px;">
       ${header()}
-      <tr><td class="ea-card" bgcolor="${C.card}" style="background:${C.card};border:1px solid ${C.border};border-radius:16px;padding:40px;">
+      <tr><td class="ea-card" bgcolor="${C.card}" style="background:${C.card};border:1px solid ${C.border};border-radius:14px;padding:40px;">
         ${content}
       </td></tr>
       ${footer(foot)}

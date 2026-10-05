@@ -51,7 +51,7 @@ function resolve(data: Data, locale: Locale) {
   return {
     subject: es ? `¡Terminaste ${data.courseTitle}! Tu certificado está listo` : `You finished ${data.courseTitle}! Your certificate is ready`,
     preheader: es ? 'Completaste todas las lecciones. Descarga tu certificado.' : 'You completed every lesson. Download your certificate.',
-    title: es ? 'Completaste el curso 🎉' : 'You completed the course 🎉',
+    title: es ? 'Completaste el curso' : 'You completed the course',
     intro: es ? `Terminaste todas las lecciones de ${data.courseTitle}. ¡Excelente trabajo!` : `You finished every lesson in ${data.courseTitle}. Great work!`,
     status: { label: es ? 'Completado' : 'Completed', tone: 'success' as const },
     next: es ? 'Descarga tu certificado y compártelo en LinkedIn.' : 'Download your certificate and share it on LinkedIn.',
