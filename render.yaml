@@ -27,8 +27,10 @@ services:
         value: 7d
       - key: COOKIE_SAMESITE
         value: lax
+      # preview: los emails no se envían (como en localhost). Para enviarlos de verdad,
+      # pon BREVO_API_KEY y cambia esto a "live" (paso 2 de DEPLOY.md)
       - key: EMAIL_MODE
-        value: live
+        value: preview
       - key: EMAIL_PROVIDER
         value: brevo
       - key: NOTIFICATIONS_SWEEP_MINUTES
