@@ -38,15 +38,35 @@ export function safeUrl(url: string) {
 /** URL absoluta dentro de la app (CLIENT_URL). */
 export const appUrl = (path: string) => safeUrl(new URL(path, env.CLIENT_URL).toString());
 
-const TZ = 'America/Bogota';
-export function formatDateTime(date: Date | string, locale: Locale) {
+const DEFAULT_TZ = 'America/Bogota';
+
+const isValidTimeZone = (tz?: string | null): tz is string => {
+  if (!tz) return false;
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Fecha en la hora local del destinatario, con el nombre de su zona y el
+ * desfase: "5 de octubre de 2026, 6:01 p. m. · hora de Afganistán (GMT+4:30)".
+ * Sin zona conocida se usa la hora de Colombia (mercado principal).
+ */
+export function formatDateTime(date: Date | string, locale: Locale, timeZone?: string | null) {
   const d = typeof date === 'string' ? new Date(date) : date;
-  const s = new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'es-CO', {
-    dateStyle: 'long',
-    timeStyle: 'short',
-    timeZone: TZ,
-  }).format(d);
-  return `${s} (${locale === 'en' ? 'Colombia time' : 'hora de Colombia'})`;
+  const tz = isValidTimeZone(timeZone) ? timeZone : DEFAULT_TZ;
+  const lang = locale === 'en' ? 'en-US' : 'es-CO';
+  const when = new Intl.DateTimeFormat(lang, { dateStyle: 'long', timeStyle: 'short', timeZone: tz }).format(d);
+  const part = (style: 'long' | 'shortOffset') =>
+    new Intl.DateTimeFormat(lang, { timeZone: tz, timeZoneName: style }).formatToParts(d).find((p) => p.type === 'timeZoneName')?.value ?? '';
+  const name = part('long');
+  const offset = part('shortOffset');
+  // Algunas zonas solo tienen nombre tipo "GMT+4:30": en ese caso no se repite
+  const label = name && name !== offset ? `${name} (${offset})` : offset;
+  return label ? `${when} · ${label}` : when;
 }
 
 export const formatCOP = (n: number) =>

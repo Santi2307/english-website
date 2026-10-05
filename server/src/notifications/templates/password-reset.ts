@@ -54,7 +54,7 @@ export const passwordResetEmail = defineTemplate<Data>({
     const foot = { locale: ctx.locale, category: ctx.category, preferencesUrl: ctx.preferencesUrl, unsubscribeUrl: ctx.unsubscribeUrl };
     const device = [data.browser, data.os].filter(Boolean).join(' · ') || null;
     const rows = [
-      { label: t.when, value: formatDateTime(data.requestedAt, ctx.locale) },
+      { label: t.when, value: formatDateTime(data.requestedAt, ctx.locale, ctx.timeZone) },
       { label: t.device, value: device },
       { label: t.ip, value: data.ip },
     ];

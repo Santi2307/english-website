@@ -50,13 +50,17 @@ function Switch({ checked, disabled, onChange, labelledBy }: { checked: boolean;
 }
 
 function ProfileForm({ user }: { user: User }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const qc = useQueryClient();
   const [name, setName] = useState(user.name);
   const [locale, setLocale] = useState(user.locale);
   const save = useMutation({
     mutationFn: () => api<{ user: User }>('/auth/profile', { method: 'PATCH', body: { name, locale } }),
-    onSuccess: (r) => qc.setQueryData(['me'], r.user),
+    onSuccess: (r) => {
+      qc.setQueryData(['me'], r.user);
+      // La web y los emails usan el mismo idioma
+      if (!i18n.language.startsWith(r.user.locale)) i18n.changeLanguage(r.user.locale);
+    },
   });
   const dirty = name.trim() !== user.name || locale !== user.locale;
 

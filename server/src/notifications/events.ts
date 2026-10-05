@@ -6,9 +6,13 @@ export type RequestContext = {
   userAgent?: string;
   /** Ubicación aproximada si el proxy/CDN la entrega (p. ej. "Medellín, CO") */
   location?: string;
+  /** Idioma con el que el usuario usa la web en este momento */
+  locale?: Locale;
+  /** Zona horaria IANA del navegador (p. ej. "Asia/Kabul") */
+  timeZone?: string;
 };
 
-export type EventUser = { id: string; email: string; name: string; locale: Locale };
+export type EventUser = { id: string; email: string; name: string; locale: Locale; timeZone?: string | null };
 
 /**
  * Catálogo de eventos de la aplicación y su payload.

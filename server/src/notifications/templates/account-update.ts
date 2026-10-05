@@ -98,7 +98,7 @@ export const accountUpdateEmail = defineTemplate<Data>({
     const l = L[ctx.locale];
     const r = resolve(data, ctx.locale);
     const foot = { locale: ctx.locale, category: ctx.category, preferencesUrl: ctx.preferencesUrl, unsubscribeUrl: ctx.unsubscribeUrl };
-    const rows = [{ label: l.what, value: r.what }, { label: l.when, value: formatDateTime(data.occurredAt, ctx.locale) }, ...r.rows];
+    const rows = [{ label: l.what, value: r.what }, { label: l.when, value: formatDateTime(data.occurredAt, ctx.locale, ctx.timeZone) }, ...r.rows];
     const ctaUrl = r.cta && appUrl(r.cta.path);
     const html = emailLayout({
       ...foot,

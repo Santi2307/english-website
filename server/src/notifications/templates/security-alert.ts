@@ -118,7 +118,7 @@ export const securityAlertEmail = defineTemplate<Data>({
     const browserOs = [data.browser, data.os].filter(Boolean).join(ctx.locale === 'en' ? ' on ' : ' en ');
     const device = [data.deviceType ? t.deviceType[data.deviceType] : null, browserOs].filter(Boolean).join(' · ') || null;
     const rows = [
-      { label: t.when, value: formatDateTime(data.occurredAt, ctx.locale) },
+      { label: t.when, value: formatDateTime(data.occurredAt, ctx.locale, ctx.timeZone) },
       { label: t.device, value: device },
       { label: t.ip, value: data.ip },
       { label: t.location, value: data.location },

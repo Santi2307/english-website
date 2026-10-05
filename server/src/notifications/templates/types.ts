@@ -2,6 +2,8 @@ import type { Locale, NotificationCategory } from '../types.js';
 
 export type TemplateContext = {
   locale: Locale;
+  /** Zona horaria IANA del destinatario; sin ella se usa la hora de Colombia */
+  timeZone?: string | null;
   name?: string | null;
   category: NotificationCategory;
   preferencesUrl: string;

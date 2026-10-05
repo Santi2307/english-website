@@ -34,7 +34,19 @@ export const toPublicUser = (u: User): PublicUser => ({
   hasPassword: !!u.passwordHash,
 });
 
-const eventUser = (u: User): EventUser => ({ id: u.id, email: u.email, name: u.name, locale: toLocale(u.locale) });
+const eventUser = (u: User): EventUser => ({ id: u.id, email: u.email, name: u.name, locale: toLocale(u.locale), timeZone: u.timeZone });
+
+/**
+ * Guarda el idioma y la zona horaria con que el usuario usa la web, para que
+ * los emails sin petición asociada (pagos, certificados) también salgan bien.
+ */
+async function rememberClient(user: User, ctx: RequestContext) {
+  const data = {
+    ...(ctx.locale && ctx.locale !== user.locale && { locale: ctx.locale }),
+    ...(ctx.timeZone && ctx.timeZone !== user.timeZone && { timeZone: ctx.timeZone }),
+  };
+  return Object.keys(data).length ? prisma.user.update({ where: { id: user.id }, data }) : user;
+}
 
 export const signToken = (user: Pick<User, 'id' | 'role' | 'sessionVersion'>) =>
   jwt.sign({ role: user.role, sv: user.sessionVersion }, env.JWT_SECRET, {
@@ -118,7 +130,8 @@ export async function register(
       name: input.name,
       email: input.email,
       passwordHash,
-      locale: input.locale ?? 'es',
+      locale: ctx.locale ?? input.locale ?? 'es',
+      timeZone: ctx.timeZone ?? null,
       // El consentimiento de marketing se registra con fecha, nunca se asume
       ...(input.marketingConsent && { preferences: { create: { marketing: true, marketingConsentAt: new Date() } } }),
     },
@@ -134,8 +147,9 @@ export async function login(input: { email: string; password: string }, ctx: Req
   const user = await prisma.user.findUnique({ where: { email: input.email } });
   const ok = await bcrypt.compare(input.password, user?.passwordHash ?? DUMMY_HASH);
   if (!user || !user.passwordHash || !ok) throw unauthorized('Email o contraseña incorrectos');
-  await signInFrom(user, ctx, 'password');
-  return user;
+  const current = await rememberClient(user, ctx);
+  await signInFrom(current, ctx, 'password');
+  return current;
 }
 
 export async function loginWithGoogle(credential: string, ctx: RequestContext, locale?: 'es' | 'en') {
@@ -156,8 +170,9 @@ export async function loginWithGoogle(credential: string, ctx: RequestContext, l
       // Google ya verificó la dirección
       data: { googleId: p.sub, avatarUrl: existing.avatarUrl ?? p.picture, emailVerifiedAt: existing.emailVerifiedAt ?? new Date() },
     });
-    await signInFrom(user, ctx, 'google');
-    return user;
+    const current = await rememberClient(user, ctx);
+    await signInFrom(current, ctx, 'google');
+    return current;
   }
 
   const user = await prisma.user.create({
@@ -166,7 +181,8 @@ export async function loginWithGoogle(credential: string, ctx: RequestContext, l
       name: p.name ?? email.split('@')[0],
       googleId: p.sub,
       avatarUrl: p.picture,
-      locale: locale ?? 'es',
+      locale: ctx.locale ?? locale ?? 'es',
+      timeZone: ctx.timeZone ?? null,
       emailVerifiedAt: new Date(),
     },
   });

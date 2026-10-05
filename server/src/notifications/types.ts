@@ -12,6 +12,8 @@ export type Recipient = {
   email: string;
   name?: string | null;
   locale: Locale;
+  /** Zona horaria IANA para mostrar fechas en la hora local del usuario */
+  timeZone?: string | null;
 };
 
 /** Registro persistido (tabla Notification). */
@@ -40,6 +42,7 @@ export type NotificationRecord = {
 /** Lo que se guarda para poder re-renderizar en un reintento. Nunca incluye datos sensibles. */
 export type NotificationPayload = {
   locale: Locale;
+  timeZone?: string | null;
   name?: string | null;
   data: Record<string, unknown>;
   /** Nombres de los datos sensibles que la plantilla necesita (sus valores NO se guardan) */

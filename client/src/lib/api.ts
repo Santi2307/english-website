@@ -1,3 +1,5 @@
+import i18n from '@/i18n';
+
 export class ApiError extends Error {
   constructor(public status: number, message: string, public details?: Record<string, string[]>) {
     super(message);
@@ -8,6 +10,19 @@ type Options = Omit<RequestInit, 'body'> & { body?: unknown };
 
 const CONNECTION_ERROR = 'No pudimos conectar con el servidor. Revisa tu conexión e intenta de nuevo.';
 
+/**
+ * Idioma y zona horaria del usuario en cada petición: el backend los usa para
+ * escribirle los emails en su idioma y con las fechas en su hora local.
+ */
+function clientHeaders(): Record<string, string> {
+  const h: Record<string, string> = { 'X-Client-Locale': i18n.language?.startsWith('en') ? 'en' : 'es' };
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (tz) h['X-Client-Timezone'] = tz;
+  } catch { /* navegador sin Intl: el servidor usa su valor por defecto */ }
+  return h;
+}
+
 export async function api<T>(path: string, { body, headers, ...opts }: Options = {}): Promise<T> {
   let res: Response;
   try {
@@ -16,6 +31,7 @@ export async function api<T>(path: string, { body, headers, ...opts }: Options =
       ...opts,
       headers: {
         'X-Requested-With': 'fetch',
+        ...clientHeaders(),
         ...(body !== undefined && { 'Content-Type': 'application/json' }),
         ...headers,
       },

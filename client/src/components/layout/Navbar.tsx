@@ -3,7 +3,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth, useAuthActions } from '@/hooks/useAuth';
+import { api } from '@/lib/api';
+import type { User } from '@/lib/types';
 import { cn } from '@/lib/format';
 
 export function LogoMark({ size = 26 }: { size?: number }) {
@@ -27,13 +30,24 @@ export function Logo() {
 
 export function LanguageToggle({ className }: { className?: string }) {
   const { i18n } = useTranslation();
+  const { user } = useAuth();
+  const qc = useQueryClient();
   const es = i18n.language.startsWith('es');
+  // Con sesión iniciada, el idioma también queda en la cuenta (idioma de los emails)
+  const change = (l: 'es' | 'en') => {
+    i18n.changeLanguage(l);
+    if (user && user.locale !== l) {
+      api<{ user: User }>('/auth/profile', { method: 'PATCH', body: { locale: l } })
+        .then((r) => qc.setQueryData(['me'], r.user))
+        .catch(() => { /* no bloquea el cambio de idioma en pantalla */ });
+    }
+  };
   return (
     <div className={cn('inline-flex rounded-lg border border-slate-200 bg-white p-0.5 text-xs font-medium', className)} role="group" aria-label="Idioma / Language">
       {(['es', 'en'] as const).map((l) => (
         <button
           key={l}
-          onClick={() => i18n.changeLanguage(l)}
+          onClick={() => change(l)}
           aria-pressed={(l === 'es') === es}
           className={cn('rounded-md px-2.5 py-1 uppercase transition-colors', (l === 'es') === es ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-900')}
         >

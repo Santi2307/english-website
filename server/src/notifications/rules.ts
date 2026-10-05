@@ -20,7 +20,17 @@ export type NotificationRule<K extends AppEventType = AppEventType> = {
   build(payload: AppEventMap[K], event: AppEvent<K>): RuleOutput | null;
 };
 
-const toRecipient = (u: EventUser): Recipient => ({ userId: u.id, email: u.email, name: u.name, locale: u.locale });
+/**
+ * Idioma y zona horaria: los de la petición que originó el evento (lo que el
+ * usuario usa en ese momento) y, si no hay petición, los guardados en su cuenta.
+ */
+const toRecipient = (u: EventUser, ctx?: RequestContext): Recipient => ({
+  userId: u.id,
+  email: u.email,
+  name: u.name,
+  locale: ctx?.locale ?? u.locale,
+  timeZone: ctx?.timeZone ?? u.timeZone ?? null,
+});
 
 /** Device info no identificable (se persiste) + IP/ubicación (solo en memoria). */
 function splitContext(ctx: RequestContext) {
@@ -68,7 +78,7 @@ export const notificationRules: NotificationRule[] = [
     build: (p, e) => {
       const ctx = splitContext(p.context);
       return {
-        recipient: toRecipient(p.user),
+        recipient: toRecipient(p.user, p.context),
         data: {
           ...ctx.data,
           requestedAt: iso(e.occurredAt),
@@ -85,7 +95,7 @@ export const notificationRules: NotificationRule[] = [
     category: 'SECURITY',
     build: (p) => {
       const ctx = splitContext(p.context);
-      return { recipient: toRecipient(p.user), data: { kind: 'password_changed', occurredAt: iso(p.occurredAt), ...ctx.data }, sensitive: ctx.sensitive };
+      return { recipient: toRecipient(p.user, p.context), data: { kind: 'password_changed', occurredAt: iso(p.occurredAt), ...ctx.data }, sensitive: ctx.sensitive };
     },
   }),
   rule({
@@ -95,7 +105,7 @@ export const notificationRules: NotificationRule[] = [
     category: 'SECURITY',
     build: (p) => {
       const ctx = splitContext(p.context);
-      return { recipient: toRecipient(p.user), data: { kind: 'new_sign_in', occurredAt: iso(p.occurredAt), ...ctx.data }, sensitive: ctx.sensitive };
+      return { recipient: toRecipient(p.user, p.context), data: { kind: 'new_sign_in', occurredAt: iso(p.occurredAt), ...ctx.data }, sensitive: ctx.sensitive };
     },
   }),
   rule({

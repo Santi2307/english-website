@@ -23,6 +23,7 @@ export class EmailChannel implements Channel {
     const token = optional && n.userId ? createUnsubscribeToken(n.userId, n.category) : null;
     const ctx: TemplateContext = {
       locale: n.payload.locale,
+      timeZone: n.payload.timeZone ?? null,
       name: n.payload.name,
       category: n.category,
       preferencesUrl: appUrl('/mi-cuenta/ajustes#notificaciones'),

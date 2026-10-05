@@ -99,6 +99,7 @@ export class NotificationEngine {
       idempotencyKey,
       payload: {
         locale: out.recipient.locale,
+        timeZone: out.recipient.timeZone ?? null,
         name: out.recipient.name ?? null,
         data: out.data,
         ...(out.sensitive && { sensitiveKeys: Object.keys(out.sensitive) }),

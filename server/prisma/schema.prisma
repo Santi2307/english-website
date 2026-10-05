@@ -55,6 +55,8 @@ model User {
   role            Role                    @default(STUDENT)
   // Idioma para comunicaciones (es | en)
   locale          String                  @default("es")
+  /// Zona horaria IANA del navegador (p. ej. "Asia/Kabul"); null si nunca se conoció
+  timeZone        String?
   emailVerifiedAt DateTime?
   // Se incrementa al cambiar la contraseña: invalida todas las sesiones (JWT) emitidas antes
   sessionVersion  Int                     @default(0)

@@ -80,7 +80,7 @@ export const actionCompletedEmail = defineTemplate<Data>({
     const url = appUrl(r.cta.path);
     const rows = [
       { label: data.kind === 'course_completed' ? l.code : l.ref, value: r.reference },
-      { label: l.date, value: formatDateTime(data.completedAt, ctx.locale) },
+      { label: l.date, value: formatDateTime(data.completedAt, ctx.locale, ctx.timeZone) },
       ...r.rows,
     ];
     const html = emailLayout({
