@@ -1,351 +1,91 @@
-# English Academy — Plataforma de cursos de inglés online 🇨🇴
+# English Academy
 
-Plataforma para vender cursos de inglés a estudiantes en Colombia: landing interactiva orientada a conversión, catálogo, checkout con **Wompi** (tarjeta, PSE, Nequi, Botón Bancolombia), dashboard del estudiante con reproductor, racha y certificado PDF, y panel de administración.
+A speaking-first English learning platform for Spanish speakers: real-life conversation practice, interactive lessons, and paid learning paths with local payments (Colombia).
 
-## Arquitectura
+**Live:** [english-website-orpin.vercel.app](https://english-website-orpin.vercel.app)
 
-```
-                        ┌──────────────────────────── Vercel ───────────────────────────┐
-  Navegador ──────────► │ React 18 + Vite (SPA)                                          │
-  (móvil primero)       │   /api/*  y  /sitemap.xml  ──rewrite──►  backend              │
-                        └───────────────────────────────┬───────────────────────────────┘
-                                                        │  cookie httpOnly first-party
-                        ┌──────────────────────── Render ───────────────────────────────┐
-  Wompi ──webhook─────► │ Express + TS   routes → controllers → services → Prisma       │ ──► PostgreSQL (Neon)
-  (transaction.updated) │   helmet · CORS · rate limit · Zod · sanitización · CSRF       │
-                        │   Wompi (firma integridad / checksum eventos / API)           │ ──► Brevo / Resend (email)
-                        │   Bunny Stream / Mux (URLs firmadas con expiración)           │
-                        └────────────────────────────────────────────────────────────────┘
-```
+## Features
 
-**Decisiones clave**
+- **Interactive lessons:** vocabulary, grammar, dialogues with voice role-play, pronunciation practice, and 9 exercise types with spaced review.
+- **Adaptive level test:** CEFR placement (A1–C1) built from a generative question bank, so the same question is never shown twice to a user.
+- **Payments:** checkout through Wompi (cards, PSE, Nequi), with server-side pricing, signed requests, and idempotent webhooks.
+- **Student dashboard:** progress, streaks, and PDF certificates.
+- **Admin panel:** courses, lesson content, orders, coupons, and metrics.
+- **Transactional email:** event-driven, with retries, preferences, and bilingual templates.
+- **Bilingual UI** (ES/EN), mobile-first and accessible.
 
-- **Cookie first-party.** El frontend proxya `/api` al backend (Vite en dev, `vercel.json` en producción). La cookie JWT es `httpOnly; SameSite=Lax`, lo que evita los problemas de cookies de terceros en Safari/iOS. Además, toda petición que cambia estado exige el header `X-Requested-With: fetch` como defensa CSRF.
-- **El cliente nunca envía montos.** El precio, el cupón y la firma se calculan en el servidor. El secreto de integridad nunca sale del backend.
-- **Webhook idempotente.** El cambio de estado es un `updateMany` condicionado al estado actual, la inscripción usa un `upsert` sobre `@@unique([userId, courseId])` y los efectos secundarios (email, uso del cupón) solo corren si esa llamada hizo la transición. Probado con 3 webhooks idénticos concurrentes: se aplica 1 y los otros 2 quedan como `already_processed`.
-- **`/pago/resultado` no confía en la URL.** Consulta la orden al backend. Si sigue `PENDING` (el webhook aún no llega), el backend consulta la transacción **directamente a la API de Wompi** y verifica que la referencia coincida antes de usarla.
-- **Rendimiento.** Code splitting por ruta. Las secciones bajo el pliegue son lazy. El 3D (three.js, ~220 KB gzip) se descarga solo en dispositivos capaces y cuando el navegador está libre (`requestIdleCallback`). No se precarga en `index.html`. JS inicial ≈ 150 KB gzip.
+## Tech stack
 
-## Estructura de carpetas
+| Layer | Technologies |
+|---|---|
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS v4, TanStack Query, Framer Motion, i18next |
+| Backend | Node.js, Express 5, TypeScript, Prisma, Zod |
+| Database | PostgreSQL |
+| Integrations | Wompi (payments), Brevo / Resend (email), Bunny Stream / Mux (signed video), Web Speech API |
+| Infrastructure | Vercel (web), Render (API), Neon (Postgres) |
+
+## Architecture
 
 ```
-english-website/
-├── package.json              # npm workspaces (client, server)
-├── docker-compose.yml        # PostgreSQL local
-├── server/
-│   ├── .env.example
-│   ├── prisma/
-│   │   ├── schema.prisma     # User, Course, Module, Lesson, Order, Enrollment, LessonProgress,
-│   │   │                     # Coupon, Review, PaymentEvent, Notification, NotificationPreference,
-│   │   │                     # AuthToken, KnownDevice
-│   │   ├── migrations/
-│   │   └── seed.ts           # 4 cursos + admin + estudiantes demo + cupones
-│   └── src/
-│       ├── index.ts / app.ts
-│       ├── config/env.ts     # variables validadas con Zod (falla al arrancar si falta algo)
-│       ├── middleware/       # auth (JWT, roles, CSRF), validate, sanitize, rateLimit, error
-│       ├── schemas/          # Zod: auth, course, order, admin
-│       ├── routes/           # auth, courses, coupons, orders, me, lessons, admin, webhooks
-│       ├── controllers/
-│       ├── services/         # auth, course, pricing, payment, wompi, video,
-│       │                     # learning, certificate (PDF), admin, notificationPreferences
-│       ├── notifications/    # eventos, motor, reglas, canales, proveedores, plantillas, tests
-│       └── utils/
-└── client/
-    ├── .env.example
-    ├── vercel.json           # rewrites /api → backend + SPA fallback + cache de assets
-    ├── index.html            # meta SEO/OG estáticos + JSON-LD
-    ├── public/               # favicon, og-image.png, robots.txt
-    └── src/
-        ├── main.tsx / App.tsx    # providers + rutas lazy
-        ├── i18n/                 # es.ts (fuente de tipos), en.ts
-        ├── lib/                  # api, analytics (GA4 + Meta Pixel), wompi, format, types
-        ├── hooks/                # useAuth, useCourses, useDeviceCapability
-        ├── data/                 # preguntas del test de nivel, testimonios
-        ├── components/
-        │   ├── layout/           # Navbar, Footer, WhatsAppButton, Layout
-        │   ├── landing/          # Hero, Hero3D, StatsBar, LevelTest, DemoLesson,
-        │   │                     # CoursesShowcase, Testimonials, Faq, FinalCta
-        │   ├── course/           # CourseCard (flip), PriceTag, BadgePill
-        │   ├── auth/             # GoogleButton, RequireAuth
-        │   └── ui/               # Seo, CourseCover, Stars, Spinner, AnimatedCounter, Reveal
-        └── pages/
-            ├── Home, Catalog, CourseDetail, Auth, Checkout, PaymentResult, NotFound
-            ├── dashboard/        # Dashboard (racha, progreso, certificado), Learn (reproductor)
-            └── admin/            # Metrics, Courses, CourseEditor, Orders, Coupons
+Browser ──► Vercel (React SPA) ──/api/* rewrite──► Render (Express API) ──► PostgreSQL (Neon)
+                                                        │
+                                   Wompi webhooks ──────┤──► Brevo (email)
+                                                        └──► Bunny / Mux (signed video URLs)
 ```
 
-## Correr en local
+- **First-party session cookie.** The SPA proxies `/api` to the backend, so the JWT lives in an `httpOnly`, `SameSite=Lax` cookie with no third-party cookie issues. State-changing requests require an anti-CSRF header.
+- **Server-authoritative payments.** Prices, coupons, and integrity signatures are computed only on the server. Webhooks are verified, checked against the order amount, and applied idempotently.
+- **Event-driven notifications.** Services emit domain events. A notification engine handles templating, user preferences, deduplication, and retries with backoff.
+- **Validated configuration and content.** Environment variables and lesson content are validated with Zod, so the app fails fast at startup instead of at runtime.
 
-Requisitos: Node 20+ y Docker (o un PostgreSQL propio).
+## Getting started
+
+**Prerequisites:** Node.js 20+ and Docker (or any PostgreSQL instance).
 
 ```bash
-npm install                              # instala client y server (workspaces)
-cp server/.env.example server/.env       # ajusta si tu Postgres es otro
+npm install
+cp server/.env.example server/.env
 cp client/.env.example client/.env
 
-npm run db:up                            # levanta PostgreSQL en Docker
-npm run db:migrate                       # crea las tablas
-npm run db:seed                          # 4 cursos, admin, estudiantes y cupones
+npm run db:up        # start PostgreSQL in Docker
+npm run db:migrate   # apply migrations
+npm run db:seed      # sample courses, lessons, users, and coupons
 
-npm run dev                              # API :4000 + web :5173
+npm run dev          # API on :4000, web on :5173
 ```
 
-Abre http://localhost:5173.
+Seeded accounts and coupons are defined in [`server/prisma/seed.ts`](server/prisma/seed.ts). In local development, emails are written to `server/.email-previews/` instead of being sent.
 
-| Usuario | Email | Contraseña |
-|---|---|---|
-| Admin | `admin@englishacademy.co` | `Admin12345!` |
-| Estudiante demo (inscrito en todo) | `valentina@demo.co` | `Demo12345!` |
+## Scripts
 
-**Cupones del seed:** `BIENVENIDO20` (20 %) y `TEST100` (100 %: inscribe sin pasar por Wompi, útil para probar el dashboard sin pagar).
-
-## Configurar Wompi (sandbox)
-
-1. Crea una cuenta en [comercios.wompi.co](https://comercios.wompi.co) y cambia al **modo de pruebas**.
-2. En **Desarrolladores → Llaves del API** copia a `server/.env`:
-   - `WOMPI_PUBLIC_KEY` (`pub_test_...`)
-   - `WOMPI_PRIVATE_KEY` (`prv_test_...`)
-3. En **Desarrolladores → Secretos para integración técnica** copia:
-   - Integridad → `WOMPI_INTEGRITY_SECRET`
-   - Eventos → `WOMPI_EVENTS_SECRET`
-4. Deja `WOMPI_ENV=sandbox`. Para producción cambia a `production` y usa las llaves `pub_prod_`/`prv_prod_`. El backend elige automáticamente `sandbox.wompi.co` o `production.wompi.co`.
-
-**Datos de prueba en sandbox**
-
-| Método | Aprobado | Rechazado |
-|---|---|---|
-| Tarjeta | `4242 4242 4242 4242` (cualquier CVC y fecha futura) | `4111 1111 1111 1111` |
-| Nequi | `3991111111` | `3992222222` |
-| PSE | Banco "que aprueba" | Banco "que rechaza" |
-
-**Flujo implementado**
-
-1. `POST /api/orders { courseId, couponCode? }` crea la orden `PENDING`, aplica el cupón en el servidor, genera una referencia única y la firma `SHA256(referencia + montoEnCentavos + COP + secretoIntegridad)`.
-2. El frontend abre el Widget con la llave pública, la referencia, el monto, la firma y `redirectUrl`.
-3. `POST /api/webhooks/wompi` valida `SHA256(valores de signature.properties + timestamp + secretoEventos)`, verifica que el monto y la moneda coincidan con la orden, actualiza el estado (`APPROVED`, `DECLINED`, `VOIDED`, `ERROR`) y, **solo si queda `APPROVED`**, crea la inscripción y envía el email. Cada evento queda auditado en `PaymentEvent`.
-4. `/pago/resultado?order=…` consulta el estado al backend y hace polling mientras siga `PENDING` (típico en PSE).
-
-## Exponer el webhook con ngrok
-
-Wompi necesita una URL pública para enviar eventos a tu máquina:
-
-```bash
-ngrok http 4000
-# → https://abcd-1234.ngrok-free.app
-```
-
-En Wompi, **Desarrolladores → URL de eventos** (modo pruebas), pega:
-
-```
-https://abcd-1234.ngrok-free.app/api/webhooks/wompi
-```
-
-Haz una compra de prueba y verás en la consola del backend la transición de la orden. Si el webhook falla, `/pago/resultado` reconcilia consultando la API de Wompi, así que el flujo igual termina bien.
-
-> Sin ngrok puedes simular un evento firmado: calcula el checksum con `WOMPI_EVENTS_SECRET` y haz `POST` a `/api/webhooks/wompi` (ver `verifyEventChecksum` en `server/src/services/wompi.service.ts`).
-
-## Videos (Bunny Stream o Mux)
-
-Las lecciones guardan solo un `videoId`. El backend genera una URL de embed **firmada y con expiración** (`VIDEO_URL_TTL_SECONDS`) únicamente para usuarios inscritos, o para cualquiera si la lección es "vista previa gratuita".
-
-- **Bunny Stream** (recomendado en LATAM por costo): `VIDEO_PROVIDER=bunny`, `BUNNY_LIBRARY_ID` y `BUNNY_TOKEN_KEY`. Activa *Token Authentication* en la librería. En el admin, `videoId` es el GUID del video.
-- **Mux**: `VIDEO_PROVIDER=mux`, `MUX_SIGNING_KEY_ID` y `MUX_SIGNING_PRIVATE_KEY` (la clave en base64, tal como la entrega Mux). Usa playback policy *signed*. En el admin, `videoId` es el `playbackId`.
-- Con `VIDEO_PROVIDER=none` el reproductor muestra "video no disponible".
-
-El trailer público del curso (`previewVideoUrl`) es una URL de embed normal que no requiere firma.
-
-## Contenido de los cursos
-
-Las 36 lecciones (4 cursos × 3 módulos × 3 lecciones) tienen contenido interactivo **original**, escrito para este proyecto y ajustado al nivel MCER de cada curso. Cada lección trae:
-
-| Paso | Qué es |
+| Command | Description |
 |---|---|
-| **Mini-clase** | Diapositivas animadas narradas en inglés con la voz del navegador. Reemplaza al video mientras no grabes uno; cuando una lección tiene `videoId` (Bunny/Mux), el video aparece arriba. |
-| **Vocabulario** | 12-15 palabras por lección. Modo *Explorar* (tarjetas que giran, con ejemplo y audio) y modo *Repasar* (flashcards que se deslizan; las que no sabes vuelven a salir pronto) |
-| **Gramática** | Explicación en español, ejemplos con audio y un tip |
-| **Errores típicos** | 3-5 errores frecuentes de hispanohablantes: el estudiante intenta detectarlo y luego ve la corrección y el porqué |
-| **Pronunciación** | Laboratorio con 4-7 palabras o frases: guía de sonido, audio y grabación con micrófono que califica cada intento |
-| **Diálogo** | Conversación tipo chat con traducción opcional y **juego de roles**: escoges un personaje, la voz dice el otro y tú respondes con el micrófono (con "modo reto" de memoria) |
-| **Lectura** | Texto original de 80-200 palabras con audio por párrafo, glosario y 4 preguntas de comprensión (en IELTS, estilo True/False/Not Given), más un **dato cultural** |
-| **Práctica** | 17-19 ejercicios de 9 tipos: opción múltiple, completar, ordenar, emparejar, escuchar, hablar, verdadero/falso, **dictado** y **corregir el error**. XP, rachas con bono y una ronda de **repaso de fallos**. La nota queda guardada; se conserva la mejor. |
-| **Misión** | Reto para usar el inglés en la vida real, con lista de pasos, borrador guardado en el dispositivo y respuesta modelo con audio |
+| `npm run dev` | Run API and web in watch mode |
+| `npm run build` | Build server and client |
+| `npm run typecheck` | Type-check both workspaces |
+| `npm test --workspace server` | Run the server test suite (Vitest) |
+| `npm run seed:content --workspace server` | Sync lesson content without touching user data |
 
-- **Dónde vive:** contenido base en `server/prisma/content/<slug>.ts` y material de profundización (lectura, errores, pronunciación, cultura, misión y ejercicios extra) en `server/prisma/content/extras/<slug>.ts`; `content/index.ts` los fusiona. Todo se valida con Zod (`server/src/lessonContent/schema.ts`).
-- **Edición:** también se edita desde **Admin → Cursos → lección → Contenido interactivo (JSON)**; el servidor rechaza contenido inválido.
-- **Acceso:** solo estudiantes inscritos, o cualquiera en las lecciones marcadas como gratuitas, cuya vista previa muestra la mini-clase.
-- **Cargar o actualizar el contenido** (idempotente; no borra progreso ni inscripciones):
-  ```bash
-  npm run seed:content --workspace server
-  # En producción (Neon):
-  DATABASE_URL="postgresql://...neon.tech/neondb?sslmode=require" npm run seed:content --workspace server
-  ```
-- **Tests:** `npm test --workspace server` valida las 36 lecciones: estructura, respuestas dentro de rango, variedad de ejercicios, opciones sin repetir, vocabulario sin duplicados y que cada lección tenga todas las secciones.
-- **Por qué no hay videos de terceros:** copiar material de otros cursos o meter videos de YouTube dentro de un curso pago infringe derechos de autor y los términos de YouTube. Graba tus propios videos, súbelos a Bunny Stream y pega el `videoId` en cada lección desde el admin.
-
-## Notificaciones y emails
-
-Los emails se disparan por **eventos**. Ningún servicio, controlador ni componente de UI llama a `sendEmail`: publican un hecho de negocio y el motor decide qué enviar.
+## Project structure
 
 ```
-auth / pagos / aprendizaje
-  └─ events.emit('USER_REGISTERED', payload, { id: user.id })
-       └─ NotificationEngine
-            ├─ rules.ts            evento → [canal, plantilla, categoría]
-            ├─ preferencias        seguridad y transaccionales siempre pasan
-            ├─ idempotencia        clave única "USER_REGISTERED:<id>:email"
-            ├─ tabla Notification  log + cola (queued → processing → sent/failed/…)
-            └─ EmailChannel → plantilla → EmailProvider (Resend | Preview | Sandbox)
+client/             React SPA
+  src/components/   UI by domain (home, lesson, course, layout, ui)
+  src/pages/        Routes (public, dashboard, admin)
+  src/data/         Copy, question banks, and static content
+server/             Express API
+  prisma/           Schema, migrations, seed, and lesson content
+  src/              Routes → controllers → services, middleware, notifications
+render.yaml         Render blueprint for the API
 ```
 
-Todo vive en `server/src/notifications/`:
+## Deployment
 
-| Archivo | Responsabilidad |
-|---|---|
-| `events.ts` | Catálogo tipado de eventos y bus en proceso |
-| `rules.ts` | Qué notificación produce cada evento; separa datos persistibles de sensibles |
-| `engine.ts` | Idempotencia, preferencias, supresión por rebote, reintentos, worker |
-| `store.ts` | Persistencia (Prisma). La interfaz permite cambiar a BullMQ/SQS |
-| `channels/email.channel.ts` | Render + headers `List-Unsubscribe` + entrega |
-| `providers/` | `EmailProvider` (Resend sin SDK, Preview a archivos, Sandbox con lista blanca) |
-| `templates/` | Componentes (layout, botón, tarjetas, badges, footer) y los 6 emails |
-| `preferences.ts` / `unsubscribe.ts` | Política por categoría y tokens de baja firmados |
+The project deploys on free tiers: Vercel for the web, Render for the API, and Neon for PostgreSQL. See the step-by-step guide in [DEPLOY.md](DEPLOY.md) (in Spanish).
 
-### Emails incluidos
+## Security
 
-| Evento | Plantilla | Categoría |
-|---|---|---|
-| `USER_REGISTERED` | Bienvenida | Transaccional |
-| `EMAIL_VERIFICATION_REQUESTED` | Verificar email (24 h, un solo uso) | Transaccional |
-| `PASSWORD_RESET_REQUESTED` | Restablecer contraseña (30 min, un solo uso) | Seguridad |
-| `PASSWORD_CHANGED` | Alerta de seguridad | Seguridad |
-| `NEW_SIGN_IN` | Alerta de seguridad (solo si el dispositivo es nuevo) | Seguridad |
-| `ORDER_APPROVED` | Acción completada (recibo) | Transaccional |
-| `ORDER_FAILED` | Actualización de cuenta (pago no completado) | Transaccional |
-| `ACCOUNT_UPDATED` | Actualización de cuenta | Actividad de la cuenta (opcional) |
-| `COURSE_COMPLETED` | Acción completada (certificado) | Actividad de la cuenta (opcional) |
-
-- **Categorías que siempre llegan:** Seguridad y Transaccional. No se pueden desactivar ni tienen link de baja.
-- **Categorías opcionales:** Actividad de la cuenta, Novedades y Consejos. Se controlan desde `/mi-cuenta/ajustes`.
-- **Marketing:** exige consentimiento explícito con fecha (casilla desmarcada al registrarse), de acuerdo con la Ley 1581 de 2012.
-
-### Probar en local sin enviar nada
-
-Con `EMAIL_MODE=preview` (el valor por defecto) ningún email sale de tu máquina:
-
-- **Vista previa de todas las plantillas y variantes:** http://localhost:4000/api/dev/emails, con enlaces a español, inglés, texto plano y "sin nombre". Solo existe fuera de producción.
-- **Emails generados por la app:** se guardan como `.html` y `.txt` en `server/.email-previews/` (ignorada por git). La consola imprime la ruta de cada uno.
-
-**Para recibir emails reales en tu bandeja sin arriesgar a usuarios:**
-
-```
-EMAIL_MODE=sandbox
-RESEND_API_KEY=re_...
-EMAIL_SANDBOX_ALLOWLIST=tu-email@gmail.com
-```
-
-Solo las direcciones de la lista reciben el email real; las demás se desvían a preview. El servidor **se niega a arrancar** con `EMAIL_MODE=live` si `NODE_ENV` no es `production`.
-
-### Producción con Resend (con dominio propio)
-
-> Sin dominio propio usa **Brevo** (`EMAIL_PROVIDER=brevo`, el valor por defecto): ver [DEPLOY.md](DEPLOY.md#2-emails-con-brevo).
-
-1. En [resend.com](https://resend.com), verifica tu dominio (registros SPF y DKIM) y crea una API key.
-2. Configura las variables:
-   ```
-   EMAIL_MODE=live
-   RESEND_API_KEY=re_...
-   EMAIL_FROM="English Academy <hola@tudominio.com>"
-   EMAIL_REPLY_TO=...
-   SUPPORT_EMAIL=...
-   ```
-3. Opcional: en Resend, ve a **Webhooks**, apunta a `https://tu-dominio.com/api/webhooks/resend` con los eventos `email.delivered`, `email.bounced` y `email.complained`, y copia el signing secret en `RESEND_WEBHOOK_SECRET`. Con eso el log pasa a `DELIVERED`/`BOUNCED`, y a las direcciones que rebotan se les deja de escribir durante 30 días.
-
-### Garantías
-
-- **Sin duplicados.** Cada notificación tiene una clave de idempotencia única en la base de datos, y la misma clave se envía a Resend (`Idempotency-Key`). Un evento procesado 5 veces produce 1 email.
-- **No bloquea.** El registro, el login y los pagos responden de inmediato; el envío corre en segundo plano, y un fallo del proveedor nunca rompe el flujo de negocio.
-- **Reintentos.**
-  - Errores temporales (timeout, 429, 5xx): se reintentan a los 1 min, 5 min, 30 min y 2 h.
-  - Errores permanentes (4xx, dirección inválida): se marcan `FAILED` de inmediato.
-  - Si el proceso se cae a mitad de un envío, el lease vence y la notificación vuelve a la cola.
-- **Nada sensible en la base de datos.**
-  - Los tokens de verificación y reset solo existen en el link del email; en la base de datos queda su hash SHA-256.
-  - La IP y la ubicación de las alertas viven solo en memoria.
-  - Si el servidor se reinicia antes de enviar, esa notificación falla de forma segura, sin mandar un link roto, y el usuario puede pedir otro.
-- **Sesiones.** Cambiar o restablecer la contraseña cierra todas las demás sesiones (`sessionVersion` en el JWT).
-
-**Consultar el log:**
-
-```sql
-select "eventType", template, recipient, status, attempts, "errorMessage", "createdAt", "sentAt"
-from "Notification" order by "createdAt" desc limit 50;
-```
-
-### Cómo extender
-
-- **Un email nuevo:**
-  1. Agrega el evento y su payload en `events.ts`.
-  2. Crea la plantilla en `templates/` con los componentes existentes y regístrala en `templates/index.ts`.
-  3. Agrega la regla en `rules.ts`, con su categoría.
-  4. Publica el evento desde el servicio: `void events.emit('MI_EVENTO', payload, { id })`.
-- **Otro proveedor (Postmark, SES):** implementa `EmailProvider` y selecciónalo en `providers/index.ts`.
-- **Otro canal (SMS, push, in-app):** implementa `Channel` y regístralo en `notifications/index.ts`. Luego agrega reglas con `channel: 'sms'`; ni los emisores ni el motor cambian.
-
-### Tests
-
-```bash
-npm test --workspace server
-```
-
-62 tests que no usan la base de datos ni el proveedor real. Cubren:
-- Render de cada plantilla en los dos idiomas, datos faltantes, escape de HTML y URLs peligrosas.
-- Links generados y el flujo de eventos.
-- Duplicados (incluidos 5 eventos concurrentes).
-- Preferencias y categorías bloqueadas.
-- Datos sensibles fuera del log.
-- Reintentos, errores permanentes, intentos agotados, leases vencidos y rebotes.
-- Clasificación de errores de Resend, el modo sandbox y la firma del webhook.
-
-## Otras integraciones
-
-- **Google login.** Crea un OAuth Client ID tipo *Web* en Google Cloud, agrega tus orígenes (`http://localhost:5173` y tu dominio) y pon el mismo ID en `GOOGLE_CLIENT_ID` (server) y `VITE_GOOGLE_CLIENT_ID` (client). El backend verifica el ID token.
-- **Analítica.** Configura `VITE_GA_MEASUREMENT_ID` y `VITE_META_PIXEL_ID`. Se cargan tras la primera interacción (o a los 3 s) para no afectar el LCP. Eventos que se envían:
-  - Test de nivel: `level_test_start` y `generate_lead`/`Lead`.
-  - Clase demo: `demo_lesson_interaction`.
-  - Embudo de compra: `view_item`/`ViewContent`, `begin_checkout`/`InitiateCheckout` y `purchase`/`Purchase` (deduplicado por orden).
-  - WhatsApp: `contact`.
-- **WhatsApp.** `VITE_WHATSAPP_NUMBER=573151378651` (formato internacional sin `+`).
-- **Fotos.** En `client/public/images/people/`, con licencia Unsplash. Ver `CREDITS.md`: son de stock y deben reemplazarse por profes y estudiantes reales antes de lanzar.
-- **Testimonios en video.** Pon los `.mp4` en `client/public/videos/` con los nombres de `src/data/testimonials.ts`. Si un archivo no existe, la tarjeta se muestra solo con texto.
-
-## Despliegue
-
-La guía paso a paso está en **[DEPLOY.md](DEPLOY.md)**. Despliega todo gratis y sin tarjeta:
-
-- **Vercel:** la web.
-- **Render:** la API, con `render.yaml`.
-- **Neon:** PostgreSQL.
-- **Brevo:** los emails.
-- **cron-job.org:** mantiene la API despierta.
-
-## SEO
-
-- Meta tags, Open Graph y JSON-LD. `index.html` los trae estáticos para la landing, y cada página los sobrescribe con `react-helmet-async`. Hay schema `Course` en el detalle y `FAQPage` en las preguntas frecuentes.
-- `/sitemap.xml` es dinámico: lo genera el backend con los cursos publicados.
-- **Limitación.** Google ejecuta JavaScript, pero otros crawlers (WhatsApp, Facebook, LinkedIn) solo leen el HTML inicial. Por eso el detalle de cada curso comparte la imagen y el título genéricos. Si el SEO orgánico es prioridad, el siguiente paso recomendado es **migrar la landing, el catálogo y el detalle del curso a Next.js** (SSG/ISR), manteniendo este mismo backend. Una alternativa intermedia es un servicio de prerender (p. ej. Prerender.io) configurado en Vercel.
-
-## Seguridad
-
-- **Entrada:** Zod en todas las rutas y sanitización de HTML en los bodies.
-- **HTTP:** `helmet`, CORS restringido a `CLIENT_URL` con credenciales y rate limiting (general, auth y órdenes).
-- **Sesión:** JWT en cookie `httpOnly` + `Secure` en producción, header anti-CSRF y login con bcrypt (cost 12) que tarda lo mismo exista o no el email.
-- **Autorización:** rutas de admin protegidas por rol. El `videoId` nunca se expone en endpoints públicos. `?next=` solo acepta rutas internas (no hay open redirect).
-- **Wompi:** checksum comparado en tiempo constante y verificación de monto y moneda en cada evento.
-
-## Pendientes y siguientes pasos sugeridos
-
-- El panel admin está solo en español. El contenido de los cursos (títulos, descripciones) se guarda en un solo idioma.
-- Reembolsos: el estado `VOIDED` revoca la inscripción, pero el reembolso se gestiona en el dashboard de Wompi.
-- Tests automatizados (Vitest + Supertest para el webhook y el flujo de orden).
-- Verificación pública de certificados por código (`certificateCode` ya existe en `Enrollment`).
+- Input validation with Zod and HTML sanitization on every request body.
+- `helmet`, CORS restricted to the client origin, and rate limiting on auth, email, and order endpoints.
+- bcrypt password hashing, session invalidation when a password changes, and only hashed tokens stored for email links.
+- Role-based admin routes, signed and expiring video URLs, and constant-time webhook signature checks.
