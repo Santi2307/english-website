@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/format';
 import { Seo } from '@/components/ui/Seo';
 import { PageLoader, Spinner } from '@/components/ui/Spinner';
+import { PasswordInput } from '@/components/ui/PasswordInput';
 import type { NotificationPreferences, PreferenceKey, User } from '@/lib/types';
 
 function Section({ id, icon: Icon, title, children }: { id: string; icon: typeof Bell; title: string; children: React.ReactNode }) {
@@ -123,15 +124,13 @@ function PasswordForm({ user }: { user: User }) {
         {user.hasPassword && (
           <div>
             <label htmlFor="current" className="label">{t('settings.currentPassword')}</label>
-            <input id="current" type="password" className="input" autoComplete="current-password" required value={current} onChange={(e) => setCurrent(e.target.value)} />
+            <PasswordInput id="current" autoComplete="current-password" required value={current} onChange={(e) => setCurrent(e.target.value)} />
           </div>
         )}
         <div>
           <label htmlFor="new" className="label">{t('settings.newPassword')}</label>
-          <input
+          <PasswordInput
             id="new"
-            type="password"
-            className="input"
             autoComplete="new-password"
             required
             minLength={8}

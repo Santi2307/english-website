@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { api, ApiError } from '@/lib/api';
 import { Seo } from '@/components/ui/Seo';
 import { Spinner } from '@/components/ui/Spinner';
+import { PasswordInput } from '@/components/ui/PasswordInput';
 import { AuthCard, ResultMessage } from './AuthCard';
 
 const schema = z
@@ -63,12 +64,12 @@ export default function ResetPassword() {
       <form className="mt-6 space-y-4" onSubmit={handleSubmit((v) => reset.mutate(v))} noValidate>
         <div>
           <label htmlFor="password" className="label">{t('reset.password')}</label>
-          <input id="password" type="password" autoComplete="new-password" className="input" aria-invalid={!!errors.password} {...register('password')} />
+          <PasswordInput id="password" autoComplete="new-password" aria-invalid={!!errors.password} {...register('password')} />
           {errors.password ? err('password') : <p className="mt-1 text-xs text-slate-500">{t('auth.passwordHint')}</p>}
         </div>
         <div>
           <label htmlFor="confirm" className="label">{t('reset.confirm')}</label>
-          <input id="confirm" type="password" autoComplete="new-password" className="input" aria-invalid={!!errors.confirm} {...register('confirm')} />
+          <PasswordInput id="confirm" autoComplete="new-password" aria-invalid={!!errors.confirm} {...register('confirm')} />
           {err('confirm')}
         </div>
         {reset.error && (

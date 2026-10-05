@@ -202,6 +202,8 @@ const en: Messages = {
     noAccount: "Don't have an account?",
     hasAccount: 'Already have an account?',
     passwordHint: 'At least 8 characters, with letters and numbers.',
+    showPassword: 'Show password',
+    hidePassword: 'Hide password',
     forgot: 'Forgot your password?',
     marketingConsent: 'Send me promotions and discounts by email (optional).',
     errors: {

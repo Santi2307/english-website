@@ -200,6 +200,8 @@ const es = {
     noAccount: '¿No tienes cuenta?',
     hasAccount: '¿Ya tienes cuenta?',
     passwordHint: 'Mínimo 8 caracteres, con letras y números.',
+    showPassword: 'Mostrar contraseña',
+    hidePassword: 'Ocultar contraseña',
     forgot: '¿Olvidaste tu contraseña?',
     marketingConsent: 'Quiero recibir promociones y descuentos por email (opcional).',
     errors: {

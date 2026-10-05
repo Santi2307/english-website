@@ -8,6 +8,7 @@ import { useAuthActions } from '@/hooks/useAuth';
 import { GoogleButton } from '@/components/auth/GoogleButton';
 import { Seo } from '@/components/ui/Seo';
 import { Spinner } from '@/components/ui/Spinner';
+import { PasswordInput } from '@/components/ui/PasswordInput';
 import { ApiError } from '@/lib/api';
 
 const loginSchema = z.object({
@@ -86,11 +87,9 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
           </div>
           <div>
             <label htmlFor="password" className="label">{t('auth.password')}</label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
               autoComplete={isLogin ? 'current-password' : 'new-password'}
-              className="input"
               aria-invalid={!!errors.password}
               aria-describedby={!isLogin ? 'pw-hint' : undefined}
               {...field('password')}
