@@ -1,4 +1,4 @@
-import { appUrl, ctaButton, divider, emailLayout, formatDateTime, greeting, heading, infoCard, paragraph, plainText, securityNote, textRows } from './components.js';
+import { appUrl, decision, divider, emailLayout, formatDateTime, greeting, hero, infoCard, paragraph, plainText, securityNote, textRows, type HeroIcon } from './components.js';
 import { defineTemplate } from './types.js';
 import type { Locale } from '../types.js';
 
@@ -15,6 +15,13 @@ type Data = {
 };
 
 type KindCopy = { subject: string; preheader: string; title: string; intro: string };
+
+const ICONS: Record<SecurityAlertKind, HeroIcon> = {
+  password_changed: 'shield-check-success',
+  new_sign_in: 'monitor-smartphone-neutral',
+  email_changed: 'mail-check-neutral',
+  suspicious_attempt: 'lock-keyhole-danger',
+};
 
 const kinds: Record<Locale, Record<SecurityAlertKind, KindCopy>> = {
   es: {
@@ -73,27 +80,39 @@ const kinds: Record<Locale, Record<SecurityAlertKind, KindCopy>> = {
 
 const copy = {
   es: {
-    card: 'Detalles',
+    kicker: 'Alerta de seguridad',
+    card: 'Detalles de la actividad',
     when: 'Fecha y hora',
     device: 'Dispositivo',
     ip: 'Dirección IP',
     location: 'Ubicación aproximada',
     deviceType: { mobile: 'Celular', desktop: 'Computador', tablet: 'Tablet' },
-    wasYou: '¿Fuiste tú? Entonces todo está bien y no tienes que hacer nada.',
+    wasYouTitle: '¿Fuiste tú?',
+    wasYou: 'Entonces todo está bien y no tienes que hacer nada.',
+    notYouTitle: '¿No fuiste tú?',
+    notYouText: 'Cambia tu contraseña ahora mismo. Eso cierra todas las sesiones abiertas.',
+    wasYouPlain: '¿Fuiste tú? Entonces todo está bien y no tienes que hacer nada.',
     notYou: '¿No fuiste tú? Cambia tu contraseña ahora mismo. Eso cierra todas las sesiones abiertas.',
     cta: 'Proteger mi cuenta',
+    locationNote: 'La ubicación se calcula a partir de la dirección IP y puede no ser exacta, sobre todo si usas una VPN o datos móviles.',
     footnote: 'Nunca te pediremos tu contraseña por email, WhatsApp ni teléfono.',
   },
   en: {
-    card: 'Details',
+    kicker: 'Security alert',
+    card: 'Activity details',
     when: 'Date and time',
     device: 'Device',
     ip: 'IP address',
     location: 'Approximate location',
     deviceType: { mobile: 'Phone', desktop: 'Computer', tablet: 'Tablet' },
-    wasYou: "Was this you? Then everything's fine and you don't need to do anything.",
+    wasYouTitle: 'Was this you?',
+    wasYou: "Then everything's fine and you don't need to do anything.",
+    notYouTitle: "Wasn't you?",
+    notYouText: 'Change your password right away. That signs out every open session.',
+    wasYouPlain: "Was this you? Then everything's fine and you don't need to do anything.",
     notYou: "Wasn't you? Change your password right away. That signs out every open session.",
     cta: 'Secure my account',
+    locationNote: "Location is estimated from the IP address and may be inaccurate, especially if you use a VPN or mobile data.",
     footnote: "We'll never ask for your password by email, WhatsApp or phone.",
   },
 };
@@ -120,26 +139,32 @@ export const securityAlertEmail = defineTemplate<Data>({
     const rows = [
       { label: t.when, value: formatDateTime(data.occurredAt, ctx.locale, ctx.timeZone) },
       { label: t.device, value: device },
-      { label: t.ip, value: data.ip },
       { label: t.location, value: data.location },
+      { label: t.ip, value: data.ip, mono: true },
     ];
     const html = emailLayout({
       ...foot,
+      kicker: t.kicker,
       title: k.title,
       preheader: k.preheader,
       content: [
-        heading(k.title),
+        hero({ icon: ICONS[data.kind], title: k.title }),
         paragraph(greeting(ctx.name, ctx.locale)),
         paragraph(k.intro),
         infoCard(rows, t.card),
-        paragraph(t.wasYou),
-        paragraph(t.notYou),
-        ctaButton({ href: url, label: t.cta }),
+        decision({
+          yes: { title: t.wasYouTitle, text: t.wasYou },
+          no: { title: t.notYouTitle, text: t.notYouText, href: url, label: t.cta },
+        }),
+        data.location ? securityNote(t.locationNote) + '<p style="margin:0 0 12px;"></p>' : '',
         divider(),
         securityNote(t.footnote),
       ].join(''),
     });
-    const text = plainText([greeting(ctx.name, ctx.locale), k.intro, textRows(rows), t.wasYou, t.notYou, `${t.cta}: ${url}`, t.footnote], foot);
+    const text = plainText(
+      [greeting(ctx.name, ctx.locale), k.intro, `${t.card}\n${textRows(rows)}`, t.wasYouPlain, t.notYou, `${t.cta}: ${url}`, data.location && t.locationNote, t.footnote],
+      foot,
+    );
     return { subject: k.subject, preheader: k.preheader, html, text };
   },
 });

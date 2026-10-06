@@ -40,7 +40,7 @@ describe('flujo evento → notificación', () => {
     expect(t.provider.sent).toHaveLength(1);
     const mail = t.provider.sent[0];
     expect(mail.to).toBe('santiago@example.com');
-    expect(mail.subject).toBe('Bienvenido a English Academy');
+    expect(mail.subject).toBe('Te damos la bienvenida a English Academy');
     expect(mail.idempotencyKey).toBe('USER_REGISTERED:user_123:email');
     const [n] = t.store.all();
     expect(n).toMatchObject({ status: 'SENT', provider: 'fake', providerMessageId: 'msg_1', template: 'welcome', category: 'TRANSACTIONAL', attempts: 1 });
