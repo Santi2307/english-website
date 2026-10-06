@@ -58,7 +58,7 @@ export function Footer() {
       </div>
       <div className="container-page">
         <div className="flex flex-col gap-4 border-t border-slate-200 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} English Academy · {t('footer.payments')}</p>
+          <p>© {new Date().getFullYear()} English Academy. {t('footer.rights')}</p>
           <LanguageToggle />
         </div>
       </div>
