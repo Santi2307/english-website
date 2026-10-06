@@ -185,11 +185,15 @@ export type HeroIcon =
   | 'lock-keyhole-danger' | 'circle-alert-danger';
 
 /** Apertura del email: ícono, título y una entrada que resume el mensaje en una frase. */
+const HERO_TILE: Record<string, string> = { brand: '#fff1ec', success: '#ecf8f0', danger: '#fdf0ef', neutral: '#f3f3f0' };
+
 export function hero({ icon, title, lead }: { icon: HeroIcon; title: string; lead?: string }) {
   const src = esc(appUrl(`/email/${icon}.png`));
+  // Si la imagen está bloqueada, queda un recuadro suave del mismo color en vez de un hueco
+  const tile = HERO_TILE[icon.split('-').pop() ?? 'neutral'] ?? HERO_TILE.neutral;
   return `
 <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:0 0 22px;"><tr>
-  <td><img src="${src}" width="56" height="56" alt="" style="display:block;border:0;width:56px;height:56px;"></td>
+  <td width="56" height="56" bgcolor="${tile}" style="width:56px;height:56px;background:${tile};border-radius:16px;font-size:0;line-height:0;"><img src="${src}" width="56" height="56" alt="" style="display:block;border:0;width:56px;height:56px;color:${tile};font-size:0;"></td>
 </tr></table>
 ${heading(title)}
 ${lead ? paragraph(lead, { lead: true }) : ''}`;
@@ -409,8 +413,17 @@ export function securityNote(text: string) {
 }
 
 // ─── Estructura ─────────────────────────────────────────────────────────────
+/**
+ * Logo dibujado con HTML (no imagen): se ve aunque el cliente bloquee las
+ * imágenes, como hace Gmail con remitentes que todavía no conoce.
+ */
+function logoMark() {
+  return `<table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
+    <td width="30" height="30" align="center" valign="middle" bgcolor="${C.ink}" style="width:30px;height:30px;background:${C.ink};border-radius:8px;font-family:${FONT};font-size:17px;line-height:30px;font-weight:800;color:#ffffff;mso-line-height-rule:exactly;">E<span style="color:${C.brand};">.</span></td>
+  </tr></table>`;
+}
+
 function header(kicker: string) {
-  const logo = esc(appUrl('/email-logo.png'));
   const home = esc(appUrl('/'));
   return `
 <tr><td style="padding:0 4px 20px;">
@@ -418,7 +431,7 @@ function header(kicker: string) {
     <td style="vertical-align:middle;">
       <a href="${home}" target="_blank" style="text-decoration:none;">
         <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
-          <td style="vertical-align:middle;padding-right:10px;"><img src="${logo}" width="30" height="30" alt="" style="display:block;border:0;border-radius:8px;"></td>
+          <td style="vertical-align:middle;padding-right:10px;">${logoMark()}</td>
           <td class="ea-text" style="vertical-align:middle;font-family:${FONT};font-size:16px;line-height:24px;font-weight:700;letter-spacing:-0.01em;color:${C.text};">${esc(BRAND.name)}</td>
         </tr></table>
       </a>
