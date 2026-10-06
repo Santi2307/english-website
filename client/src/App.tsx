@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
 import { RequireAuth } from './components/auth/RequireAuth';
 import { PageLoader } from './components/ui/Spinner';
@@ -7,6 +7,9 @@ import { ErrorBoundary } from './components/ui/ErrorState';
 import Home from './pages/Home';
 
 // Code splitting por ruta
+const HowItWorksPage = lazy(() => import('./pages/HowItWorksPage'));
+const PracticePage = lazy(() => import('./pages/PracticePage'));
+const PricingPage = lazy(() => import('./pages/PricingPage'));
 const Catalog = lazy(() => import('./pages/Catalog'));
 const CourseDetail = lazy(() => import('./pages/CourseDetail'));
 const AuthPage = lazy(() => import('./pages/Auth'));
@@ -35,6 +38,11 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<Home />} />
+          <Route path="how-it-works" element={<HowItWorksPage />} />
+          <Route path="practice" element={<PracticePage />} />
+          <Route path="practice/:category" element={<PracticePage />} />
+          <Route path="pricing" element={<PricingPage />} />
+          <Route path="dashboard" element={<Navigate to="/mi-cuenta" replace />} />
           <Route path="cursos" element={<Catalog />} />
           <Route path="cursos/:slug" element={<CourseDetail />} />
           <Route path="ingresar" element={<AuthPage mode="login" />} />

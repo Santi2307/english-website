@@ -1,7 +1,8 @@
 import type { Level } from '@/lib/types';
 
 /**
- * Copy y datos de muestra del home.
+ * Copy y datos de muestra de las páginas secundarias (/how-it-works, /practice,
+ * /pricing). El copy del home narrativo vive en data/home.ts.
  *
  * Las vistas del producto (coach, Error Bank, progreso) usan datos de ejemplo:
  * representan hacia dónde va la plataforma, todavía no son funcionalidad real.
@@ -22,49 +23,7 @@ export const HERO = {
   note: { es: 'Test de nivel gratis · Sin tarjeta', en: 'Free level test · No credit card' },
 };
 
-export const COACH = {
-  scenario: { es: 'Entrevista de trabajo', en: 'Job interview' },
-  round: { es: 'Pregunta 1 de 6', en: 'Question 1 of 6' },
-  coach: { es: 'Coach', en: 'Coach' },
-  you: { es: 'Tú', en: 'You' },
-  question: 'Tell me about yourself.',
-  answer: { before: 'I have experience working with customers ', error: 'since two years', after: '.' },
-  better: 'I have two years of experience working with customers.',
-  sayItLikeThis: { es: 'Dilo así', en: 'Say it like this' },
-  why: { es: '“Since” no va con duraciones: usa “for” o reformula.', en: '“Since” doesn’t work with a length of time. Use “for”, or rephrase.' },
-  scores: [
-    { key: 'fluency', label: { es: 'Fluidez', en: 'Fluency' }, value: 72 },
-    { key: 'grammar', label: { es: 'Gramática', en: 'Grammar' }, value: 68 },
-    { key: 'pronunciation', label: { es: 'Pronunciación', en: 'Pronunciation' }, value: 81 },
-  ],
-  tap: { es: 'Toca para responder', en: 'Tap to answer' },
-  tryAgain: { es: 'Responder otra vez', en: 'Answer again' },
-};
 
-export const PROBLEM = {
-  title: { es: 'Sabes más inglés del que crees.', en: 'You know more English than you think.' },
-  body: {
-    es: 'El problema no siempre es el vocabulario o la gramática. Es poder usar lo que ya sabes cuando la conversación se vuelve real.',
-    en: "The problem isn't always vocabulary or grammar. It's being able to use what you already know when the conversation becomes real.",
-  },
-  situations: [
-    {
-      name: { es: 'Entrevista de trabajo', en: 'Job interview' },
-      line: '“So, why should we hire you?”',
-      reality: { es: 'Sabes la respuesta. Solo que no en inglés, y no a tiempo.', en: 'You know the answer. Just not in English, and not in time.' },
-    },
-    {
-      name: { es: 'Conversación de trabajo', en: 'Work conversation' },
-      line: '“Can you walk us through the numbers?”',
-      reality: { es: 'Entendiste cada palabra. Luego todos te miran a ti.', en: 'You understood every word. Then everyone turns to you.' },
-    },
-    {
-      name: { es: 'Conversación del día a día', en: 'Everyday conversation' },
-      line: '“What do you do for fun?”',
-      reality: { es: 'Pregunta fácil. Y aun así te quedas en blanco.', en: 'An easy question. Your mind goes blank anyway.' },
-    },
-  ],
-};
 
 export const HOW = {
   eyebrow: { es: 'Cómo funciona', en: 'How it works' },
@@ -112,7 +71,17 @@ export const ERROR_BANK = {
   ] as Mistake[],
 };
 
-export type Scenario = { id: string; name: T; level: Level; minutes: number; context: T; opener: string; phrases: string[] };
+/** Categorías de práctica: cada una tiene su página en /practice/:category. */
+export type PracticeCategory = 'job-interview' | 'work' | 'travel' | 'everyday-life';
+
+export const PRACTICE_CATEGORIES: { id: PracticeCategory; name: T }[] = [
+  { id: 'job-interview', name: { es: 'Entrevistas', en: 'Job interviews' } },
+  { id: 'work', name: { es: 'Trabajo', en: 'Work' } },
+  { id: 'travel', name: { es: 'Viajes', en: 'Travel' } },
+  { id: 'everyday-life', name: { es: 'Día a día', en: 'Everyday life' } },
+];
+
+export type Scenario = { id: string; category: PracticeCategory; name: T; level: Level; minutes: number; context: T; opener: string; phrases: string[] };
 
 export const SCENARIOS = {
   eyebrow: { es: 'Practicar', en: 'Practice' },
@@ -123,49 +92,49 @@ export const SCENARIOS = {
   start: { es: 'Empezar esta conversación', en: 'Start this conversation' },
   items: [
     {
-      id: 'interview', name: { es: 'Entrevista de trabajo', en: 'Job interview' }, level: 'B1', minutes: 8,
+      id: 'interview', category: 'job-interview', name: { es: 'Entrevista de trabajo', en: 'Job interview' }, level: 'B1', minutes: 8,
       context: { es: 'Una reclutadora de una empresa de EE. UU. Videollamada, primera ronda.', en: 'A recruiter at a US company. Video call, first round.' },
       opener: "Thanks for joining. Let's start with you: tell me a bit about your background.",
       phrases: ["I've been working in…", 'What I enjoy most is…', "One thing I'm improving is…"],
     },
     {
-      id: 'first-day', name: { es: 'Primer día de trabajo', en: 'First day at work' }, level: 'A2', minutes: 6,
+      id: 'first-day', category: 'work', name: { es: 'Primer día de trabajo', en: 'First day at work' }, level: 'A2', minutes: 6,
       context: { es: 'Tu nueva jefa te muestra la oficina.', en: 'Your new manager shows you around.' },
       opener: 'Welcome aboard! Did you find the office okay?',
       phrases: ["Nice to meet you, I'm…", 'Who should I ask about…?', "I'm looking forward to…"],
     },
     {
-      id: 'complaint', name: { es: 'Cliente molesto', en: 'Customer complaint' }, level: 'B1', minutes: 7,
+      id: 'complaint', category: 'work', name: { es: 'Cliente molesto', en: 'Customer complaint' }, level: 'B1', minutes: 7,
       context: { es: 'Un cliente llama porque su pedido no ha llegado.', en: "A customer calls because their order hasn't arrived." },
       opener: "I ordered this two weeks ago and it still hasn't arrived.",
       phrases: ['I completely understand.', 'Let me check that for you.', "Here's what I can do…"],
     },
     {
-      id: 'airport', name: { es: 'Aeropuerto', en: 'Airport' }, level: 'A2', minutes: 5,
+      id: 'airport', category: 'travel', name: { es: 'Aeropuerto', en: 'Airport' }, level: 'A2', minutes: 5,
       context: { es: 'Oficial de migración en el aeropuerto de Miami.', en: 'Immigration officer at Miami International.' },
       opener: "What's the purpose of your visit?",
       phrases: ["I'm here on vacation.", "I'll be staying for…", "I'm staying at…"],
     },
     {
-      id: 'food', name: { es: 'Pedir comida', en: 'Ordering food' }, level: 'A1', minutes: 4,
+      id: 'food', category: 'everyday-life', name: { es: 'Pedir comida', en: 'Ordering food' }, level: 'A1', minutes: 4,
       context: { es: 'Un diner lleno en Nueva York.', en: 'A busy diner in New York.' },
       opener: 'Hi there! Are you ready to order?',
       phrases: ['Could I get…?', 'What do you recommend?', 'Can I have the check, please?'],
     },
     {
-      id: 'meeting', name: { es: 'Reunión', en: 'Meeting' }, level: 'B2', minutes: 8,
+      id: 'meeting', category: 'work', name: { es: 'Reunión', en: 'Meeting' }, level: 'B2', minutes: 8,
       context: { es: 'Llamada semanal del equipo. Te toca dar tu actualización.', en: "Weekly team call. It's your turn to give an update." },
       opener: "Okay, let's hear your update. How's the project going?",
       phrases: ["We're on track to…", 'The main blocker is…', "I'll follow up by…"],
     },
     {
-      id: 'sales', name: { es: 'Llamada de ventas', en: 'Sales call' }, level: 'B2', minutes: 7,
+      id: 'sales', category: 'work', name: { es: 'Llamada de ventas', en: 'Sales call' }, level: 'B2', minutes: 7,
       context: { es: 'Un posible cliente duda por el precio.', en: 'A potential client is unsure about the price.' },
       opener: 'Honestly, this seems more expensive than other options.',
       phrases: ["That's a fair point.", 'What you get is…', 'Would it help if…?'],
     },
     {
-      id: 'small-talk', name: { es: 'Charla casual', en: 'Small talk' }, level: 'A2', minutes: 5,
+      id: 'small-talk', category: 'everyday-life', name: { es: 'Charla casual', en: 'Small talk' }, level: 'A2', minutes: 5,
       context: { es: 'Pausa del café con un colega.', en: 'Coffee break with a colleague.' },
       opener: 'Any plans for the weekend?',
       phrases: ['Not much, just…', 'How about you?', "I've been meaning to…"],

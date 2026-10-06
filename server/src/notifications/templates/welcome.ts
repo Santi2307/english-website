@@ -50,7 +50,7 @@ export const welcomeEmail = defineTemplate<Data>({
   render(data, ctx) {
     const t = copy[ctx.locale];
     const url = appUrl('/mi-cuenta');
-    const testUrl = appUrl('/#test-de-nivel');
+    const testUrl = appUrl('/practice#test-de-nivel');
     const title = t.title;
     const foot = { locale: ctx.locale, category: ctx.category, preferencesUrl: ctx.preferencesUrl, unsubscribeUrl: ctx.unsubscribeUrl };
     const html = emailLayout({

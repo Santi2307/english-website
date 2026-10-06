@@ -19,7 +19,17 @@ export async function review(req: Request, res: Response) {
 export async function sitemap(_req: Request, res: Response) {
   const entries = await courses.sitemapEntries();
   const base = env.CLIENT_URL.replace(/\/$/, '');
-  const staticPaths = ['/', '/cursos'];
+  const staticPaths = [
+    '/',
+    '/how-it-works',
+    '/practice',
+    '/practice/job-interview',
+    '/practice/work',
+    '/practice/travel',
+    '/practice/everyday-life',
+    '/pricing',
+    '/cursos',
+  ];
   const urls = [
     ...staticPaths.map((p) => `<url><loc>${base}${p}</loc><changefreq>weekly</changefreq><priority>${p === '/' ? '1.0' : '0.8'}</priority></url>`),
     ...entries.map(

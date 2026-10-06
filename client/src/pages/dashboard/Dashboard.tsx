@@ -191,7 +191,7 @@ export default function Dashboard() {
           <p className="font-medium text-slate-900">{scenario.name[locale]}</p>
           <p className="mt-1 text-sm text-slate-500">{scenario.context[locale]}</p>
           <p className="mt-4 border-l-2 border-slate-200 pl-3 text-sm italic text-slate-700">“{scenario.opener}”</p>
-          <Link to="/#practicar" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-slate-900 hover:text-brand-700">
+          <Link to="/practice" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-slate-900 hover:text-brand-700">
             {t('dashboard.preview')} <ArrowRight size={14} aria-hidden />
           </Link>
         </Panel>

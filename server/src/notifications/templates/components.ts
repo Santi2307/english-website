@@ -464,7 +464,7 @@ function footer({ locale, category, unsubscribeUrl, preferencesUrl }: FooterOpti
   const nav = [
     [s.nav.account, '/mi-cuenta'],
     [s.nav.paths, '/cursos'],
-    [s.nav.practice, '/#practicar'],
+    [s.nav.practice, '/practice'],
   ]
     .map(([l, p]) => `<a href="${esc(appUrl(p))}" target="_blank" class="ea-text" style="color:${C.text};font-weight:600;text-decoration:none;">${esc(l)}</a>`)
     .join(`<span style="color:${C.faint};">&nbsp;&nbsp;·&nbsp;&nbsp;</span>`);

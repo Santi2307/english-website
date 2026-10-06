@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
@@ -81,9 +81,9 @@ export function Navbar() {
   }, [open]);
 
   const links = [
-    { to: '/#como-funciona', label: t('nav.howItWorks') },
-    { to: '/#practicar', label: t('nav.practice') },
-    { to: '/#precios', label: t('nav.pricing') },
+    { to: '/how-it-works', label: t('nav.howItWorks') },
+    { to: '/practice', label: t('nav.practice') },
+    { to: '/pricing', label: t('nav.pricing') },
   ];
   const startHref = user ? '/mi-cuenta' : '/registro';
 
@@ -94,14 +94,20 @@ export function Navbar() {
 
   return (
     <>
-    <header className={cn('sticky top-0 z-40 border-b transition-colors duration-200', open ? 'border-slate-200 bg-slate-50' : scrolled ? 'border-slate-200 bg-slate-50/90 backdrop-blur-md' : 'border-transparent bg-slate-50')}>
+    {/* Arriba se funde con la página; al bajar, barra sólida y limpia (sin vidrio) */}
+    <header className={cn('sticky top-0 z-40 border-b transition-[background-color,border-color] duration-300', open || scrolled ? 'border-slate-200 bg-white' : 'border-transparent bg-transparent')}>
       <nav aria-label="Principal" className="container-page flex h-16 items-center justify-between gap-4">
         <div className="flex items-center gap-10">
           <Logo />
           <ul className="hidden items-center gap-1 md:flex">
             {links.map((l) => (
               <li key={l.to}>
-                <Link to={l.to} className="rounded-md px-3 py-2 text-sm text-slate-600 transition-colors hover:text-slate-900">{l.label}</Link>
+                <NavLink
+                  to={l.to}
+                  className={({ isActive }) => cn('rounded-md px-3 py-2 text-sm transition-colors duration-200', isActive ? 'font-medium text-slate-900' : 'text-slate-600 hover:text-slate-900')}
+                >
+                  {l.label}
+                </NavLink>
               </li>
             ))}
           </ul>
@@ -140,7 +146,7 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18 }}
-            className="fixed inset-x-0 bottom-0 top-16 z-30 flex flex-col overflow-y-auto bg-slate-50 px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] md:hidden"
+            className="fixed inset-x-0 bottom-0 top-16 z-30 flex flex-col overflow-y-auto bg-white px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] md:hidden"
           >
             <ul className="divide-y divide-slate-200 border-b border-slate-200">
               {links.map((l) => (

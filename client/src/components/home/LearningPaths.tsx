@@ -4,22 +4,22 @@ import { PATHS } from '@/data/landing';
 import { useLocale } from '@/hooks/useLocale';
 import { useCourses } from '@/hooks/useCourses';
 import { SectionHeader } from '../ui/product';
-import { formatCOP } from '@/lib/format';
+import { cn, formatCOP } from '@/lib/format';
 
 /** Los cursos, presentados como rutas de apoyo con su precio (sección "Precios"). */
-export function LearningPaths() {
+export function LearningPaths({ header = true }: { header?: boolean }) {
   const locale = useLocale();
   const { data, isLoading, isError } = useCourses({ sort: 'popular' });
 
   return (
-    <section id="precios" className="section border-t border-slate-200">
+    <section id="precios" className={header ? 'section border-t border-slate-200' : 'pb-20 sm:pb-28'}>
       <div className="container-page">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <SectionHeader eyebrow={PATHS.eyebrow[locale]} title={PATHS.title[locale]} body={PATHS.sub[locale]} />
+        <div className={cn('flex flex-col justify-between gap-6 md:flex-row md:items-end', !header && 'md:justify-end')}>
+          {header && <SectionHeader eyebrow={PATHS.eyebrow[locale]} title={PATHS.title[locale]} body={PATHS.sub[locale]} />}
           <Link to="/cursos" className="btn-secondary shrink-0 self-start md:self-auto">{PATHS.all[locale]}</Link>
         </div>
 
-        <ul className="mt-12 border-t border-slate-900">
+        <ul className={cn('border-t border-slate-900', header ? 'mt-12' : 'mt-6')}>
           {isLoading &&
             Array.from({ length: 4 }, (_, i) => <li key={i} className="h-[5.5rem] animate-pulse border-b border-slate-200 bg-slate-100/50" />)}
           {isError && <li className="border-b border-slate-200 py-8 text-sm text-slate-500">—</li>}

@@ -99,6 +99,16 @@
   @apply text-[2.6rem] leading-[1.02] font-semibold tracking-[-0.04em] text-slate-900 sm:text-6xl lg:text-[3.4rem] xl:text-[3.6rem];
 }
 
+/* Titular del hero: editorial, grande, dos líneas */
+@utility hero-display {
+  @apply text-[2.7rem] leading-[0.98] font-semibold tracking-[-0.045em] text-slate-900 sm:text-[4.2rem] lg:text-[5rem] xl:text-[5.6rem];
+}
+
+/* Frases-manifiesto (sección del problema, historia) */
+@utility statement {
+  @apply text-[2rem] leading-[1.08] font-semibold tracking-[-0.035em] text-slate-900 sm:text-5xl lg:text-[3.6rem];
+}
+
 @utility section-title {
   @apply text-[2rem] leading-[1.08] font-semibold tracking-[-0.03em] text-slate-900 sm:text-[2.6rem];
 }

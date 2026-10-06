@@ -10,9 +10,9 @@ export function Footer() {
     {
       title: t('footer.product'),
       links: [
-        { to: '/#como-funciona', label: t('nav.howItWorks') },
-        { to: '/#practicar', label: t('nav.practice') },
-        { to: '/#test-de-nivel', label: t('nav.levelTest') },
+        { to: '/how-it-works', label: t('nav.howItWorks') },
+        { to: '/practice', label: t('nav.practice') },
+        { to: '/practice#test-de-nivel', label: t('nav.levelTest') },
         { to: '/cursos', label: t('nav.courses') },
       ],
     },
@@ -21,7 +21,7 @@ export function Footer() {
       links: [
         { to: '/ingresar', label: t('nav.signIn') },
         { to: '/registro', label: t('nav.register') },
-        { to: '/#precios', label: t('nav.pricing') },
+        { to: '/pricing', label: t('nav.pricing') },
       ],
     },
   ];

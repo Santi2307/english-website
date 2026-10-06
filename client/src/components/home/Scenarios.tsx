@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Square, Volume2 } from 'lucide-react';
-import { SCENARIOS } from '@/data/landing';
+import { SCENARIOS, type Scenario } from '@/data/landing';
 import { useLocale } from '@/hooks/useLocale';
 import { useAuth } from '@/hooks/useAuth';
 import { useSpeak } from '@/hooks/useSpeech';
@@ -13,12 +13,12 @@ import { cn } from '@/lib/format';
  * Escenarios: lista a la izquierda (chips deslizables en móvil) y la vista previa
  * de la conversación a la derecha. La frase de apertura se puede escuchar de verdad.
  */
-export function Scenarios() {
+export function Scenarios({ items = SCENARIOS.items, header = true }: { items?: Scenario[]; header?: boolean }) {
   const locale = useLocale();
   const { user } = useAuth();
-  const [id, setId] = useState(SCENARIOS.items[0].id);
+  const [id, setId] = useState(items[0].id);
   const { speak, stop, speaking, supported } = useSpeak();
-  const s = SCENARIOS.items.find((x) => x.id === id)!;
+  const s = items.find((x) => x.id === id) ?? items[0];
 
   const choose = (next: string) => {
     stop();
@@ -26,14 +26,14 @@ export function Scenarios() {
   };
 
   return (
-    <section id="practicar" className="section border-t border-slate-200">
+    <section id="escenarios" className={header ? 'section border-t border-slate-200' : 'pb-20 sm:pb-28'}>
       <div className="container-page">
-        <SectionHeader eyebrow={SCENARIOS.eyebrow[locale]} title={SCENARIOS.title[locale]} body={SCENARIOS.sub[locale]} />
+        {header && <SectionHeader eyebrow={SCENARIOS.eyebrow[locale]} title={SCENARIOS.title[locale]} body={SCENARIOS.sub[locale]} />}
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-12">
+        <div className={cn('grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-12', header && 'mt-12')}>
           {/* Móvil: carrusel de chips. Escritorio: lista vertical */}
           <div role="tablist" aria-label={SCENARIOS.eyebrow[locale]} className="no-scrollbar -mx-4 flex snap-x gap-2 overflow-x-auto px-4 lg:mx-0 lg:block lg:space-y-0 lg:overflow-visible lg:border-t lg:border-slate-200 lg:px-0">
-            {SCENARIOS.items.map((x) => {
+            {items.map((x) => {
               const on = x.id === id;
               return (
                 <button

@@ -17,7 +17,7 @@ export function FinalCta() {
         <p className="relative mt-4 max-w-md text-white/60">{FINAL.sub[locale]}</p>
         <div className="relative mt-9 flex flex-col gap-3 sm:flex-row">
           <Link to={user ? '/mi-cuenta' : '/registro'} className="btn-primary btn-lg">{HERO.cta[locale]}</Link>
-          <a href="#test-de-nivel" className="btn btn-lg border border-white/15 text-white hover:bg-white/10">{FINAL.test[locale]}</a>
+          <Link to="/practice#test-de-nivel" className="btn btn-lg border border-white/15 text-white hover:bg-white/10">{FINAL.test[locale]}</Link>
         </div>
       </div>
     </section>

@@ -142,7 +142,7 @@ export function PlanCalculator() {
                 {fromTest ? (
                   <span className="text-slate-500">✓ {PLAN.savedLevel[locale]}: <strong className="text-slate-800">{fromTest}</strong></span>
                 ) : (
-                  <a href="#test-de-nivel" className="font-semibold text-slate-800 hover:text-slate-950">{PLAN.noLevel[locale]} →</a>
+                  <Link to="/practice#test-de-nivel" className="font-semibold text-slate-800 hover:text-slate-950">{PLAN.noLevel[locale]} →</Link>
                 )}
               </p>
             </div>
