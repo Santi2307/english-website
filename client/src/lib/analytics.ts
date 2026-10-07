@@ -105,6 +105,10 @@ export const track = {
     window.gtag?.('event', 'purchase', { transaction_id: orderId, currency: 'COP', value: i.price, items: [{ item_id: i.id, item_name: i.name, price: i.price }] });
     window.fbq?.('track', 'Purchase', { content_ids: [i.id], value: i.price, currency: 'COP' }, { eventID: orderId });
   },
+  // Embudo del checkout: precios vistos → checkout iniciado → intento de pago → compra / fallo
+  paymentAttempted: () => window.gtag?.('event', 'checkout_payment_attempted'),
+  checkoutFailed: (code: string) => window.gtag?.('event', 'checkout_failed', { code }),
+  promoApplied: (code: string) => window.gtag?.('event', 'promo_applied', { code }),
   whatsappClick: (source: string) => {
     window.gtag?.('event', 'contact', { method: 'whatsapp', source });
     window.fbq?.('track', 'Contact');

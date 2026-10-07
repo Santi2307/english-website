@@ -44,6 +44,9 @@ Sigue los pasos en orden, porque cada uno usa datos del anterior. Tiempo estimad
    ```bash
    cd english-website/server
    DATABASE_URL="postgresql://USUARIO:CONTRASEÑA@ep-xxxx.REGION.aws.neon.tech/neondb?sslmode=require" npx prisma migrate deploy
+
+   DATABASE_URL="postgresql://USUARIO:CONTRASEÑA@HOST.neon.tech/neondb?sslmode=require" npx prisma migrate deploy
+   
    DATABASE_URL="postgresql://USUARIO:CONTRASEÑA@ep-xxxx.REGION.aws.neon.tech/neondb?sslmode=require" npm run seed
    ```
    El seed también carga el contenido interactivo de las 36 lecciones. Si en el futuro editas el contenido en `server/prisma/content/`, actualízalo en producción con:

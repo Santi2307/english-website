@@ -106,7 +106,7 @@ const en: Messages = {
   faq: {
     title: 'Frequently asked questions',
     items: [
-      { q: 'How can I pay?', a: 'We accept credit and debit cards, PSE, Nequi and Botón Bancolombia via Wompi, a secure Colombian payment gateway. You pay in Colombian pesos.' },
+      { q: 'How can I pay?', a: 'With a credit or debit card, and with Apple Pay or Google Pay when your device offers them. Payments are securely processed by Stripe. Prices are in Colombian pesos (COP): if your card uses another currency, your bank converts it.' },
       { q: 'How long do I have access?', a: 'Lifetime access. Watch the lessons as many times as you want, at your own pace, on phone or computer.' },
       { q: 'Do I get a certificate?', a: 'Yes. When you complete every lesson you can download a PDF certificate with a verification code.' },
       { q: "What if the course isn't for me?", a: "You have a 7-day guarantee. If you're not satisfied, we refund 100% of your money, no questions asked." },
@@ -116,7 +116,7 @@ const en: Messages = {
   },
   footer: {
     tagline: "English practice for Spanish speakers who want to stop freezing up when they speak.",
-    payments: 'Secure payments with Wompi: PSE, Nequi and cards',
+    payments: 'Payments securely processed by Stripe',
     rights: 'All rights reserved.',
     product: 'Product',
     account: 'Account',
@@ -154,7 +154,7 @@ const en: Messages = {
     enrolled: "You're enrolled",
     goToCourse: 'Go to course',
     includes: ['Lifetime access', 'Certificate of completion', 'Interactive exercises', 'WhatsApp support'],
-    paymentMethods: 'Card · PSE · Nequi · Bancolombia',
+    paymentMethods: 'Secure payment · Lifetime access · 7-day guarantee',
     noPreview: 'Trailer coming soon',
   },
   checkout: {
@@ -169,14 +169,14 @@ const en: Messages = {
     couponApplied: 'Code {{code}} applied',
     pay: 'Pay {{amount}}',
     payFree: 'Enroll for free',
-    secure: '100% secure payment processed by Wompi (Bancolombia).',
-    methods: 'Pay with card, PSE, Nequi or Botón Bancolombia',
+    secure: 'Payments securely processed by Stripe.',
+    methods: 'Pay with card, Apple Pay or Google Pay',
     loginRequired: 'Create an account or log in to continue',
     widgetError: "We couldn't open the checkout. Check your connection and try again.",
   },
   result: {
     checking: 'Verifying your payment…',
-    checkingHint: 'This can take a few seconds with PSE.',
+    checkingHint: 'This can take a few seconds.',
     APPROVED: 'Payment approved! Welcome to the course 🎉',
     APPROVEDText: 'We sent you a confirmation email. You can start your first lesson now.',
     DECLINED: 'Your payment was declined',
@@ -287,6 +287,7 @@ const en: Messages = {
     invalid: 'This link is invalid. Request a new one.',
   },
   settings: {
+    purchases: 'Purchases',
     title: 'Account settings',
     profile: 'Profile',
     language: 'Email language',

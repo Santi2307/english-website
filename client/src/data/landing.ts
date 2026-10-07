@@ -173,7 +173,7 @@ export const PATHS = {
   lessons: { es: 'h de práctica', en: 'h of practice' },
   view: { es: 'Ver ruta', en: 'View path' },
   all: { es: 'Ver todas las rutas', en: 'See all paths' },
-  guarantee: { es: 'Pagas en pesos con PSE, Nequi o tarjeta. 7 días de garantía.', en: 'Pay in pesos with PSE, Nequi or card. 7-day guarantee.' },
+  guarantee: { es: 'Precios en COP. Pago seguro con tarjeta. 7 días de garantía.', en: 'Prices in COP. Secure card payment. 7-day guarantee.' },
 };
 
 export const FINAL = {

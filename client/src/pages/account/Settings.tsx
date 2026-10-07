@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Bell, Check, KeyRound, Lock, UserRound } from 'lucide-react';
+import { ArrowLeft, Bell, Check, KeyRound, Lock, Receipt, UserRound } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/format';
 import { Seo } from '@/components/ui/Seo';
 import { PageLoader, Spinner } from '@/components/ui/Spinner';
+import { Purchases } from '@/components/checkout/Purchases';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import type { NotificationPreferences, PreferenceKey, User } from '@/lib/types';
 
@@ -233,6 +234,7 @@ export default function Settings() {
       </div>
       <Section id="perfil" icon={UserRound} title={t('settings.profile')}><ProfileForm user={user} /></Section>
       <Section id="seguridad" icon={KeyRound} title={t('settings.security')}><PasswordForm user={user} /></Section>
+      <Section id="compras" icon={Receipt} title={t('settings.purchases')}><Purchases /></Section>
       <Section id="notificaciones" icon={Bell} title={t('settings.notifications')}><NotificationsForm /></Section>
     </div>
   );

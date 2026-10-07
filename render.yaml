@@ -54,6 +54,14 @@ services:
         sync: false
       - key: BREVO_API_KEY
         sync: false
+      # Pagos con Stripe (Dashboard → Developers → API keys / Webhooks)
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      # Wompi: opcional, solo para conciliar órdenes anteriores a Stripe
       - key: WOMPI_PUBLIC_KEY
         sync: false
       - key: WOMPI_PRIVATE_KEY

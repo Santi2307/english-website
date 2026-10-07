@@ -105,8 +105,8 @@ function resolve(data: Data, locale: Locale): Resolved {
           : `The payment for ${data.courseTitle} wasn't approved. You weren't charged.`,
         status: { label: statusLabel, tone: 'danger' },
         next: es
-          ? 'Intenta con otro medio de pago (tarjeta, PSE o Nequi). Si el problema sigue, escríbenos.'
-          : 'Try another payment method (card, PSE or Nequi). If it keeps happening, contact us.',
+          ? 'Intenta con otra tarjeta o contacta a tu banco. Si el problema sigue, escríbenos.'
+          : 'Try another card or contact your bank. If it keeps happening, contact us.',
         cta: { label: es ? 'Intentar de nuevo' : 'Try again', path: `/checkout/${data.courseSlug}` },
         rows: [
           { label: L[locale].course, value: data.courseTitle },

@@ -28,8 +28,8 @@ export const PAGES = {
     eyebrow: { es: 'Precios', en: 'Pricing' } as T,
     title: { es: 'Paga una vez. Practica para siempre.', en: 'Pay once. Practice for good.' } as T,
     lead: {
-      es: 'Rutas de aprendizaje con acceso de por vida, en pesos, con PSE, Nequi o tarjeta. 7 días de garantía.',
-      en: 'Learning paths with lifetime access, in pesos, with PSE, Nequi or card. 7-day guarantee.',
+      es: 'Rutas de aprendizaje con acceso de por vida. Un solo pago, sin suscripción. 7 días de garantía.',
+      en: 'Learning paths with lifetime access. One payment, no subscription. 7-day guarantee.',
     } as T,
   },
 };

@@ -47,6 +47,9 @@ export type AdminOrder = {
   amountInCents: number;
   paymentMethod: string | null;
   wompiTransactionId: string | null;
+  provider: string;
+  providerPaymentId: string | null;
+  paymentDetail: string | null;
   statusMessage: string | null;
   createdAt: string;
   paidAt: string | null;

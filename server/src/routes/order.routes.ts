@@ -7,6 +7,8 @@ import { idParams } from '../schemas/course.schema.js';
 import { createOrderSchema, orderStatusQuery, validateCouponSchema } from '../schemas/order.schema.js';
 
 export const orderRoutes = Router()
+  .get('/', requireAuth, c.list)
+  .get('/checkout-config', requireAuth, c.config)
   .post('/', requireAuth, orderLimiter, validate({ body: createOrderSchema }), c.create)
   .get('/:id', requireAuth, validate({ params: idParams, query: orderStatusQuery }), c.status);
 

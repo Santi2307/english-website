@@ -19,9 +19,6 @@ type Data =
 
 const METHODS: Record<string, { es: string; en: string }> = {
   CARD: { es: 'Tarjeta', en: 'Card' },
-  PSE: { es: 'PSE', en: 'PSE' },
-  NEQUI: { es: 'Nequi', en: 'Nequi' },
-  BANCOLOMBIA_TRANSFER: { es: 'Bancolombia', en: 'Bancolombia' },
   COUPON: { es: 'Cupón', en: 'Coupon' },
 };
 
@@ -121,7 +118,7 @@ export const actionCompletedEmail = defineTemplate<Data>({
     courseTitle: 'Conversación Fluida',
     courseSlug: 'conversacion-fluida',
     totalCOP: 199_200,
-    paymentMethod: 'NEQUI',
+    paymentMethod: 'VISA •••• 4242',
   },
   render(data, ctx) {
     const foot = { locale: ctx.locale, category: ctx.category, preferencesUrl: ctx.preferencesUrl, unsubscribeUrl: ctx.unsubscribeUrl };

@@ -47,6 +47,7 @@ export async function listOrders(q: { status?: OrderStatus; q?: string; page: nu
     ...(q.q && {
       OR: [
         { reference: { contains: q.q, mode: 'insensitive' } },
+        { providerPaymentId: { contains: q.q, mode: 'insensitive' } },
         { user: { email: { contains: q.q, mode: 'insensitive' } } },
       ],
     }),
