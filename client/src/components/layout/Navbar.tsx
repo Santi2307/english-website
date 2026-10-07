@@ -21,7 +21,7 @@ export function LogoMark({ size = 26 }: { size?: number }) {
 
 export function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-2.5 text-[0.95rem] font-semibold tracking-[-0.01em] text-slate-900">
+    <Link to="/" className="flex items-center gap-2.5 whitespace-nowrap text-[0.95rem] font-semibold tracking-[-0.01em] text-slate-900">
       <LogoMark />
       <span>English Academy</span>
     </Link>

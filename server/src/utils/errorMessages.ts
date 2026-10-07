@@ -57,7 +57,9 @@ const EN: Record<string, string> = {
 
   // Pagos
   'Cupón inválido o expirado': 'Invalid or expired coupon',
+  'Código postal inválido': 'Enter a valid postal code',
   'Orden no encontrada': 'Order not found',
+  'Los pagos no están disponibles en este momento': 'Payments are not available right now',
 };
 
 /** Traduce un mensaje al idioma del cliente. Si no hay traducción, lo deja igual. */

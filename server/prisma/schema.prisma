@@ -53,6 +53,8 @@ model User {
   googleId        String?                 @unique
   avatarUrl       String?
   role            Role                    @default(STUDENT)
+  // Cliente en Stripe (cus_…): agrupa los pagos del usuario en el proveedor
+  stripeCustomerId String?                 @unique
   // Idioma para comunicaciones (es | en)
   locale          String                  @default("es")
   /// Zona horaria IANA del navegador (p. ej. "Asia/Kabul"); null si nunca se conoció
@@ -153,7 +155,18 @@ model Order {
   currency           String      @default("COP")
   couponId           String?
   wompiTransactionId String?     @unique
+  // Proveedor que procesa la orden: "stripe" (actual) o "wompi" (órdenes anteriores)
+  provider           String      @default("wompi")
+  // Id del pago en el proveedor (Stripe: PaymentIntent pi_…). Sirve para conciliar.
+  providerPaymentId  String?     @unique
+  // Recibo alojado por el proveedor (Stripe receipt_url)
+  receiptUrl         String?
   paymentMethod      String?
+  // Resumen legible del medio de pago que reporta Wompi ("VISA •••• 4242", "PSE").
+  // Nunca se guarda el número de tarjeta, CVV ni vencimiento: los maneja solo Wompi.
+  paymentDetail      String?
+  // Datos de facturación del comprador (nombre, país, ciudad, dirección). No sensibles.
+  billing            Json?
   statusMessage      String?
   paidAt             DateTime?
   createdAt          DateTime    @default(now())

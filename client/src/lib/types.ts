@@ -59,21 +59,19 @@ export type CourseDetail = CourseSummary & {
   }[];
 };
 
-export type WompiCheckout = {
-  publicKey: string;
-  currency: 'COP';
-  amountInCents: number;
-  reference: string;
-  signature: string;
-  redirectUrl: string;
-};
 
 export type CreateOrderResponse =
   | { orderId: string; free: true }
   | {
       orderId: string;
       free: false;
-      checkout: WompiCheckout;
+      provider: 'stripe';
+      /** client_secret del PaymentIntent: solo sirve para confirmar ESTE pago desde el navegador */
+      clientSecret: string;
+      status: string;
+      amountInCents: number;
+      currency: string;
+      returnUrl: string;
       summary: { subtotalCOP: number; discountCOP: number; totalCOP: number };
     };
 
@@ -82,10 +80,42 @@ export type OrderStatusResponse = {
   reference: string;
   status: OrderStatus;
   amountInCents: number;
+  subtotalCOP: number;
   discountCOP: number;
+  currency: string;
   paymentMethod: string | null;
+  paymentDetail: string | null;
+  receiptUrl: string | null;
+  /** Código del último intento fallido (card_declined…); la UI lo traduce */
+  attemptError: string | null;
   statusMessage: string | null;
+  createdAt: string;
+  paidAt: string | null;
+  receiptEmail: string;
   course: { id: string; slug: string; title: string };
+};
+
+export type CheckoutConfig = {
+  provider: 'stripe';
+  /** false si faltan las llaves de Stripe: el checkout lo dice, no simula nada */
+  enabled: boolean;
+  publishableKey: string | null;
+  currency: string;
+  savedBilling: Record<string, string> | null;
+};
+
+export type OrderHistoryItem = {
+  id: string;
+  reference: string;
+  status: OrderStatus;
+  totalCOP: number;
+  currency: string;
+  paymentMethod: string | null;
+  paymentDetail: string | null;
+  receiptUrl: string | null;
+  createdAt: string;
+  paidAt: string | null;
+  course: { slug: string; title: string };
 };
 
 export type MyCourses = {

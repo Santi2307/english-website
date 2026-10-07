@@ -1,4 +1,4 @@
 import { Router } from 'express';
 import * as c from '../controllers/webhook.controller.js';
 
-export const webhookRoutes = Router().post('/wompi', c.wompi).post('/resend', c.resend).post('/brevo', c.brevo);
+export const webhookRoutes = Router().post('/stripe', c.stripe).post('/wompi', c.wompi).post('/resend', c.resend).post('/brevo', c.brevo);

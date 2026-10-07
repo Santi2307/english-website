@@ -64,7 +64,8 @@ export default function Orders() {
               <tr key={o.id} className="align-top">
                 <td className="p-4">
                   <p className="font-mono text-xs">{o.reference}</p>
-                  {o.wompiTransactionId && <p className="font-mono text-[11px] text-slate-400">tx {o.wompiTransactionId}</p>}
+                  {o.providerPaymentId && <p className="font-mono text-[11px] text-slate-400">{o.provider} {o.providerPaymentId}</p>}
+                  {o.wompiTransactionId && <p className="font-mono text-[11px] text-slate-400">wompi {o.wompiTransactionId}</p>}
                 </td>
                 <td className="py-4"><p className="font-medium">{o.user.name}</p><p className="text-xs text-slate-500">{o.user.email}</p></td>
                 <td className="py-4">{o.course.title}{o.coupon && <p className="text-xs text-emerald-700">Cupón {o.coupon.code}</p>}</td>

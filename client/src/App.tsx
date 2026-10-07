@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
+import { CheckoutShell } from './components/checkout/CheckoutShell';
 import { RequireAuth } from './components/auth/RequireAuth';
 import { PageLoader } from './components/ui/Spinner';
 import { ErrorBoundary } from './components/ui/ErrorState';
@@ -47,8 +48,6 @@ export default function App() {
           <Route path="cursos/:slug" element={<CourseDetail />} />
           <Route path="ingresar" element={<AuthPage mode="login" />} />
           <Route path="registro" element={<AuthPage mode="register" />} />
-          <Route path="checkout/:slug" element={<RequireAuth><Checkout /></RequireAuth>} />
-          <Route path="pago/resultado" element={<RequireAuth><PaymentResult /></RequireAuth>} />
           <Route path="mi-cuenta" element={<RequireAuth><Dashboard /></RequireAuth>} />
           <Route path="mi-cuenta/ajustes" element={<RequireAuth><Settings /></RequireAuth>} />
           <Route path="verificar-email" element={<VerifyEmail />} />
@@ -58,6 +57,12 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
   
+        {/* Checkout: marco propio, sin navegación de marketing */}
+        <Route element={<CheckoutShell />}>
+          <Route path="checkout/:slug" element={<RequireAuth><Checkout /></RequireAuth>} />
+          <Route path="pago/resultado" element={<RequireAuth><PaymentResult /></RequireAuth>} />
+        </Route>
+
         {/* Reproductor a pantalla completa, sin header/footer de marketing */}
         <Route path="aprender/:slug/:lessonId?" element={<RequireAuth><Learn /></RequireAuth>} />
   

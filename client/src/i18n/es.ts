@@ -104,7 +104,7 @@ const es = {
   faq: {
     title: 'Preguntas frecuentes',
     items: [
-      { q: '¿Cómo puedo pagar?', a: 'Aceptamos tarjetas de crédito y débito, PSE, Nequi y Botón Bancolombia a través de Wompi, una pasarela de pagos colombiana segura. Pagas en pesos colombianos.' },
+      { q: '¿Cómo puedo pagar?', a: 'Con tarjeta de crédito o débito, y con Apple Pay o Google Pay cuando tu dispositivo los ofrece. El pago lo procesa Stripe de forma segura. Los precios están en pesos colombianos (COP): si tu tarjeta es de otra moneda, tu banco hace la conversión.' },
       { q: '¿Cuánto tiempo tengo acceso?', a: 'Acceso de por vida. Puedes ver las lecciones cuantas veces quieras, a tu ritmo, desde el celular o el computador.' },
       { q: '¿Recibo certificado?', a: 'Sí. Al completar todas las lecciones descargas tu certificado en PDF con código de verificación.' },
       { q: '¿Y si el curso no es para mí?', a: 'Tienes 7 días de garantía. Si no estás satisfecho, te devolvemos el 100% de tu dinero, sin preguntas.' },
@@ -114,7 +114,7 @@ const es = {
   },
   footer: {
     tagline: 'Práctica de inglés para hispanohablantes que quieren dejar de bloquearse al hablar.',
-    payments: 'Pagos seguros con Wompi: PSE, Nequi y tarjeta',
+    payments: 'Pagos seguros procesados por Stripe',
     rights: 'Todos los derechos reservados.',
     product: 'Producto',
     account: 'Cuenta',
@@ -152,7 +152,7 @@ const es = {
     enrolled: 'Ya estás inscrito',
     goToCourse: 'Ir al curso',
     includes: ['Acceso de por vida', 'Certificado al finalizar', 'Ejercicios interactivos', 'Soporte por WhatsApp'],
-    paymentMethods: 'Tarjeta · PSE · Nequi · Bancolombia',
+    paymentMethods: 'Pago seguro · Acceso de por vida · Garantía de 7 días',
     noPreview: 'Trailer próximamente',
   },
   checkout: {
@@ -167,14 +167,14 @@ const es = {
     couponApplied: 'Cupón {{code}} aplicado',
     pay: 'Pagar {{amount}}',
     payFree: 'Inscribirme gratis',
-    secure: 'Pago 100% seguro procesado por Wompi (Bancolombia).',
-    methods: 'Paga con tarjeta, PSE, Nequi o Botón Bancolombia',
+    secure: 'Pagos procesados de forma segura por Stripe.',
+    methods: 'Paga con tarjeta, Apple Pay o Google Pay',
     loginRequired: 'Crea tu cuenta o inicia sesión para continuar',
     widgetError: 'No pudimos abrir el checkout. Revisa tu conexión e intenta de nuevo.',
   },
   result: {
     checking: 'Verificando tu pago…',
-    checkingHint: 'Esto puede tardar unos segundos con PSE.',
+    checkingHint: 'Esto puede tardar unos segundos.',
     APPROVED: '¡Pago aprobado! Bienvenido al curso 🎉',
     APPROVEDText: 'Te enviamos un email de confirmación. Ya puedes empezar tu primera lección.',
     DECLINED: 'Tu pago fue rechazado',
@@ -285,6 +285,7 @@ const es = {
     invalid: 'Este enlace no es válido. Pide uno nuevo.',
   },
   settings: {
+    purchases: 'Compras',
     title: 'Ajustes de la cuenta',
     profile: 'Perfil',
     language: 'Idioma de los emails',

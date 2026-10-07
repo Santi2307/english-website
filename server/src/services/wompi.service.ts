@@ -8,6 +8,8 @@ export type WompiTransaction = {
   amount_in_cents: number;
   currency: string;
   payment_method_type?: string;
+  /** Wompi solo expone datos no sensibles de la tarjeta (marca y últimos 4). */
+  payment_method?: { type?: string; extra?: { brand?: string; last_four?: string; financial_institution_name?: string } };
   status_message?: string | null;
   customer_email?: string;
 };
@@ -41,6 +43,7 @@ const getPath = (obj: unknown, path: string): unknown =>
  * SHA256(valores de signature.properties en orden + timestamp + secretoEventos).
  */
 export function verifyEventChecksum(event: WompiEvent) {
+  if (!env.WOMPI_EVENTS_SECRET) return false;
   if (!event?.signature?.properties || !event.signature.checksum || !event.timestamp) return false;
   const values = event.signature.properties.map((p) => String(getPath(event.data, p) ?? '')).join('');
   const expected = sha256(`${values}${event.timestamp}${env.WOMPI_EVENTS_SECRET}`);
@@ -57,4 +60,19 @@ export async function fetchTransaction(id: string): Promise<WompiTransaction | n
   if (!res.ok) return null;
   const json = (await res.json()) as { data?: WompiTransaction };
   return json.data ?? null;
+}
+
+/**
+ * Resumen legible del medio de pago: "VISA •••• 4242", "PSE · Bancolombia", "Nequi".
+ * Usa solo los datos que Wompi ya enmascara; nunca recibimos el número completo.
+ */
+export function paymentDetail(tx: WompiTransaction): string | null {
+  const type = tx.payment_method_type ?? tx.payment_method?.type;
+  const extra = tx.payment_method?.extra;
+  if (type === 'CARD' && extra?.last_four) return `${(extra.brand ?? 'Card').toUpperCase()} •••• ${extra.last_four.slice(-4)}`;
+  const names: Record<string, string> = { PSE: 'PSE', NEQUI: 'Nequi', BANCOLOMBIA_TRANSFER: 'Bancolombia', BANCOLOMBIA_QR: 'Bancolombia QR', DAVIPLATA: 'Daviplata', PCOL: 'Puntos Colombia' };
+  // Sin marca/últimos 4 (o un medio que no conocemos) la UI muestra la etiqueta traducida del tipo
+  if (!type || !names[type]) return null;
+  const base = names[type];
+  return type === 'PSE' && extra?.financial_institution_name ? `${base} · ${extra.financial_institution_name}` : base;
 }
